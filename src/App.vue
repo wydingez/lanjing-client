@@ -27,10 +27,32 @@
       color="primary lighten-1"
     >
       <v-layout
-        justify-center
         row
         wrap
       >
+        <v-flex
+          primary
+          lighten-1
+          py-3
+          px-3
+          text-xs-left
+          white--text
+        >
+          <v-icon dark>copyright</v-icon> - <strong>2019 lanjing</strong>
+          <v-divider
+            class="mx-2"
+            inset
+            vertical
+          ></v-divider>
+          <v-icon dark>cloud</v-icon> - 京ICP证030173号(<strong>京公网安备11000002000001号</strong>)
+          <v-divider
+            class="mx-2"
+            inset
+            vertical
+          ></v-divider>
+          <v-icon dark>phone</v-icon> - <strong>138*****6372</strong>
+        </v-flex>
+        <v-spacer></v-spacer>
         <v-btn
           v-for="link in footerLinks"
           :key="link"
@@ -40,16 +62,6 @@
         >
           {{ link }}
         </v-btn>
-        <v-flex
-          primary
-          lighten-2
-          py-3
-          text-xs-center
-          white--text
-          xs12
-        >
-          &copy;2018 — <strong>Vuetify</strong>
-        </v-flex>
       </v-layout>
     </v-footer>
   </v-app>
@@ -85,12 +97,9 @@ export default {
         }
       ],
       footerLinks: [
-        'Home',
-        'About Us',
-        'Team',
-        'Services',
-        'Blog',
-        'Contact Us'
+        '首页',
+        '关于我们',
+        '联系我们'
       ]
     }
   },
