@@ -37,19 +37,33 @@
           px-3
           text-xs-left
           white--text
+          xs12
+          md2
         >
           <v-icon dark>copyright</v-icon> - <strong>2019 lanjing</strong>
-          <v-divider
-            class="mx-2"
-            inset
-            vertical
-          ></v-divider>
+        </v-flex>
+        <v-flex
+          primary
+          lighten-1
+          py-3
+          px-3
+          text-xs-left
+          white--text
+          xs12
+          md3
+        >
           <v-icon dark>cloud</v-icon> - 京ICP证030173号(<strong>京公网安备11000002000001号</strong>)
-          <v-divider
-            class="mx-2"
-            inset
-            vertical
-          ></v-divider>
+        </v-flex>
+        <v-flex
+          primary
+          lighten-1
+          py-3
+          px-3
+          text-xs-left
+          white--text
+          xs12
+          md2
+        >
           <v-icon dark>phone</v-icon> - <strong>138*****6372</strong>
         </v-flex>
         <v-spacer></v-spacer>

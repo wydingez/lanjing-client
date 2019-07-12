@@ -11,5 +11,6 @@ module.exports = {
       .set('_c', resolve('src/components'))
       .set('_v', resolve('src/views'))
       .set('static', resolve('public/static'))
+      .set('_d', resolve('src/data'))
   }
 }

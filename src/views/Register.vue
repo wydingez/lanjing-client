@@ -21,10 +21,25 @@
               {{type.label}}
             </v-tab>
           </v-tabs>
-          <v-form>
-            <v-text-field prepend-icon="person" name="login" label="账号" type="text"></v-text-field>
-            <v-text-field prepend-icon="lock" name="password" label="密码" id="password" type="password"></v-text-field>
-            <p class="text-lg-right">忘记密码？</p>
+          <v-form class="register-page-form">
+            <v-container>
+              <v-select :items="nationalityList" label="国籍" outline messages="国籍信息注册后不可修改，请务必如实选择。" v-model="form.nationality" @change="selectCountry"></v-select>
+              <v-layout>
+                <template v-if="form.registerType === 0">
+                  <v-flex xs3>
+                    <v-select :items="phoneList" solo v-model="form.phonePrev"></v-select>
+                  </v-flex>
+                  <v-flex xs9>
+                    <v-text-field label="手机号" solo v-model="form.phone"></v-text-field>
+                  </v-flex>
+                </template>
+                <v-flex v-else xs12>
+                  <v-text-field label="邮箱账号" solo v-model="form.email"></v-text-field>
+                </v-flex>
+              </v-layout>
+              <v-text-field label="设置密码" type="password" outline v-model="form.password"></v-text-field>
+              <v-text-field label="确认密码" type="password" outline v-model="form.rePassword"></v-text-field>
+            </v-container>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -37,13 +52,23 @@
 </template>
 
 <script>
+  import country from '_d/country.json'
+  import countryPhone from '_d/countryPhone.json'
   export default {
     name: 'Register',
     data () {
       return {
         form: {
+          nationality: 37,
+          phonePrev: '0086',
+          phone: '',
+          email: '',
+          password: '',
+          rePassword: '',
           registerType: 0
         },
+        nationalityList: [],
+        phoneList: [],
         registerTypes: [
           {
             label: '手机注册',
@@ -54,12 +79,35 @@
           }
         ]
       }
+    },
+    methods: {
+      initList () {
+        this.nationalityList = country.map((item) => {
+          item.value = item.country_id
+          item.text = item.name_cn
+          return item
+        })
+        this.phoneList = countryPhone.map((item) => {
+          item.value = item.area_code
+          item.text = item.area_code
+          return item
+        })
+      },
+      selectCountry (value) {
+        console.log(value)
+      }
+    },
+    created () {
+      this.initList()
     }
   }
 </script>
 
 <style lang="stylus">
 .register-page {
+  &-form {
+    margin-top: 10px;
+  }
   &-tabs {
     .v-tabs__container {
       border-bottom: 1px solid #ddd;
