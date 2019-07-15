@@ -1,12 +1,11 @@
 <template>
   <v-app class="my-app">
-    <v-toolbar app class="my-app-toolbar" color="primary" dark>
+    <v-toolbar app class="my-app-toolbar" color="primary" dark :height="48" tabs>
       <v-img src="static/logo.png" class="my-app-toolbar-logo" @click.native="linkHome"></v-img>
       <v-toolbar-title class="my-app-toolbar-title">lanjing</v-toolbar-title>
       <v-tabs
         v-model="tab"
         color="transparent"
-        :height="64"
         align-with-title
       >
         <v-tab v-for="item in items" :key="item">
@@ -23,6 +22,7 @@
     </v-content>
 
     <v-footer
+      class="my-app-footer"
       height="auto"
       color="primary lighten-1"
     >
@@ -31,40 +31,18 @@
         wrap
       >
         <v-flex
+          v-for="item in footerInfos"
+          :key="item.icon"
           primary
           lighten-1
-          py-3
-          px-3
+          py-2
+          px-2
           text-xs-left
           white--text
           xs12
           md2
         >
-          <v-icon dark>copyright</v-icon> - <strong>2019 lanjing</strong>
-        </v-flex>
-        <v-flex
-          primary
-          lighten-1
-          py-3
-          px-3
-          text-xs-left
-          white--text
-          xs12
-          md3
-        >
-          <v-icon dark>cloud</v-icon> - 京ICP证030173号(<strong>京公网安备11000002000001号</strong>)
-        </v-flex>
-        <v-flex
-          primary
-          lighten-1
-          py-3
-          px-3
-          text-xs-left
-          white--text
-          xs12
-          md2
-        >
-          <v-icon dark>phone</v-icon> - <strong>138*****6372</strong>
+          <div class="content"><v-icon dark>{{item.icon}}</v-icon> - <strong>{{item.text}}</strong></div>
         </v-flex>
         <v-spacer></v-spacer>
         <v-btn
@@ -114,6 +92,18 @@ export default {
         '首页',
         '关于我们',
         '联系我们'
+      ],
+      footerInfos: [
+        {
+          icon: 'copyright',
+          text: '2019 lanjing'
+        }, {
+          icon: 'cloud',
+          text: '京ICP证030173号'
+        }, {
+          icon: 'phone',
+          text: '138*****6372'
+        }
       ]
     }
   },
@@ -135,6 +125,11 @@ export default {
     }
     &-title {
       overflow: inherit;
+    }
+  }
+  &-footer {
+    .content {
+      line-height: 32px;
     }
   }
 }

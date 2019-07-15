@@ -5,7 +5,11 @@ function resolve(dir) {
 }
 
 module.exports = {
-  transpileDependencies:[/node_modules[/\\\\]vuetify[/\\\\]/],
+  transpileDependencies:[
+    /node_modules[/\\\\]vuetify[/\\\\]/,
+    'vue-echarts',
+    'resize-detector'
+  ],
   chainWebpack: (config) => {
     config.resolve.alias
       .set('_c', resolve('src/components'))
