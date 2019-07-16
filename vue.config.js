@@ -5,6 +5,9 @@ function resolve(dir) {
 }
 
 module.exports = {
+  devServer: {
+    port: 9000
+  },
   transpileDependencies:[
     /node_modules[/\\\\]vuetify[/\\\\]/,
     'vue-echarts',
