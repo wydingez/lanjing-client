@@ -60,22 +60,11 @@
                     v-for="item in orderInfo"
                     :key="item.key"
                   >
-                    <v-card flat>
-                      <VTable :headers="tableDef.orderHeader" :items="tableDef.orderBuyData" :url="tableDef.orderUrl">
-                        <template v-slot:items="props">
-                          <td>{{props.item.name}}</td>
-                          <td>
-                            <v-avatar size="36"><img :src="props.item.avatar" :alt="props.item.name"></v-avatar>
-                          </td>
-                          <td>{{props.item.per}} ￥/个</td>
-                          <td>{{props.item.amount}}</td>
-                          <td>
-                            <v-btn color="warning" fab small dark>
-                              <v-icon>add_shopping_cart</v-icon>
-                            </v-btn>
-                          </td>
-                        </template>
-                      </VTable>
+                    <v-card flat v-if="item.key === 'buy'">
+                      <HomeOrderBuy />
+                    </v-card>
+                    <v-card flat v-if="item.key === 'sell'">
+                      <HomeOrderSell />
                     </v-card>
                   </v-tab-item>
                 </v-tabs>
@@ -99,7 +88,7 @@
               </v-card-title>
               <v-divider light></v-divider>
               <div class="home-records-container">
-                <VTable :headers="tableDef.orderHeader" :items="tableDef.orderBuyData"></VTable>
+                <HomeRecords></HomeRecords>
               </div>
             </v-card>
           </v-flex>
@@ -111,10 +100,13 @@
 
 <script>
   import HomeCharts from './portal/HomeCharts'
+  import HomeOrderBuy from './portal/HomeOrderBuy'
+  import HomeOrderSell from './portal/HomeOrderSell'
+  import HomeRecords from './portal/HomeRecords'
 
   export default {
     name: 'Home',
-    components: {HomeCharts},
+    components: {HomeCharts, HomeOrderBuy, HomeOrderSell, HomeRecords},
     data () {
       return {
         selectOrder: null,
@@ -127,50 +119,7 @@
           {src: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg'},
           {src: 'https://cdn.vuetifyjs.com/images/carousel/bird.jpg'},
           {src: 'https://cdn.vuetifyjs.com/images/carousel/planet.jpg'}
-        ],
-        tableDef: {
-          orderHeader: [
-            {text: '委托方', value: 'name', sortable: false},
-            {text: '微信图像', value: 'avatar', sortable: false},
-            {text: '单价', value: 'per'},
-            {text: '数量', value: 'amount'},
-            {text: '操作', value: 'opt', sortable: false}
-          ],
-          recordHeader: [
-            {text: '委托方', value: 'name', sortable: false},
-            {text: '微信图像', value: 'avatar', sortable: false},
-            {text: '交易记录', value: 'optDesc', sortable: false},
-          ],
-          orderBuyData: [
-            {name: 'wyd1**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 2000, amount: 100},
-            {name: 'wyd2**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 3000, amount: 100},
-            {name: 'wyd3**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 100, amount: 100},
-            {name: 'wyd4**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 500, amount: 100},
-            {name: 'wyd5**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 500, amount: 100},
-            {name: 'wyd6**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 500, amount: 100},
-            {name: 'wyd7**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 500, amount: 100}
-          ],
-          orderSellData: [
-            {name: 'wyd1**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 2000, amount: 100},
-            {name: 'wyd2**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 3000, amount: 100},
-            {name: 'wyd3**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 100, amount: 100},
-            {name: 'wyd4**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 500, amount: 100},
-            {name: 'wyd5**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 500, amount: 100}
-          ],
-          recordData: [
-            {name: 'wyd1**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 2000, amount: 100},
-            {name: 'wyd2**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 3000, amount: 100},
-            {name: 'wyd3**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 100, amount: 100},
-            {name: 'wyd4**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 500, amount: 100},
-            {name: 'wyd5**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 500, amount: 100}
-          ],
-          orderUrl: 'http://www.baidu.com'
-        }
-      }
-    },
-    methods: {
-      xxx () {
-        console.log('xxx')
+        ]
       }
     }
   }
