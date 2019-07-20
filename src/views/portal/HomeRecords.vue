@@ -1,5 +1,5 @@
 <template>
-  <v-data-table :headers="headers" :items="items" hide-actions>
+  <v-table :headers="headers" :items="items" hide-actions>
     <template v-slot:items="props">
       <td>{{props.item.name}}</td>
       <td>
@@ -7,7 +7,7 @@
       </td>
       <td class="subheading font-weight-medium" v-html="translateDesc(props.item)"></td>
     </template>
-  </v-data-table> 
+  </v-table> 
 </template>
 
 <script>

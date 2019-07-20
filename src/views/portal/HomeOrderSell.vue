@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-data-table :headers="headers" :items="items" hide-actions>
+    <v-table :headers="headers" :items="items" hide-actions>
       <template v-slot:items="props">
         <td>{{props.item.name}}</td>
         <td>
@@ -19,7 +19,7 @@
           </v-tooltip>
         </td>
       </template>
-    </v-data-table>
+    </v-table>
     <v-dialog v-model="dialog" width="500">
       <v-card>
         <v-card-title class="headline grey lighten-2" primary-title>卖出</v-card-title>

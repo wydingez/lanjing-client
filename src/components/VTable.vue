@@ -71,35 +71,30 @@
         let tableDefine = null
         let rows = []
         this.items.forEach((item) => {
-          let scopedSlot = this.$scopedSlots({item})
+          let scopedSlot = this.$scopedSlots.items({item})
           let row = []
-          this.headers.forEach((header) => {
-            row.push()
+          this.headers.forEach((header, index) => {
+            row.push(
+               <div class={['v-table-phone-card-row']}>
+                <span class={['v-table-phone-card-row-title']}>
+                  {header.text}
+                </span>
+                {scopedSlot[index]}
+              </div>
+            )
           })
+          rows.push(
+            <div class={['v-table-phone-card']}>
+              {row}
+            </div>
+          )
         })
 
         tableDefine = (
           <div class={['v-table-phone']}>
-            <div class={['v-table-phone-row']}>
-              <span class={['v-table-phone-row-title']}>
-
-              </span>
-            </div>
+            {rows}
           </div>
         )
-        // this.items.forEach((item) => {
-        //   rows.push(this.$createElement('div', {
-        //     'class': {
-        //       'v-table-phone-row': true
-        //     }
-        //   }, this.$scopedSlots.items({item})))
-        // })
-
-        // tableDefine = this.$createElement('div', {
-        //   'class': {
-        //     'v-table-phone': true
-        //   }
-        // }, rows)
 
         return tableDefine
       }
@@ -109,13 +104,22 @@
 
 <style lang="stylus">
 .v-table-phone {
-  &-row {
-    margin: 10px;
-    td {
-      display: block;
+  &-card {
+    border-bottom: 1px solid #eee;
+    &-row {
       height: 52px;
       line-height: 52px;
-      text-align: right;
+      margin: 5px 10px;
+      td {
+        display: inline-block;
+        float: right;
+        kbd {
+          line-height: 24px;
+        }
+        button {
+          margin-right: 0;
+        }
+      }
     }
   }
 }

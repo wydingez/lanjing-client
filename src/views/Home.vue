@@ -1,12 +1,12 @@
 <template>
   <div class="home">
     <v-layout class="home-carousel">
-      <v-carousel :height="200" delimiter-icon="stop" hide-controls>
+      <v-carousel :height="300" delimiter-icon="stop" hide-controls>
         <v-carousel-item
           v-for="(item,i) in carouselItems"
           :key="i"
-          :src="item.src"
-        ></v-carousel-item>
+          :src="item.src">
+        </v-carousel-item>
       </v-carousel>
     </v-layout>
 
@@ -18,7 +18,7 @@
         <v-layout row wrap>
           <v-flex xs12>
             <v-card color="transparent darken-2">
-              <v-card-title>
+              <v-card-title class="primary white--text">
                 <div class="title">交易数据</div>
               </v-card-title>
               <v-divider light></v-divider>
@@ -39,21 +39,23 @@
         <v-layout row wrap>
           <v-flex xs12>
             <v-card color="transparent darken-2">
-              <v-card-title>
+              <v-card-title class="primary white--text">
                 <div class="title">自选交易区</div>
               </v-card-title>
               <v-divider light></v-divider>
               <div class="home-order-container">
                 <v-tabs
                   v-model="selectOrder"
-                  color="primary"
-                  dark
+                  color="transparent"
+                  slider-color="primary"
+                  light
                 >
                   <v-tab
                     v-for="item in orderInfo"
                     :key="item.key"
                     ripple
                   >
+                    <v-icon>{{item.icon}}</v-icon>
                     {{item.label}}
                   </v-tab>
                   <v-tab-item
@@ -83,7 +85,7 @@
         <v-layout row wrap>
           <v-flex xs12>
             <v-card color="transparent darken-2">
-              <v-card-title>
+              <v-card-title class="primary white--text">
                 <div class="title">交易记录</div>
               </v-card-title>
               <v-divider light></v-divider>
@@ -111,14 +113,18 @@
       return {
         selectOrder: null,
         orderInfo: [
-          {key: 'buy', label: '我要买'}, 
-          {key: 'sell', label: '我要卖'}
+          {key: 'buy', label: '我要买', icon: 'add_shopping_cart'}, 
+          {key: 'sell', label: '我要卖', icon: 'input'}
         ],
         carouselItems: [
-          {src: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg'},
-          {src: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg'},
-          {src: 'https://cdn.vuetifyjs.com/images/carousel/bird.jpg'},
-          {src: 'https://cdn.vuetifyjs.com/images/carousel/planet.jpg'}
+          {src: 'static/bg1.jpg'},
+          {src: 'static/bg2.jpg'},
+          {src: 'static/bg3.jpg'},
+          {src: 'static/bg4.jpg'}
+          // {src: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg'},
+          // {src: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg'},
+          // {src: 'https://cdn.vuetifyjs.com/images/carousel/bird.jpg'},
+          // {src: 'https://cdn.vuetifyjs.com/images/carousel/planet.jpg'}
         ]
       }
     }
@@ -131,13 +137,15 @@ card-custom-padding()
   .container {
     padding-bottom: 12px;
     padding-top: 12px;
+    padding-left: 16px;
+    padding-right: 16px;
   }
 
 .home {
   &-echarts {
     card-custom-padding()
     &-container {
-      height: 500px;
+      height: 400px;
       width: 100%;
       &-content {
         height: 100%;
