@@ -6,20 +6,29 @@ import router from './router'
 import store from './store'
 import './style/index.styl'
 
+import throttle from 'lodash/throttle'
+import debounce from 'lodash/debounce'
+
 Vue.config.productionTip = false
 
 new Vue({
   data: {
-    screenWidth: 0
+    screenWidth: 0,
+    scrollTop: 0
   },
   router,
   store,
   render: h => h(App),
   mounted () {
     this.screenWidth = document.body.clientWidth
-    window.onresize = () => {
+    window.onresize = debounce(() => {
+      // 使用防抖函数防止出发多次
 			this.screenWidth = document.body.clientWidth
-		}
+    }, 400)
+    window.onscroll = throttle(() => {
+      // 使用节流函数防止出发多次
+      this.scrollTop = document.documentElement.scrollTop || document.body.scrollTop
+    }, 400)
   },
   computed: {
     smallScreen () {

@@ -121,6 +121,22 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
+
+    <!-- Back button -->
+   <v-fab-transition>
+    <v-btn
+      v-show="$root.scrollTop > 100"
+      color="red"
+      dark
+      fixed
+      bottom
+      right
+      fab
+      @click="scrollTop"
+    >
+      <v-icon>keyboard_arrow_up</v-icon>
+    </v-btn>
+  </v-fab-transition>
   </v-app>
 </template>
 
@@ -159,6 +175,7 @@ export default {
       drawer: null,
       right: null,
       projectTitle: 'lanjing',
+      hidden: false
     }
   },
   computed: {
@@ -169,6 +186,9 @@ export default {
   methods: {
     linkHome () {
       this.$router.push('/')
+    },
+    scrollTop () {
+      this.$vuetify.goTo(0, 0)
     }
   }
 }

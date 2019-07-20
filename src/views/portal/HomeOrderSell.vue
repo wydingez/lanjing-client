@@ -20,7 +20,7 @@
         </td>
       </template>
     </v-table>
-    <v-dialog v-model="dialog" width="500">
+    <v-dialog v-model="dialog" width="500" persistent>
       <v-card>
         <v-card-title class="headline grey lighten-2" primary-title>卖出</v-card-title>
 
@@ -61,13 +61,13 @@
             flat
             @click="dialog = false"
           >
-            取消卖出
+            取消
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="snackbar" width="500">
+    <v-dialog v-model="snackbar" width="500" persistent>
       <v-card>
         <v-card-title class="headline grey lighten-2" primary-title>卖出成功</v-card-title>
         <v-card-text>
@@ -81,7 +81,7 @@
               v-clipboard:success="onCopy"
               v-clipboard:error="onError"
             >
-              【点击复制】
+              【点击复制】 
             </v-btn>
           </p>
           <p>微信号：{{buyerInfo.wx}}</p>
@@ -89,7 +89,6 @@
           <blockquote class="blockquote" style="padding: 0">
             完成转入后，请到<span class="red--text font-weight-bold">【订单】</span>页面继续完成交易
           </blockquote>
-          
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>

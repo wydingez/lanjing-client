@@ -21,7 +21,7 @@
       </template>
     </v-table>
 
-    <v-dialog v-model="dialog" width="500">
+    <v-dialog v-model="dialog" width="500" persistent>
       <v-card>
         <v-card-title class="headline grey lighten-2" primary-title>购买</v-card-title>
 
@@ -77,13 +77,13 @@
             flat
             @click="dialog = false"
           >
-            取消购买
+            取消
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
     
-    <v-dialog v-model="snackbar" width="500">
+    <v-dialog v-model="snackbar" width="500" persistent>
       <v-card>
         <v-card-title class="headline grey lighten-2" primary-title>购买成功</v-card-title>
         <v-card-text>购买成功，请点击确认至【订单】查看交易进度</v-card-text>
