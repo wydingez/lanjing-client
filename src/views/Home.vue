@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <v-layout class="home-carousel">
-      <v-carousel :height="300" delimiter-icon="stop" hide-controls>
+      <v-carousel :height="$root.smallScreen ? 200 : 300" delimiter-icon="stop" hide-controls>
         <v-carousel-item
           v-for="(item,i) in carouselItems"
           :key="i"

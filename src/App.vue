@@ -194,9 +194,15 @@ export default {
       padding-bottom: 6px;
     }
   }
+  .container.grid-list-lg .layout .flex {
+    padding: 4px 2px;
+  }
   &-phone {
     .my-app-toolbar-logo {
       flex: inherit;
+    }
+    .container.grid-list-lg .layout .flex {
+      padding: 2px
     }
   }
 }
