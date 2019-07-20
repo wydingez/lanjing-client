@@ -52,10 +52,8 @@
           return total
         }, {})
       }
-      
-      // $createElement 将VNodes转换为具体节点信息
-      let rowNodes = this.$createElement('div', this.genPhoneRows())
-      const phoneTable = rowNodes
+
+      const phoneTable = this.genPhoneRows()
 
       const pcTable = (
         <v-data-table {...options} scopedSlots={scopedSlots}></v-data-table>
@@ -70,17 +68,55 @@
           return null
         }
 
-        const rows = []
-        this.items.forEach((item, index) => {
-          rows.push(this.$scopedSlots.items({item}))
+        let tableDefine = null
+        let rows = []
+        this.items.forEach((item) => {
+          let scopedSlot = this.$scopedSlots({item})
+          let row = []
+          this.headers.forEach((header) => {
+            row.push()
+          })
         })
 
-        return rows
+        tableDefine = (
+          <div class={['v-table-phone']}>
+            <div class={['v-table-phone-row']}>
+              <span class={['v-table-phone-row-title']}>
+
+              </span>
+            </div>
+          </div>
+        )
+        // this.items.forEach((item) => {
+        //   rows.push(this.$createElement('div', {
+        //     'class': {
+        //       'v-table-phone-row': true
+        //     }
+        //   }, this.$scopedSlots.items({item})))
+        // })
+
+        // tableDefine = this.$createElement('div', {
+        //   'class': {
+        //     'v-table-phone': true
+        //   }
+        // }, rows)
+
+        return tableDefine
       }
     }
   }
 </script>
 
-<style lang="scss" scoped>
-
+<style lang="stylus">
+.v-table-phone {
+  &-row {
+    margin: 10px;
+    td {
+      display: block;
+      height: 52px;
+      line-height: 52px;
+      text-align: right;
+    }
+  }
+}
 </style>
