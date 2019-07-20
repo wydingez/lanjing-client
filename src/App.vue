@@ -109,13 +109,15 @@
           v-for="item in toolBarBtns"
           :key="item.title"
         >
-          <v-list-tile-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-tile-action>
+          <template v-if="item.icon">
+            <v-list-tile-action>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-tile-action>
 
-          <v-list-tile-content>
-            <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-          </v-list-tile-content>
+            <v-list-tile-content>
+              <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+            </v-list-tile-content>
+          </template>
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
@@ -138,16 +140,12 @@ export default {
         {title: '合约交易', icon: 'tab'}
       ],
       toolBarBtns: [
+        {title: '首页', url: '/'},
         {title: '登陆', url: '/login', 'icon': 'supervisor_account'}, 
         {title: '注册', url: '/register', 'icon': 'person_add'}, 
         {title: '委托', url: '/delegate', 'icon': 'card_travel'}, 
         {title: '订单', url: '/order', 'icon': 'description'}, 
         {title: '个人中心', url: '/personal', 'icon': 'account_circle'}
-      ],
-      footerLinks: [
-        '首页',
-        '关于我们',
-        '联系我们'
       ],
       footerInfos: [
         {

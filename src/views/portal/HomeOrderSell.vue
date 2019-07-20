@@ -33,6 +33,7 @@
               v-model="amount"
               label="数量"
               placeholder="80-2000"
+              :rules="amountRule"
               required
             ></v-text-field>
           </v-form>
@@ -51,7 +52,7 @@
           <v-btn
             color="primary"
             flat
-            @click="dialog = false; snackbar = true"
+            @click="doSell"
           >
             确认卖出
           </v-btn>
@@ -65,13 +66,54 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-dialog v-model="snackbar" width="500">
+      <v-card>
+        <v-card-title class="headline grey lighten-2" primary-title>卖出成功</v-card-title>
+        <v-card-text>
+          <p><blockquote class="blockquote" style="padding: 0">确认购买成功，先打开蓝晶社APP转赠蓝晶至：</blockquote></p>
+          <p>
+            手机号：{{buyerInfo.phone}}
+             <v-btn
+              color="pink"
+              flat
+              v-clipboard:copy="buyerInfo.phone"
+              v-clipboard:success="onCopy"
+              v-clipboard:error="onError"
+            >
+              【点击复制】
+            </v-btn>
+          </p>
+          <p>微信号：{{buyerInfo.wx}}</p>
+          <p class="red--text">(安全提醒：请在蓝晶社APP里转赠蓝晶时务必核对以上信息无误，方可转入。如遇信息不符时请至公众号【爱坚果社区】联系客服人员处理！)</p>
+          <blockquote class="blockquote" style="padding: 0">
+            完成转入后，请到<span class="red--text font-weight-bold">【订单】</span>页面继续完成交易
+          </blockquote>
+          
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="pink"
+            flat
+            @click="snackbar = false"
+          >
+            确认
+          </v-btn>
+          <v-btn
+            color="grey"
+            flat
+            @click="snackbar = false"
+          >
+            关闭
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     
-    <v-snackbar v-model="snackbar" top :timeout="0">
-      确认购买成功，先打开蓝晶社APP转赠蓝晶至：
-      手机号：13813813813
-      微信号：weishi
-      (安全提醒：请在蓝晶社APP里转赠蓝晶时务必核对以上信息无误，方可转入。如遇信息不符时请至公众号【爱坚果社区】联系客服人员处理！)
-      完成转入后，请到【订单】页面继续完成交易
+    <v-snackbar v-model="copyTip" top right :timeout="2000">
+      复制成功
       <v-btn
         color="pink"
         flat
@@ -103,8 +145,33 @@
       ],
       amount: '',
       dialog: false,
-      snackbar: false
-    })
+      snackbar: false,
+      copyTip: false,
+      buyerInfo: {
+        phone: '13813813813',
+        wx: 'weishi'
+      },
+      amountRule: [
+        value => !!value || '数量不能为空',
+        value => !Number.isNaN(Number(value)) || '数量不正确',
+        value => Number(value) >= 80 && Number(value) <= 2000 || '数量应该在80-2000之间'
+      ],
+    }),
+    methods: {
+      onCopy () {
+        this.copyTip = true
+      },
+      onError () {
+        console.error('copy error!')
+      },
+      doSell () {
+        let flag = this.$refs.form.validate()
+        if (flag) {
+          this.dialog = false
+          this.snackbar = true
+        }
+      }
+    }
   }
 </script>
 

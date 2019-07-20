@@ -12,6 +12,7 @@
     "core-js": "^2.6.5",
     "echarts": "^4.2.1",
     "vue": "^2.6.10",
+    "vue-clipboard2": "^0.3.0",
     "vue-echarts": "^4.0.3",
     "vue-router": "^3.0.3",
     "vuetify": "^1.5.16",
