@@ -1,12 +1,253 @@
 <template>
-  <div>
-    Delegate
-  </div>
+  <v-container fluid grid-list-md>
+    <v-data-iterator
+      :items="items"
+      content-tag="v-layout"
+      row
+      wrap
+      hide-actions
+    >
+      <template v-slot:item="props">
+        <v-flex
+          xs12
+          sm6
+          md6
+          lg6
+        >
+          <v-card>
+            <v-card-title><h4>{{ props.item.name }}</h4></v-card-title>
+            <v-divider></v-divider>
+            <v-list dense>
+              <v-list-tile>
+                <v-list-tile-content class="subheading font-weight-bold" style="display: -webkit-box">数量<v-icon>sort</v-icon></v-list-tile-content>
+                <v-list-tile-content class="align-end subheading font-weight-bold" style="display: -webkit-box"><v-icon>attach_money</v-icon>价格</v-list-tile-content>
+              </v-list-tile>
+              <v-list-tile v-for="item in props.item.list" :key="item.id">
+                <v-list-tile-content>{{item.amount}}</v-list-tile-content>
+                <v-list-tile-content class="align-end">￥ {{ item.price }}</v-list-tile-content>
+              </v-list-tile>
+              <v-list-tile>
+                <v-btn block color="warning" dark @click="props.item.btnClick(props.item.type)">{{ props.item.btnText }}</v-btn>
+              </v-list-tile>
+            </v-list>
+          </v-card>
+        </v-flex>
+      </template>
+    </v-data-iterator>
+
+    <v-dialog v-model="dialogInfo.dialog" width="500" persistent>
+      <v-card>
+        <v-card-title class="headline grey lighten-2" primary-title>{{dialogInfo.title}}</v-card-title>
+
+        <v-card-text>
+          <v-form
+            ref="form"
+            lazy-validation
+          >
+          
+            <v-text-field
+              v-model="dialogInfo.amount"
+              v-show="!dialogInfo.showConfPass"
+              :label="dialogInfo.title + '的数量'"
+              placeholder="80-2000"
+              required
+              :rules="rules.amountRule"
+            ></v-text-field>
+
+            <v-text-field
+              v-model="dialogInfo.perPrice"
+              v-show="!dialogInfo.showConfPass"
+              :label="dialogInfo.title + '的单价'"
+              placeholder="0.1-10000"
+              required
+              :rules="rules.perPriceRule"
+            ></v-text-field>
+
+            <v-text-field
+              v-show="dialogInfo.type === 'buy' && dialogInfo.showConfPass"
+              :append-icon="passwordVisible ? 'visibility' : 'visibility_off'"
+              :rules="rules.confPassRule"
+              :type="passwordVisible ? 'text' : 'password'"
+              label="请输入资金密码"
+              v-model="rules.password"
+              @click:append="passwordVisible = !passwordVisible"
+            ></v-text-field>
+          </v-form>
+          
+          <p v-html="dialogInfo.tip" v-show="!dialogInfo.showConfPass"></p>
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            flat
+            @click="dialogInfo.onOk"
+          >
+            {{'确认委托' + dialogInfo.title}}
+          </v-btn>
+          <v-btn
+            color="primary"
+            flat
+            @click="dialogInfo.onCancel"
+          >
+            取消委托
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="dialogInfo.successModal" width="500" persistent>
+      <v-card>
+        <v-card-title class="headline grey lighten-2" primary-title>{{dialogInfo.title}}成功</v-card-title>
+        <v-card-text>委托{{dialogInfo.title}}成功，请点击确认至【订单】查看委托详情</v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="pink"
+            flat
+            @click="dialogInfo.successModal = false"
+          >
+            确认
+          </v-btn>
+          <v-btn
+            color="grey"
+            flat
+            @click="dialogInfo.successModal = false"
+          >
+            关闭
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-container>
 </template>
 
 <script>
   export default {
-    name: 'Delegate'
+    name: 'Delegate',
+    data () {
+      return {
+        items: [
+          {
+            type: 'sell',
+            name: '前五卖单',
+            btnText: '我要委托卖',
+            btnClick: (type) => {
+              this.doOrder(type)
+            },
+            list: [
+              {id: 1, amount: 2000, price: 10000},
+              {id: 2, amount: 1500, price: 7500},
+              {id: 3, amount: 1000, price: 5000},
+              {id: 4, amount: 800, price: 4000},
+              {id: 5, amount: 500, price: 2500}
+            ]
+          },
+          {
+            type: 'buy',
+            name: '前五买单',
+            btnText: '我要委托买',
+            btnClick: (type) => {
+              this.doOrder(type)
+            },
+            list: [
+              {id: 11, amount: 3000, price: 15000},
+              {id: 22, amount: 1500, price: 7500},
+              {id: 33, amount: 1000, price: 5000},
+              {id: 44, amount: 800, price: 4000},
+              {id: 55, amount: 500, price: 2500}
+            ]
+          }
+        ],
+        dialogInfo: {
+          dialog: false,
+          title: '',
+          type: '',
+          amount: '',
+          perPrice: '',
+          tip: '',
+          onOk: '',
+          onCancel: () => {
+            this.dialogInfo.dialog = false
+          },
+          successModal: false,
+          showConfPass: false
+        },
+        rules: {
+          amountRule: [
+            value => !!value || '数量不能为空',
+            value => !Number.isNaN(Number(value)) || '数量不正确',
+            value => Number(value) >= 20 && Number(value) <= 2000 || '数量应该在80-2000之间'
+          ],
+          perPriceRule: [
+            value => !!value || '数量不能为空',
+            value => !Number.isNaN(Number(value)) || '数量不正确',
+            value => Number(value) >= 0.1 && Number(value) <= 10000 || '数量应该在0.1-10000之间'
+          ],
+          confPassRule: []
+        },
+        passwordVisible: false
+      }
+    },
+    methods: {
+      doOrder (type) {
+        this.$refs.form.reset()
+        this.dialogInfo.dialog = true
+        this.dialogInfo.type = type
+        this.dialogInfo.amount = '' 
+        this.dialogInfo.perPrice = ''
+        this.dialogInfo.showConfPass = false
+        if (type === 'sell') {
+          this.dialogInfo.title = '卖出'
+          this.dialogInfo.tip = `
+            <blockquote class="blockquote" style="padding: 0">
+              委托卖出提醒：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;委托卖出前请确认您的蓝晶社账号中<span class="red--text font-weight-bold">蓝晶数量充足</span>，以保证能够正常完成交易。一旦发现卖方谎报数据，平台将记录个人诚信档案，在一段时间内禁止登陆平台。谢谢合作！
+            </blockquote>
+          `
+          this.dialogInfo.onOk = this.doSell
+        } else {
+          this.dialogInfo.title = '买入',
+          this.dialogInfo.tip = `
+            <blockquote class="blockquote" style="padding: 0">
+              委托买入提醒：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;委托买入前请确认您的现金账户中<span class="red--text font-weight-bold">余额充足</span>，以保证能够正常完成交易。一旦确认委托买入，系统自动冻结相应数目的金额，直至交易完成或者委托买入被取消
+            </blockquote>
+          `
+          this.dialogInfo.onOk = this.doBuy
+        }
+      },
+      doSell () {
+        // 卖出操作
+        let flag = this.$refs.form.validate()
+        if (flag) {
+          this.dialogInfo.dialog = false
+          this.dialogInfo.successModal = true
+        }
+      },
+      doBuy () {
+        // 买入操作
+        let flag = this.$refs.form.validate()
+        if (this.dialogInfo.showConfPass) {
+          // 输入了密码，校验密码
+          if (flag) {
+            this.dialogInfo.dialog = false
+            this.dialogInfo.successModal = true
+          }
+        } else {
+          // 校验数量，成功了才跳到输入密码页面
+          if (flag) {
+            this.rules.confPassRule = [
+              value => !!value || '密码不能为空'
+            ]
+            this.$refs.form.resetValidation()
+            this.dialogInfo.showConfPass = true
+          }
+        }
+      }
+    }
   }
 </script>
 

@@ -9,10 +9,11 @@ import Order from '_v/Order'
 import Personal from '_v/Personal'
 import Register from '_v/Register'
 
+import PersonalIdcard from '_v/portal/PersonalIdcard'
+
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
   base: process.env.BASE_URL,
   scrollBehavior: (to, from, savedPosition) => {
     let scrollTo = 0
@@ -44,7 +45,14 @@ export default new Router({
     {
       path: '/personal',
       name: 'Personal',
-      component: Personal
+      component: Personal,
+      children: [
+        {
+          path: 'idcard-info',
+          name: 'idcard-info',
+          component: PersonalIdcard
+        }
+      ]
     },
     {
       path: '/delegate',

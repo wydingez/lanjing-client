@@ -38,6 +38,17 @@
     name: 'VTable',
     components: {VDataTable},
     props: [...PROP_DEFS_BASE],
+    data () {
+      return {
+        defaultPagination: {
+          descending: false,
+          page: 1,
+          rowsPerPage: 5,
+          sortBy: null,
+          totalItems: 0
+        },
+      }
+    },
     render () {
       const {smallScreen} = this.$root
       const scopedSlots = this.$scopedSlots
@@ -62,7 +73,16 @@
       return smallScreen ? phoneTable : pcTable
     },
 
+    created () {
+      this.initPagination()
+    },
+
     methods: {
+      initPagination () {
+        if (this.$root.smallScreen) {
+          this.$emit('update:pagination', Object.assign({}, this.defaultPagination, this.pagination))
+        }
+      },
       genPhoneRows () {
         if (!this.$scopedSlots.items) {
           return null
@@ -113,6 +133,10 @@
       td {
         display: inline-block;
         float: right;
+        max-width: 70%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
         kbd {
           line-height: 24px;
         }

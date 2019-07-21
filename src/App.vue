@@ -108,6 +108,7 @@
         <v-list-tile
           v-for="item in toolBarBtns"
           :key="item.title"
+          :to="item.url"
         >
           <template v-if="item.icon">
             <v-list-tile-action>
@@ -221,6 +222,9 @@ export default {
     }
     .container.grid-list-lg .layout .flex {
       padding: 2px
+    }
+    .v-toolbar__title {
+      font-size: 16px;  
     }
   }
 }

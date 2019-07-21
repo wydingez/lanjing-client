@@ -45,10 +45,12 @@
               <v-divider light></v-divider>
               <div class="home-order-container">
                 <v-tabs
+                  fixed-tabs
                   v-model="selectOrder"
                   color="transparent"
                   slider-color="primary"
                   light
+                  class="home-order-container-tabs"
                 >
                   <v-tab
                     v-for="item in orderInfo"
@@ -155,6 +157,11 @@ card-custom-padding()
   }
   &-order {
     card-custom-padding()
+    &-container-tabs {
+      .v-tabs__wrapper {
+        border-bottom: 1px solid #ddd;
+      }
+    }
   }
   &-records {
     card-custom-padding()
