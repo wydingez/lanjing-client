@@ -226,6 +226,7 @@
           type: '',
           cash: '',
           doOpt: (type) => {
+            console.log(type)
             this.cashInfo.modal = false
           }
         },

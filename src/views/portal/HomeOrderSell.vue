@@ -71,7 +71,7 @@
       <v-card>
         <v-card-title class="headline grey lighten-2" primary-title>卖出成功</v-card-title>
         <v-card-text>
-          <p><blockquote class="blockquote" style="padding: 0">确认购买成功，先打开蓝晶社APP转赠蓝晶至：</blockquote></p>
+          <blockquote class="blockquote" style="padding: 0">确认购买成功，先打开蓝晶社APP转赠蓝晶至：</blockquote>
           <p>
             手机号：{{buyerInfo.phone}}
              <v-btn
