@@ -1,6 +1,9 @@
 const path = require('path')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const CompressionWebpackPlugin = require("compression-webpack-plugin");
+
+const productionGzipExtensions = /\.(js|css|json|txt|html|ico|svg)(\?.*)?$/i
 
 function resolve(dir) {
   return path.join(__dirname, dir);
@@ -23,13 +26,9 @@ module.exports = {
       .set('_d', resolve('src/data'))
   },
   configureWebpack: config => {
-    config.plugins = config.plugins || []
+    let plugins = []
     if (process.env.NODE_ENV === 'production') {
-      if (process.env.npm_config_report === 'true') {
-        // Add BundleAnalyzerPlugin
-        config.plugins.push(new BundleAnalyzerPlugin())
-      }
-      config.plugins.push(
+      plugins = [
         new UglifyJsPlugin({
           uglifyOptions: {
             warnings: false,
@@ -40,8 +39,20 @@ module.exports = {
           },
           sourceMap: false,
           parallel: true
+        }),
+        new CompressionWebpackPlugin({
+          filename: "[path].gz[query]",
+          algorithm: "gzip",
+          test: productionGzipExtensions,
+          threshold: 10240,
+          minRatio: 0.8
         })
-      )
+      ]
+      if (process.env.npm_config_report === 'true') {
+        // Add BundleAnalyzerPlugin
+        plugins.push(new BundleAnalyzerPlugin())
+      }
     }
+    config.plugins = [...config.plugins, ...plugins]
   }
 }
