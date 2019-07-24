@@ -1,7 +1,7 @@
 <template>
   <v-container grid-list-xl text-xs-center class="personal-page">
     <v-layout row wrap>
-      <v-flex xs12 sm5 md2 offset-xs0 offset-lg1 class="personal-page-left">
+      <v-flex xs12 sm5 md3 offset-xs0 class="personal-page-left">
         <v-card class="elevation-12">
           <v-toolbar dark color="primary">
             <v-toolbar-title>个人信息</v-toolbar-title>
@@ -214,7 +214,7 @@
         password: '123456',
         realName: '李军挺',
         idCard: '420832199302938293',
-        cash: 1000,
+        cash: '1,000',
         aliPay: '2342788232@qq.com',
         openAccountTip: false,
         openBillTip: false,

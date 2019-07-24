@@ -89,6 +89,10 @@
         let valid = this.$refs.form.validate()
         if (valid) {
           // 提交操作
+        } else {
+          this.$vNotice.error({
+            text: '表单校验失败'
+          })
         }
       }
     }
