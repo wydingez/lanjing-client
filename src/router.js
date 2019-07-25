@@ -10,6 +10,7 @@ import Personal from '_v/Personal'
 import Register from '_v/Register'
 
 import PersonalIdcard from '_v/portal/PersonalIdcard'
+import PersonalAccountInfo from '_v/portal/PersonalAccountInfo'
 
 Vue.use(Router)
 
@@ -51,6 +52,11 @@ export default new Router({
           path: 'idcard-info',
           name: 'idcard-info',
           component: PersonalIdcard
+        },
+        {
+          path: 'account-info',
+          name: 'account-info',
+          component: PersonalAccountInfo
         }
       ]
     },

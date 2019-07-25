@@ -5,16 +5,7 @@
       <v-toolbar-side-icon v-if="smallScreen" @click="drawer = !drawer"></v-toolbar-side-icon>
       <v-img src="static/logo.png" class="my-app-toolbar-logo" @click.native="linkHome"></v-img>
       <v-toolbar-title class="my-app-toolbar-title">{{projectTitle}}</v-toolbar-title>
-      <v-tabs
-        v-if="!smallScreen"
-        v-model="tab"
-        color="transparent"
-        align-with-title
-      >
-        <v-tab v-for="item in items" :key="item.title">
-          {{ item.title }}
-        </v-tab>
-      </v-tabs>
+      <v-spacer></v-spacer>
       <v-toolbar-items v-if="!smallScreen">
         <v-btn flat v-for="btn in toolBarBtns" :key="btn.url" :to="btn.url" color="white">{{btn.title}}</v-btn>
       </v-toolbar-items>
@@ -89,23 +80,6 @@
         <v-divider light></v-divider>
 
         <v-list-tile
-          v-for="item in items"
-          :key="item.title"
-        >
-          <v-list-tile-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-tile-action>
-
-          <v-list-tile-content>
-            <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-      </v-list>
-
-      <v-list class="pt-0" dense>
-        <v-divider light></v-divider>
-
-        <v-list-tile
           v-for="item in toolBarBtns"
           :key="item.title"
           :to="item.url"
@@ -147,15 +121,8 @@ export default {
   data () {
     return {
       tab: null,
-      items: [
-        {title: '普通交易', icon: 'bookmark'},
-        {title: '大宗交易', icon: 'bookmarks'},
-        {title: 'OTC Desk', icon: 'business'},
-        {title: '货币交易', icon: 'attach_money'},
-        {title: '合约交易', icon: 'tab'}
-      ],
       toolBarBtns: [
-        {title: '首页', url: '/'},
+        {title: '首页', url: '/', 'icon': 'home'},
         {title: '登陆', url: '/login', 'icon': 'supervisor_account'}, 
         {title: '注册', url: '/register', 'icon': 'person_add'}, 
         {title: '委托', url: '/delegate', 'icon': 'card_travel'}, 
@@ -195,6 +162,9 @@ export default {
 
 <style lang="stylus">
 .my-app {
+  .my-app-toolbar-logo {
+    flex: inherit;
+  }
   &-toolbar {
     &-logo {
       width: 38px;

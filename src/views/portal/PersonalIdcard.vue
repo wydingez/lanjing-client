@@ -57,7 +57,7 @@
 
 <script>
   export default {
-    name: 'personal-idcard-info',
+    name: 'PersonalIdcard',
     data () {
       return {
         form: {

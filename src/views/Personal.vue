@@ -1,5 +1,5 @@
 <template>
-  <v-container grid-list-xl text-xs-center class="personal-page">
+  <v-container grid-list-xl class="personal-page">
     <v-layout row wrap>
       <v-flex xs12 sm5 md3 offset-xs0 class="personal-page-left">
         <v-card class="elevation-12">
@@ -42,8 +42,8 @@
                   <span class="personal-info-label">安全邮箱：</span>
                   <span class="personal-info-value">{{email}}</span>
                   <div class="personal-info-opt">
-                    <v-btn flat color="warning">绑定</v-btn>
-                    <v-btn flat color="warning">修改</v-btn>
+                    <v-btn flat color="warning" @click="setEmail('bind')">绑定</v-btn>
+                    <v-btn flat color="warning" @click="setEmail('update')">修改</v-btn>
                   </div>
                 </li>
                 <li>
@@ -55,8 +55,8 @@
                     </v-btn>
                   </span>
                   <div class="personal-info-opt">
-                    <v-btn flat color="warning">设置</v-btn>
-                    <v-btn flat color="warning">修改</v-btn>
+                    <v-btn flat color="warning" @click="setPayCode('bind')">设置</v-btn>
+                    <v-btn flat color="warning" @click="setPayCode('update')">修改</v-btn>
                   </div>
                 </li>
               </ul>
@@ -73,7 +73,7 @@
                   <span class="personal-info-label">实名认证：</span>
                   <span class="personal-info-value">{{realName}}，{{idCard}}</span>
                   <div class="personal-info-opt">
-                    <v-btn flat color="warning" @click="$router.push('/personal/idcard-info')">去认证</v-btn>
+                    <v-btn flat color="warning" to="/personal/idcard-info">去认证</v-btn>
                     <v-btn flat color="warning">已认证</v-btn>
                   </div>
                 </li>
@@ -86,7 +86,7 @@
               <v-toolbar-title>账户信息</v-toolbar-title>
               <v-spacer></v-spacer>
               <v-toolbar-items>
-                <v-btn flat>查看明细</v-btn>
+                <v-btn flat to="/personal/account-info">查看明细</v-btn>
               </v-toolbar-items>
             </v-toolbar>
             <v-card-text>
@@ -197,6 +197,100 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- 邮箱绑定 -->
+    <v-dialog v-model="bindEmail.modal" width="500" persistent>
+      <v-card>
+        <v-card-title class="headline grey lighten-2" primary-title>绑定邮箱</v-card-title>
+
+        <v-card-text>
+          <v-form>
+            <v-text-field
+              v-model="bindEmail.email"
+              label="邮箱"
+              required
+              :rules="rules.emailRules"
+            ></v-text-field>
+          </v-form>
+          <p class="text-center red--text">(安全邮箱作⽤：⽤户找回您资⾦密码)</p>
+          <blockquote class="blockquote">
+            操作提示：
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;系统随后将发送⼀条认证邮件到您的邮箱，请⾄邮箱点击认证链接，完成安全邮箱认证。
+          </blockquote>
+        </v-card-text>
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            flat
+            @click="bindEmail.doOpt"
+          >
+            确认发送
+          </v-btn>
+          <v-btn
+            color="primary"
+            flat
+            @click="bindEmail.modal = false"
+          >
+            取消发送
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- 设置资金密码 -->
+    <v-dialog v-model="capitalCode.modal" width="500" persistent>
+      <v-card>
+        <v-card-title class="headline grey lighten-2" primary-title>设置资金密码</v-card-title>
+
+        <v-card-text>
+          <v-form>
+            <v-text-field
+              v-model="capitalCode.payCode"
+              label="资金密码"
+              type="password"
+              required
+              :rules="rules.payCodeRules"
+            ></v-text-field>
+            <v-text-field
+              v-model="capitalCode.rePayCode"
+              label="确认资金密码"
+              type="password"
+              required
+              :rules="rules.rePayCodeRules"
+            ></v-text-field>
+          </v-form>
+          <p class="text-center red--text">(资⾦密码作⽤：⽤于验证⾦额的⽀付。)</p>
+          <blockquote class="blockquote">
+            操作提示：
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;请输⼊⾄少含有<span class="red--text">⼀个⼤写和⼩写字母以及阿拉伯数字的6位及以上字符</span>组合。
+          </blockquote>
+        </v-card-text>
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            flat
+            @click="capitalCode.doOpt"
+          >
+            确认设置
+          </v-btn>
+          <v-btn
+            color="primary"
+            flat
+            @click="capitalCode.modal = false"
+          >
+            取消设置
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -230,8 +324,26 @@
             this.cashInfo.modal = false
           }
         },
+        bindEmail: {
+          modal: false,
+          email: '',
+          doOpt: () => {
+            this.bindEmail.modal = false
+          }
+        },
+        capitalCode: {
+          modal: false,
+          payCode: '',
+          rePayCode: '',
+          doOpt: () => {
+            this.capitalCode.modal = false
+          }
+        },
         rules: {
-          cashRule: []
+          cashRule: [],
+          emailRules: [],
+          payCodeRules: [],
+          rePayCodeRules: []
         }
       }
     },
@@ -241,6 +353,14 @@
         this.cashInfo.type = type
         this.cashInfo.text = type === 'cashIn' ? '充值' : '提现'
         this.cashInfo.cash = ''
+      },
+      setEmail (type) {
+        console.log(type)
+        this.bindEmail.modal = true
+      },
+      setPayCode (type) {
+        console.log(type)
+        this.capitalCode.modal = true
       }
     }
   }
@@ -252,6 +372,7 @@
     height: 48px !important;
   }
   &-left {
+    text-align: center;
     .info-footer {
       display: block;
       text-align: left;
