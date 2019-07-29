@@ -3,7 +3,7 @@
     <!-- Header -->
     <v-toolbar app class="my-app-toolbar" color="primary" dark :height="48" tabs>
       <v-toolbar-side-icon v-if="smallScreen" @click="drawer = !drawer"></v-toolbar-side-icon>
-      <v-img src="static/logo.png" class="my-app-toolbar-logo" @click.native="linkHome"></v-img>
+      <v-img src="static/logo.png" class="my-app-toolbar-logo" @click.native="linkHome" v-if="!smallScreen"></v-img>
       <v-toolbar-title class="my-app-toolbar-title">{{projectTitle}}</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items v-if="!smallScreen">
@@ -140,7 +140,7 @@ export default {
       ],
       drawer: null,
       right: null,
-      projectTitle: 'lanjing',
+      projectTitle: '蓝晶交换平台',
       hidden: false
     }
   },
@@ -192,7 +192,8 @@ export default {
       padding: 2px
     }
     .v-toolbar__title {
-      font-size: 16px;  
+      font-size: 16px;
+      margin-left: calc(50% - 75px);
     }
   }
 }

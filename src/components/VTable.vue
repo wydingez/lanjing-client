@@ -133,7 +133,7 @@
       td {
         display: inline-block;
         float: right;
-        max-width: 70%;
+        max-width: 75%;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
