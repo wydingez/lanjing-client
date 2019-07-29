@@ -9,6 +9,8 @@
   import 'echarts/lib/component/dataZoom'
   import timeData from '_d/echarts.json'
 
+  // https://www.echartsjs.com/examples/editor.html?c=mix-line-bar 参考例子
+  // 右边纵坐标 交易量  左边纵坐标价格 / 一个竖条 时间为一天 / 默认显示15天的一个走势 / 柱形就保留一个参数的柱形  在上面加一个折线    柱形表示交易量  折线表示价格
   const echartsData = timeData.map(function (str) {
     return str.replace('2009/', '')
   })
