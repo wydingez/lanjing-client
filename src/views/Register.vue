@@ -26,10 +26,10 @@
               <v-select :items="nationalityList" label="国籍" outline messages="国籍信息注册后不可修改，请务必如实选择。" v-model="form.nationality" @change="selectCountry"></v-select>
               <v-layout class="phone-emial-input">
                 <template v-if="form.registerType === 0">
-                  <v-flex xs4>
+                  <v-flex xs5>
                     <v-select :items="phoneList" solo v-model="form.phonePrev"></v-select>
                   </v-flex>
-                  <v-flex xs8>
+                  <v-flex xs7>
                     <v-text-field label="手机号" solo v-model="form.phone"></v-text-field>
                   </v-flex>
                 </template>

@@ -161,6 +161,8 @@ export default {
 </script>
 
 <style lang="stylus">
+$echarts-height = 300px
+
 .my-app {
   .my-app-toolbar-logo {
     flex: inherit;
@@ -194,6 +196,12 @@ export default {
     .v-toolbar__title {
       font-size: 16px;
       margin-left: calc(50% - 75px);
+    }
+    .home-echarts-container {
+      height: $echarts-height;
+      &-content {
+        height: $echarts-height;
+      }
     }
   }
 }
