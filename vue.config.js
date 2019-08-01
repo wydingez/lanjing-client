@@ -29,7 +29,7 @@ module.exports = {
     }
   },
   // 生产环境打包目录放在子目录下，github打包时自动回加上这一层目录
-  publicPath: process.env.NODE_ENV === 'production' ? '/lanjing-currency' : '',
+  publicPath: process.env.NODE_ENV === 'production' ? '/lanjing-client' : '',
   transpileDependencies:[
     /node_modules[/\\\\]vuetify[/\\\\]/,
     'vue-echarts',
