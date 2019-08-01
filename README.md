@@ -1,4 +1,4 @@
-# lanjing-currency
+# 蓝晶交换平台
 
 ## Project setup
 ```

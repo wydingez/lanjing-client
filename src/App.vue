@@ -32,10 +32,10 @@
             <span class="headline">蓝晶交换平台</span>——<span class="body-2">坚果网络出品</span>
           </div>
         </v-flex>
-        <v-flex xs3 pa-3 >
+        <v-flex sm3 xs12 pa-3 class="row2 row2-1">
           <v-layout row wrap class="row2-block">
             <v-flex xs12>
-              帮助信息：
+              帮助信息
             </v-flex>
             <v-flex xs6>
               网站地图
@@ -51,26 +51,26 @@
             </v-flex>
           </v-layout>
         </v-flex>
-        <v-flex xs6 pa-3 sm12>
+        <v-flex sm6 xs8 pa-3 class="row2 row2-2">
           <v-layout row wrap class="row2-block">
             <v-flex xs12>
-              联系方式：
+              联系方式
             </v-flex>
-            <v-flex xs6>
+            <v-flex sm6 xs12>
               QQ群：12345678
             </v-flex>
-            <v-flex xs6>
+            <v-flex sm6 xs12>
               邮箱：admin@utyue.com
             </v-flex>
-            <v-flex xs6>
+            <v-flex sm6 xs12>
               客服电话：13813813814
             </v-flex>
-            <v-flex xs6>
+            <v-flex sm6 xs12>
               工作时间：9:00-22:00
             </v-flex>
           </v-layout>
         </v-flex>
-        <v-flex xs3 pa-3 sm12>
+        <v-flex sm3 xs4 pa-3 class="row2 row2-3">
           <div class="row2-subscription">
             <span class="row2-subscription-title">微信公众号</span>
             <v-img src="static/subscription.bmp" :height="80" :width="80" class="row2-subscription-img"></v-img>
@@ -238,17 +238,20 @@ $echarts-height = 300px
       padding-top: 6px;
       padding-bottom: 6px;
     }
-    .row2-block {
-      border-right: 1px solid #eee;
-      height: 100%;
-    }
-    .row2-subscription {
-      &-title {
-        writing-mode: tb-rl;
-        padding: 0 10px;
+    .row2 {
+      text-align: center;
+      &-block {
+        border-right: 1px solid #eee;
+        height: 100%;
       }
-      &-img {
-        display: inline-block;
+      &-subscription {
+        &-title {
+          writing-mode: tb-rl;
+          padding: 0 10px;
+        }
+        &-img {
+          display: inline-block;
+        }
       }
     }
   }
@@ -271,6 +274,25 @@ $echarts-height = 300px
       &-content {
         height: $echarts-height;
       }
+    }
+    .row2 {
+      &.row2-1 {
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+        .row2-block {
+          border: none;
+        }
+      }
+      &.row2-2 {
+        text-align: left;
+      }
+    }
+    .row2-subscription-title {
+      writing-mode: inherit;
+      padding: 5px 0;
+    }
+    .row2-subscription-img {
+      margin-top: 10px;
     }
   }
 }

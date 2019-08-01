@@ -35,7 +35,8 @@
                   <span class="personal-info-label">手机号：</span>
                   <span class="personal-info-value">{{phone}}</span>
                   <div class="personal-info-opt">
-                    <v-btn flat color="warning">获取微信手机号</v-btn>
+                    <v-btn flat color="warning">绑定</v-btn>
+                    <v-btn flat color="warning">修改</v-btn>
                   </div>
                 </li>
                 <li>
