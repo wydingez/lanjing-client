@@ -2,7 +2,6 @@
   <div>
     <v-table :headers="headers" :items="items" hide-actions>
       <template v-slot:items="props">
-        <td>{{props.item.name}}</td>
         <td>
           <v-avatar size="36"><img :src="props.item.avatar" :alt="props.item.name"></v-avatar>
         </td>
@@ -129,7 +128,6 @@
     name: 'HomeOrderSell',
     data: () => ({
       headers: [
-        {text: '委托方', value: 'name', sortable: false},
         {text: '微信头像', value: 'avatar', sortable: false},
         {text: '单价', value: 'per'},
         {text: '数量', value: 'amount'},

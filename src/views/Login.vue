@@ -23,14 +23,18 @@
 </template>
 
 <script>
+  import { doLogin } from '@/api/login'
+  import { Base64 } from 'js-base64'
+  import { queryInfo } from '@/api/user'
+
   export default {
     name: 'Login',
     data () {
       return {
         valid: true,
         form: {
-          username: '',
-          password: ''
+          username: 'Jesse',
+          password: 'Jesse123456'
         },
         rules: {
           username: [
@@ -45,7 +49,16 @@
     methods: {
       doLogin () {
         if (this.$refs.form.validate()) {
-          this.snackbar = true
+          doLogin({
+            username: this.form.username,
+            password: Base64.encode(this.form.password)
+          }).then(() => {
+            queryInfo()
+          })
+        } else {
+          this.$vNotice.error({
+            text: '表单校验失败'
+          })
         }
       }
     }

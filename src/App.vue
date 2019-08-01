@@ -23,10 +23,66 @@
     <!-- Footer -->
     <v-footer
       dark
-      :height="48"
+      height="auto"
       class="my-app-footer"
     >
-      <v-card
+      <v-layout row wrap>
+        <v-flex xs12>
+          <div class="text-xs-center pa-2">
+            <span class="headline">蓝晶交换平台</span>——<span class="body-2">坚果网络出品</span>
+          </div>
+        </v-flex>
+        <v-flex xs3 pa-3 >
+          <v-layout row wrap class="row2-block">
+            <v-flex xs12>
+              帮助信息：
+            </v-flex>
+            <v-flex xs6>
+              网站地图
+            </v-flex>
+            <v-flex xs6>
+              法律声明
+            </v-flex>
+            <v-flex xs6>
+              常见问题
+            </v-flex>
+            <v-flex xs6>
+              要提意见
+            </v-flex>
+          </v-layout>
+        </v-flex>
+        <v-flex xs6 pa-3 sm12>
+          <v-layout row wrap class="row2-block">
+            <v-flex xs12>
+              联系方式：
+            </v-flex>
+            <v-flex xs6>
+              QQ群：12345678
+            </v-flex>
+            <v-flex xs6>
+              邮箱：admin@utyue.com
+            </v-flex>
+            <v-flex xs6>
+              客服电话：13813813814
+            </v-flex>
+            <v-flex xs6>
+              工作时间：9:00-22:00
+            </v-flex>
+          </v-layout>
+        </v-flex>
+        <v-flex xs3 pa-3 sm12>
+          <div class="row2-subscription">
+            <span class="row2-subscription-title">微信公众号</span>
+            <v-img src="static/subscription.bmp" :height="80" :width="80" class="row2-subscription-img"></v-img>
+          </div>
+        </v-flex>
+        <v-flex xs12>
+          <div class="text-xs-center pa-1 body-1">
+            Copyright 2018-2019 All right reserved 版权所有：嘉兴市坚果网络科技有限公司 浙ICP备16034800号-1
+          </div>
+        </v-flex>
+      </v-layout>
+      <!-- <v-card
         class="flex my-app-footer-card"
         flat
         tile
@@ -48,7 +104,7 @@
           </v-tooltip>
           
         </v-card-actions>
-      </v-card>
+      </v-card> -->
     </v-footer>
 
     <!-- Mobile menu -->
@@ -181,6 +237,19 @@ $echarts-height = 300px
     &-card .v-card__actions{
       padding-top: 6px;
       padding-bottom: 6px;
+    }
+    .row2-block {
+      border-right: 1px solid #eee;
+      height: 100%;
+    }
+    .row2-subscription {
+      &-title {
+        writing-mode: tb-rl;
+        padding: 0 10px;
+      }
+      &-img {
+        display: inline-block;
+      }
     }
   }
   .container.grid-list-lg .layout .flex {

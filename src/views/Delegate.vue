@@ -1,13 +1,15 @@
 <template>
   <v-container fluid grid-list-md>
+    <!-- pc -->
     <v-data-iterator
+      v-if="!$root.smallScreen"
       :items="items"
       content-tag="v-layout"
       row
       wrap
       hide-actions
     >
-      <template v-slot:item="props">
+      <template v-slot:item="{item}">
         <v-flex
           xs12
           sm6
@@ -15,25 +17,78 @@
           lg6
         >
           <v-card>
-            <v-card-title><h4>{{ props.item.name }}</h4></v-card-title>
+            <v-card-title><h4>{{ item.name }}</h4></v-card-title>
             <v-divider></v-divider>
             <v-list dense>
               <v-list-tile>
                 <v-list-tile-content class="subheading font-weight-bold" style="display: -webkit-box">数量<v-icon>sort</v-icon></v-list-tile-content>
                 <v-list-tile-content class="align-end subheading font-weight-bold" style="display: -webkit-box"><v-icon>attach_money</v-icon>价格</v-list-tile-content>
               </v-list-tile>
-              <v-list-tile v-for="item in props.item.list" :key="item.id">
+              <v-list-tile v-for="item in item.list" :key="item.id">
                 <v-list-tile-content>{{item.amount}}</v-list-tile-content>
                 <v-list-tile-content class="align-end">￥ {{ item.price }}</v-list-tile-content>
               </v-list-tile>
               <v-list-tile>
-                <v-btn block color="warning" dark @click="props.item.btnClick(props.item.type)">{{ props.item.btnText }}</v-btn>
+                <v-btn block color="warning" dark @click="item.btnClick(item.type)">{{ item.btnText }}</v-btn>
               </v-list-tile>
             </v-list>
           </v-card>
         </v-flex>
       </template>
     </v-data-iterator>
+
+    <!-- phone -->
+    <v-card class="home-order" v-else>
+      <v-layout row wrap>
+        <v-flex xs12>
+          <v-card color="transparent darken-2">
+            <v-card-title class="primary white--text">
+              <div class="title">委托</div>
+            </v-card-title>
+            <v-divider light></v-divider>
+            <div class="home-order-container">
+              <v-tabs
+                fixed-tabs
+                v-model="selectOrder"
+                color="transparent"
+                slider-color="primary"
+                light
+                class="home-order-container-tabs"
+              >
+                <v-tab
+                  v-for="item in items"
+                  :key="item.type"
+                  ripple
+                >
+                  <v-icon>{{item.icon}}</v-icon>
+                  {{item.name}}
+                </v-tab>
+                <v-tab-item
+                  v-for="item in items"
+                  :key="item.key"
+                >
+                  <v-card>
+                    <v-list dense>
+                      <v-list-tile>
+                        <v-list-tile-content class="subheading font-weight-bold" style="display: -webkit-box">数量<v-icon>sort</v-icon></v-list-tile-content>
+                        <v-list-tile-content class="align-end subheading font-weight-bold" style="display: -webkit-box"><v-icon>attach_money</v-icon>价格</v-list-tile-content>
+                      </v-list-tile>
+                      <v-list-tile v-for="item in item.list" :key="item.id">
+                        <v-list-tile-content>{{item.amount}}</v-list-tile-content>
+                        <v-list-tile-content class="align-end">￥ {{ item.price }}</v-list-tile-content>
+                      </v-list-tile>
+                      <v-list-tile>
+                        <v-btn block color="warning" dark @click="item.btnClick(item.type)">{{ item.btnText }}</v-btn>
+                      </v-list-tile>
+                    </v-list>
+                  </v-card>
+                </v-tab-item>
+              </v-tabs>
+            </div>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-card>
 
     <v-dialog v-model="dialogInfo.dialog" width="500" persistent>
       <v-card>
@@ -131,6 +186,7 @@
     name: 'Delegate',
     data () {
       return {
+        selectOrder: null,
         items: [
           {
             type: 'sell',

@@ -11,7 +11,22 @@ function resolve(dir) {
 
 module.exports = {
   devServer: {
-    port: 9000
+    port: 9000,
+    open: true,
+    overlay: {
+      warnings: false,
+      errors: true
+    },
+    proxy: {
+      [process.env.VUE_APP_BASE_API]: {
+        target: 'http://ceshi.utyue.com:8080/bucrystal/cloud',
+        changeOrigin: true, // needed for virtual hosted sites
+        ws: true, // proxy websockets
+        pathRewrite: {
+          ['^' + process.env.VUE_APP_BASE_API]: ''
+        }
+      }
+    }
   },
   // 生产环境打包目录放在子目录下，github打包时自动回加上这一层目录
   publicPath: process.env.NODE_ENV === 'production' ? '/lanjing-currency' : '',
