@@ -1,16 +1,17 @@
 <template>
   <div>
-    <v-table :headers="headers" :items="items" hide-actions>
+    <v-table-server :headers="headers" :ajax="ajax">
       <template v-slot:items="props">
         <td>
-          <v-avatar size="36"><img :src="props.item.avatar" :alt="props.item.name"></v-avatar>
+          <v-avatar size="36"><img :src="props.item.agencyUserPortraitUrl" :alt="props.item.name"></v-avatar>
         </td>
-        <td>{{props.item.per}} ￥/个</td>
-        <td>{{props.item.amount}}</td>
+        <td>{{props.item.agencyNo}}</td>
+        <td>{{props.item.agencyUnitPrice}} ￥/蓝晶</td>
+        <td>{{props.item.agencyAmount}}</td>
         <td>
           <v-tooltip top>
             <template v-slot:activator="{ on }">
-              <v-btn color="warning" fab small dark v-on="on" @click="dialog = true">
+              <v-btn color="warning" fab small dark v-on="on" @click="openSellModal(props.item)">
                 <v-icon>input</v-icon>
               </v-btn>
             </template>
@@ -18,7 +19,7 @@
           </v-tooltip>
         </td>
       </template>
-    </v-table>
+    </v-table-server>
     <v-dialog v-model="dialog" width="500" persistent>
       <v-card>
         <v-card-title class="headline grey lighten-2" primary-title>卖出</v-card-title>
@@ -31,12 +32,12 @@
             <v-text-field
               v-model="amount"
               label="数量"
-              placeholder="80-2000"
+              :placeholder="amountPlaceholder"
               :rules="amountRule"
               required
             ></v-text-field>
           </v-form>
-          <p>锁定的价格为：0.35元/蓝晶</p>
+          <p>锁定的价格为：{{rowClickItem.agencyUnitPrice}}元/蓝晶</p>
           <p>锁定的有效剩余时间：598秒</p>
 
           <blockquote class="blockquote" style="padding: 0">
@@ -109,41 +110,26 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    
-    <v-snackbar v-model="copyTip" top right :timeout="2000">
-      复制成功
-      <v-btn
-        color="pink"
-        flat
-        @click="snackbar = false"
-      >
-        关闭
-      </v-btn>
-    </v-snackbar>
   </div>
 </template>
 
 <script>
+  import { doTradeSale } from '@/api/trade'
+
   export default {
     name: 'HomeOrderSell',
     data: () => ({
       headers: [
-        {text: '微信头像', value: 'avatar', sortable: false},
-        {text: '单价', value: 'per'},
-        {text: '数量', value: 'amount'},
+        {text: '微信头像', value: 'agencyUserPortraitUrl', sortable: false},
+        {text: '委托单号', value: 'agencyNo', sortable: false},
+        {text: '单价', value: 'agencyUnitPrice', sortable: false},
+        {text: '数量', value: 'agencyAmount', sortable: false},
         {text: '操作', value: 'opt', sortable: false}
       ],
-      items: [
-        {name: 'wyd1**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 2000, amount: 100},
-        {name: 'wyd2**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 3000, amount: 100},
-        {name: 'wyd3**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 100, amount: 100},
-        {name: 'wyd4**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 500, amount: 100},
-        {name: 'wyd5**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 500, amount: 100}
-      ],
       amount: '',
+      amountPlaceholder: '',
       dialog: false,
       snackbar: false,
-      copyTip: false,
       buyerInfo: {
         phone: '13813813813',
         wx: 'weishi'
@@ -153,19 +139,43 @@
         value => !Number.isNaN(Number(value)) || '数量不正确',
         value => Number(value) >= 80 && Number(value) <= 2000 || '数量应该在80-2000之间'
       ],
+      ajax: {
+        url: '/agency/query/buy'
+      },
+      rowClickItem: {}
     }),
     methods: {
       onCopy () {
-        this.copyTip = true
+        this.$vNotice.success({
+          text: '复制成功'
+        })
       },
       onError () {
         console.error('copy error!')
       },
+      openSellModal (item) {
+        this.rowClickItem = item
+        this.amountPlaceholder = `1-${item.agencyAmount}`
+        this.amountRule[2] = value => Number(value) >=1 && Number(value) <= item.agencyAmount || `数量应该在${this.amountPlaceholder}之间`
+        this.dialog = true
+      },
       doSell () {
         let flag = this.$refs.form.validate()
         if (flag) {
-          this.dialog = false
-          this.snackbar = true
+          doTradeSale({
+            agencyNo: this.rowClickItem.agencyNo,
+            tradeQuantity: this.amount
+          }).then(res => {
+            if (res.success) {
+              this.dialog = false
+              this.snackbar = true
+            }
+          })
+          
+        } else {
+          this.$vNotice.error({
+            text: '表单校验失败'
+          })
         }
       }
     }

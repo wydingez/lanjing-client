@@ -5,6 +5,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import './style/index.styl'
+import './permission'
 
 import throttle from 'lodash/throttle'
 import debounce from 'lodash/debounce'

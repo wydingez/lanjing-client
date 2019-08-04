@@ -1,13 +1,13 @@
 <template>
-  <v-table :headers="headers" :items="items" hide-actions>
+  <v-table-server :headers="headers" :ajax="ajax">
     <template v-slot:items="props">
-      <td>{{props.item.name}}</td>
+      <td>{{props.item.agencyNo}}</td>
       <td>
-        <v-avatar size="36"><img :src="props.item.avatar" :alt="props.item.name"></v-avatar>
+        <v-avatar size="36"><img :src="props.item.tradeUserPortraitUrl" :alt="props.item.name"></v-avatar>
       </td>
-      <td class="subheading font-weight-medium" v-html="translateDesc(props.item)"></td>
+      <td class="font-weight-medium" v-html="translateDesc(props.item)"></td>
     </template>
-  </v-table> 
+  </v-table-server> 
 </template>
 
 <script>
@@ -15,24 +15,20 @@
     name: 'HomeOrderSell',
     data: () => ({
       headers: [
-        {text: '委托方', value: 'name', sortable: false},
-        {text: '微信图像', value: 'avatar', sortable: false},
+        {text: '委托单号', value: 'agencyNo', sortable: false},
+        {text: '微信头像', value: 'tradeUserPortraitUrl', sortable: false},
         {text: '交易记录', value: 'optDesc', sortable: false},
       ],
-      items: [
-        {name: 'wyd1**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', time: '2019年6月27日', type: 'buy', amount: 2000},
-        {name: 'wyd2**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', time: '2019年6月27日', type: 'sell', amount: 2000},
-        {name: 'wyd3**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', time: '2019年6月27日', type: 'buy', amount: 2000},
-        {name: 'wyd4**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', time: '2019年6月27日', type: 'buy', amount: 2000},
-        {name: 'wyd5**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', time: '2019年6月27日', type: 'buy', amount: 2000}
-      ]
+      ajax: {
+        url: '/trade/list/all'
+      }
     }),
     methods: {
-      translateDesc ({time, type, amount}) {
-        let sellType = type === 'buy' ? '购入' : '售出'
+      translateDesc ({tradeDate, tradeType, tradeQuantity}) {
+        let sellType = tradeType === 'SALE' ? '售出' : '购入'
         return `
           <div>
-            于<kbd class="warning">${time}</kbd> ${sellType} <kbd class="warning">${amount}</kbd>个
+            于<kbd class="warning">${tradeDate}</kbd> ${sellType} <kbd class="warning">${tradeQuantity}</kbd>个
           </div>
         `
       }

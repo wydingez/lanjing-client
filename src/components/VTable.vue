@@ -1,5 +1,5 @@
 <script>
-  import {VDataTable} from 'vuetify/lib'
+  import {VDataTable, VPagination} from 'vuetify/lib'
 
   const PROP_DEFS_BASE = [
     'custom-filter',
@@ -36,7 +36,7 @@
   
   export default {
     name: 'VTable',
-    components: {VDataTable},
+    components: {VDataTable, VPagination},
     props: [...PROP_DEFS_BASE],
     data () {
       return {
@@ -47,6 +47,7 @@
           sortBy: null,
           totalItems: 0
         },
+        innerPage: 1
       }
     },
     render () {
@@ -71,6 +72,15 @@
       )
       
       return smallScreen ? phoneTable : pcTable
+    },
+
+    watch: {
+      innerPage (val) {
+        this.$emit('phone-paging-changed', val)
+      },
+      'pagination.page' (val) {
+        this.innerPage = val
+      }
     },
 
     created () {
@@ -110,11 +120,26 @@
           )
         })
 
+        let pages = this.pagination.rowsPerPage ? Math.ceil(this.totalItems / this.pagination.rowsPerPage) : 0
+        let tableFooter = (
+          <div class="text-xs-center">
+            <v-pagination
+              circle
+              vModel={this.innerPage}
+              length={pages}
+              total-visible={3}
+            ></v-pagination>
+          </div>
+        )
+
         tableDefine = (
           <div class={['v-table-phone']}>
             {rows}
+            {this.hideActions ? '' : tableFooter}
           </div>
         )
+
+
 
         return tableDefine
       }
@@ -137,6 +162,7 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        font-size: 14px;
         kbd {
           line-height: 24px;
         }

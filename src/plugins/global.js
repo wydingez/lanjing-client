@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueClipboard from 'vue-clipboard2'
 import notice from '_c/notice'
+import modal from '_c/modal'
 
 // 粘贴组件
 VueClipboard.config.autoSetContainer = true // add this line
@@ -14,3 +15,4 @@ contexts.keys().forEach(comp => {
 })
 
 Vue.prototype.$vNotice = notice
+Vue.prototype.$vModal = modal

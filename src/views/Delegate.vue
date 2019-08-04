@@ -24,9 +24,9 @@
                 <v-list-tile-content class="subheading font-weight-bold" style="display: -webkit-box">数量<v-icon>sort</v-icon></v-list-tile-content>
                 <v-list-tile-content class="align-end subheading font-weight-bold" style="display: -webkit-box"><v-icon>attach_money</v-icon>价格</v-list-tile-content>
               </v-list-tile>
-              <v-list-tile v-for="item in item.list" :key="item.id">
-                <v-list-tile-content>{{item.amount}}</v-list-tile-content>
-                <v-list-tile-content class="align-end">￥ {{ item.price }}</v-list-tile-content>
+              <v-list-tile v-for="item in item.list" :key="item.agencyNo">
+                <v-list-tile-content>{{item.agencyAmount}}</v-list-tile-content>
+                <v-list-tile-content class="align-end">￥ {{ item.agencyAmount * item.agencyUnitPrice }}</v-list-tile-content>
               </v-list-tile>
               <v-list-tile>
                 <v-btn block color="warning" dark @click="item.btnClick(item.type)">{{ item.btnText }}</v-btn>
@@ -74,8 +74,8 @@
                         <v-list-tile-content class="align-end subheading font-weight-bold" style="display: -webkit-box"><v-icon>attach_money</v-icon>价格</v-list-tile-content>
                       </v-list-tile>
                       <v-list-tile v-for="item in item.list" :key="item.id">
-                        <v-list-tile-content>{{item.amount}}</v-list-tile-content>
-                        <v-list-tile-content class="align-end">￥ {{ item.price }}</v-list-tile-content>
+                        <v-list-tile-content>{{item.agencyAmount}}</v-list-tile-content>
+                        <v-list-tile-content class="align-end">￥ {{ item.agencyAmount * item.agencyUnitPrice }}</v-list-tile-content>
                       </v-list-tile>
                       <v-list-tile>
                         <v-btn block color="warning" dark @click="item.btnClick(item.type)">{{ item.btnText }}</v-btn>
@@ -182,8 +182,13 @@
 </template>
 
 <script>
+  import { getAgencyTop5 } from '@/api/agency'
+
   export default {
     name: 'Delegate',
+    created () {
+      this.initTop5()
+    },
     data () {
       return {
         selectOrder: null,
@@ -195,13 +200,7 @@
             btnClick: (type) => {
               this.doOrder(type)
             },
-            list: [
-              {id: 1, amount: 2000, price: 10000},
-              {id: 2, amount: 1500, price: 7500},
-              {id: 3, amount: 1000, price: 5000},
-              {id: 4, amount: 800, price: 4000},
-              {id: 5, amount: 500, price: 2500}
-            ]
+            list: []
           },
           {
             type: 'buy',
@@ -210,13 +209,7 @@
             btnClick: (type) => {
               this.doOrder(type)
             },
-            list: [
-              {id: 11, amount: 3000, price: 15000},
-              {id: 22, amount: 1500, price: 7500},
-              {id: 33, amount: 1000, price: 5000},
-              {id: 44, amount: 800, price: 4000},
-              {id: 55, amount: 500, price: 2500}
-            ]
+            list: []
           }
         ],
         dialogInfo: {
@@ -302,6 +295,14 @@
             this.dialogInfo.showConfPass = true
           }
         }
+      },
+      initTop5 () {
+        getAgencyTop5().then(res => {
+          if (res.success) {
+            this.items[0].list = res.data.top5AgengcySalelist
+            this.items[1].list = res.data.top5AgengcyBuylist
+          }
+        })
       }
     }
   }

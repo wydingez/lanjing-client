@@ -14,8 +14,10 @@
     "core-js": "^2.6.5",
     "echarts": "^4.2.1",
     "js-base64": "^2.5.1",
+    "js-cookie": "^2.2.0",
     "lodash": "^4.17.15",
     "lodash.defaultsdeep": "^4.6.1",
+    "nprogress": "^0.2.0",
     "vue": "^2.6.10",
     "vue-clipboard2": "^0.3.0",
     "vue-echarts": "^4.0.3",
@@ -25,6 +27,7 @@
     "vuex": "^3.0.1"
   },
   "devDependencies": {
+    "@mdi/font": "^3.8.95",
     "@vue/cli-plugin-babel": "^3.9.0",
     "@vue/cli-plugin-eslint": "^3.9.0",
     "@vue/cli-service": "^3.9.0",

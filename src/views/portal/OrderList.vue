@@ -1,27 +1,22 @@
 <template>
   <div>
-    <v-table
+    <v-table-server
       :headers="headers"
-      :items="desserts"
-      :pagination.sync="pagination"
-      :total-items="totalDesserts"
-      :loading="loading"
+      :ajax="ajax"
       class="elevation-1"
     >
       <template v-slot:items="props">
-        <td>{{ getBuyTypeDesc(props.item.buyType) }}</td>
+        <td>{{ getBuyTypeDesc(props.item.type) }}</td>
         <td>{{ props.item.orderNo }}</td>
-        <td>{{ props.item.perPrice }}</td>
-        <td>{{ props.item.amount }}</td>
-        <td>{{ props.item.delegatePrice }}</td>
-        <td>{{ getStatusDesc(props.item.buyType) }}</td>
+        <td>{{ props.item.unitPrice }} 元/蓝晶</td>
+        <td>{{ props.item.quantity }}</td>
+        <td>{{ props.item.totalAmount }}</td>
+        <td>{{ getStatusDesc(props.item.status) }}</td>
         <td class="order-table-btn">
-          <v-btn color="warning" small outline @click="doOpt(props.item, 'sell')" v-if="![2, 3].includes(props.item.status) && props.item.buyType.split('-')[1] === 'sell'">确认发货</v-btn>
-          <v-btn color="warning" small outline @click="doOpt(props.item, 'buy')" v-if="![2, 3].includes(props.item.status) && props.item.buyType.split('-')[1] === 'buy'">确认收货</v-btn>
-          <v-btn color="warning" small outline @click="doOpt(props.item, 'detail')" v-if="[2, 3].includes(props.item.status)">查看明细</v-btn>
+          <v-btn color="warning" small outline @click="doOptModal(props.item, btn.key)" v-for="btn in btns" :key="btn.key" v-show="btn.visible(props.item.status)">{{btn.label}}</v-btn>
         </td>
       </template>
-    </v-table>
+    </v-table-server>
 
     <v-dialog v-model="confirmInfo.modal" width="500" persistent>
       <v-card>
@@ -33,7 +28,8 @@
           <v-btn
             color="pink"
             flat
-            @click="confirmInfo.modal = false"
+            :loading="loading"
+            @click="doOpt"
           >
             确认
           </v-btn>
@@ -97,6 +93,8 @@
 </template>
 
 <script>
+  import { doDeliveryConfirm, doReceiveConfirm } from '@/api/trade'
+
   export default {
     name: 'order-list',
     props: {
@@ -106,21 +104,14 @@
       return {
         totalDesserts: 0,
         desserts: [],
-        loading: true,
+        loading: false,
         pagination: { rowsPerPage: 10 },
-        headers: [
-          { text: '委托类型', value: 'buyType' },
-          { text: '订单号', value: 'orderNo' },
-          { text: '单价', value: 'perPrice', sortable: false },
-          { text: '数量', value: 'amount', sortable: false },
-          { text: '委托金额', value: 'delegatePrice', sortable: false },
-          { text: '完成状态', value: 'status', sortable: false },
-          { text: '操作', value: 'opt', sortable: false }
-        ],
         confirmInfo: {
+          clickRow: {},
           modal: false,
           title: '',
-          tip: ''
+          tip: '',
+          type: ''
         },
         detailInfo: {
           modal: false,
@@ -130,28 +121,57 @@
             {wx: 'wangwu', time: '2019-07-22 17:34:00', type: 'sell', amount: 100},
             {wx: 'zhaoliu', time: '2019-07-21 17:34:00', type: 'sell', amount: 50}
           ]
-        }
-        
-      }
-    },
-    watch: {
-      pagination: {
-        handler () {
-          this.getDataFromApi()
-            .then(data => {
-              this.desserts = data.items
-              this.totalDesserts = data.total
-            })
         },
-        deep: true
+        btns: [
+          {
+            key: 'delivery',
+            label: '确认发货',
+            visible: (status) => {
+              return this.orderType === 'trade' && status === 'TO_BE_DELIVER'
+            }
+          },
+          {
+            key: 'receive',
+            label: '确认收货',
+            visible: (status) => {
+              return this.orderType === 'trade' && status === 'TO_BE_TAKE'
+            }
+          },
+          {
+            key: 'detail',
+            label: '查看明细',
+            visible: (status) => {
+              return this.orderType === 'agency' || (this.orderType === 'trade' && status === 'COMPLETED')
+            }
+          }
+        ]
       }
     },
-    mounted () {
-      this.getDataFromApi()
-        .then(data => {
-          this.desserts = data.items
-          this.totalDesserts = data.total
-        })
+    computed: {
+      stateType () {
+        return this.type.split('-')[0]
+      },
+      orderType () {
+        return this.type.split('-')[1]
+      },
+      ajax () {
+        let prefixUrl = this.orderType === 'trade' ? '/trade/list/my/' : '/agency/query/my/'
+        return {
+          url: prefixUrl + this.stateType
+        }
+      },
+      headers () {
+        let orderType = this.orderType === 'trade' ? '订单' : '委托'
+        return [
+          { text: `${orderType}类型`, value: 'type' },
+          { text: '订单号', value: 'orderNo' },
+          { text: '单价', value: 'unitPrice', sortable: false },
+          { text: '数量', value: 'quantity', sortable: false },
+          { text: `${orderType}金额`, value: 'totalAmount', sortable: false },
+          { text: '完成状态', value: 'status', sortable: false },
+          { text: '操作', value: 'opt', sortable: false }
+        ]
+      }
     },
     methods: {
       generateInfo (item, index) {
@@ -160,187 +180,92 @@
         type = type === 'sell' ? '卖出' : '买入'
         return `${index}. <kbd>${wx}</kbd>于<kbd>${time}</kbd><kbd>${type}</kbd><kbd>${amount}</kbd>`
       },
-      getDataFromApi () {
-        this.loading = true
-        return new Promise((resolve) => {
-          const { sortBy, descending, page, rowsPerPage } = this.pagination
-
-          let items = this.getDesserts().filter(item => {
-            let status = this.type === 'delegated' ? 1 : this.type === 'completed' ? 2 : this.type === 'canceled' ? 3 : -1
-            return status === -1 || item.status === status
-          })
-          const total = items.length
-
-          if (this.pagination.sortBy) {
-            items = items.sort((a, b) => {
-              const sortA = a[sortBy]
-              const sortB = b[sortBy]
-
-              if (descending) {
-                if (sortA < sortB) return 1
-                if (sortA > sortB) return -1
-                return 0
-              } else {
-                if (sortA < sortB) return -1
-                if (sortA > sortB) return 1
-                return 0
-              }
-            })
-          }
-
-          if (rowsPerPage > 0) {
-            items = items.slice((page - 1) * rowsPerPage, page * rowsPerPage)
-          }
-
-          setTimeout(() => {
-            this.loading = false
-            resolve({
-              items,
-              total
-            })
-          }, 1000)
-        })
-      },
-      getDesserts () {
-        return [
-          {
-            buyType: 'delegate-buy',
-            orderNo: '1563680438479001',
-            perPrice: 0.35,
-            amount: 1000,
-            delegatePrice: 350,
-            status: 1
-          },
-          {
-            buyType: 'delegate-sell',
-            orderNo: '1563680438479002',
-            perPrice: 0.35,
-            amount: 1000,
-            delegatePrice: 350,
-            status: 2
-          },
-          {
-            buyType: 'active-buy',
-            orderNo: '1563680438479001',
-            perPrice: 0.35,
-            amount: 1000,
-            delegatePrice: 350,
-            status: 3
-          },
-          {
-            buyType: 'active-sell',
-            orderNo: '1563680438479001',
-            perPrice: 0.35,
-            amount: 1000,
-            delegatePrice: 350,
-            status: 1
-          },
-          {
-            buyType: 'delegate-buy',
-            orderNo: '1563680438479001',
-            perPrice: 0.35,
-            amount: 1000,
-            delegatePrice: 350,
-            status: 1
-          },
-          {
-            buyType: 'delegate-buy',
-            orderNo: '1563680438479001',
-            perPrice: 0.35,
-            amount: 1000,
-            delegatePrice: 350,
-            status: 2
-          },
-          {
-            buyType: 'delegate-buy',
-            orderNo: '1563680438479001',
-            perPrice: 0.35,
-            amount: 1000,
-            delegatePrice: 350,
-            status: 2
-          },
-          {
-            buyType: 'delegate-buy',
-            orderNo: '1563680438479001',
-            perPrice: 0.35,
-            amount: 1000,
-            delegatePrice: 350,
-            status: 2
-          },
-          {
-            buyType: 'delegate-buy',
-            orderNo: '1563680438479001',
-            perPrice: 0.35,
-            amount: 1000,
-            delegatePrice: 350,
-            status: 3
-          },
-          {
-            buyType: 'delegate-buy',
-            orderNo: '1563680438479001',
-            perPrice: 0.35,
-            amount: 1000,
-            delegatePrice: 350,
-            status: 1
-          },
-          {
-            buyType: 'delegate-buy',
-            orderNo: '1563680438479001',
-            perPrice: 0.35,
-            amount: 1000,
-            delegatePrice: 350,
-            status: 1
-          }
-        ]
-      },
-      getStatusDesc (buyType) {
+      getStatusDesc (status) {
         let desc = ''
-        switch (buyType) {
-          case 'delegate-buy':
-            desc = '等待锁定 / 等待卖家发货/卖家已发货，请查收'
+        let isTrade = this.type.split('-')[1] === 'trade'
+        if (!isTrade) {
+          switch (status) {
+            case 'COMPLETED':
+              desc = '已完成'
+              break
+            case 'PROGRESS':
+              desc = '交易中'
+              break
+            case 'CANCEL':
+              desc = '委托撤销'
+              break
+          }
+        } else {
+          switch (status) {
+            case 'TO_BE_DELIVER':
+              desc = '待发货'
+              break
+            case 'TO_BE_TAKE':
+              desc = '待收货'
+              break
+            case 'CANCEL':
+              desc = '已取消'
+              break
+            case 'TO_HANDLE':
+              desc = '需要手动处理'
+              break
+            case 'COMPLETED':
+              desc = '已完成'
+              break
+          }
+        }
+        return desc
+      },
+      getBuyTypeDesc (type) {
+        let desc = ''
+        switch (type) {
+          case 'SALE':
+            desc = '卖出'
             break
-          case 'delegate-sell':
-            desc = '等待锁定 / 等待买家付款/买家已付款，请收获'
-            break
-          case 'active-buy':
-            desc = '已付款等待卖家发货 / 卖家已发货，请查收'
-            break
-          case 'active-sell':
-            desc = '卖家以付款，请收获'
+          case 'BUY':
+            desc = '购买'
             break
         }
         return desc
       },
-      getBuyTypeDesc (buyType) {
-        let desc = ''
-        switch (buyType) {
-          case 'delegate-buy':
-            desc = '委托买入'
-            break
-          case 'delegate-sell':
-            desc = '委托卖出'
-            break
-          case 'active-buy':
-            desc = '主动购买'
-            break
-          case 'active-sell':
-            desc = '主动卖出'
-            break
-        }
-        return desc
-      },
-      doOpt (item, type) {
-        if (type === 'buy') {
+      doOptModal (item, type) {
+        this.confirmInfo.clickRow = item
+        this.confirmInfo.type = type
+        if (type === 'receive') {
           this.confirmInfo.modal = true
-          this.confirmInfo.title = '收获'
+          this.confirmInfo.title = '收收货'
           this.confirmInfo.tip = '点击确认后，系统⾃动将资⾦转⼊卖⽅账户'
-        } else if (type === 'sell') {
+        } else if (type === 'delivery') {
           this.confirmInfo.modal = true
           this.confirmInfo.title = '发货'
           this.confirmInfo.tip = '点击确认后，系统⾃动将货币转⼊卖⽅账户'
         } else if (type === 'detail') {
           //
           this.detailInfo.modal = true
+        }
+      },
+      doOpt () {
+        let type = this.confirmInfo.type
+        let orderNo = this.confirmInfo.clickRow.orderNo
+        this.loading = true
+        if (type === 'receive') {
+          doReceiveConfirm(orderNo).then(res => {
+            if (res.success) {
+              this.confirmInfo.modal = false
+              this.$vNotice.success({
+                text: '收货成功'
+              })
+            }
+          })
+        } else if (type === 'delivery') {
+          doDeliveryConfirm(orderNo).then(res => {
+            if (res.success) {
+              this.confirmInfo.modal = false
+              this.$vNotice.success({
+                text: '发货成功'
+              })
+            }
+          })
         }
       }
     }

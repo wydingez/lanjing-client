@@ -11,14 +11,14 @@
               size="130"
               color="grey lighten-4"
             >
-              <img :src="imgSrc">
+              <img :src="form.imgSrc">
             </v-avatar>
           </v-card-text>
           <v-card-actions class="info-footer">
-            <p><label>昵称：</label><span>{{username}}</span></p>
-            <p><label>UUID：</label><span>{{uuid}}</span></p>
+            <p><label>昵称：</label><span>{{form.username}}</span></p>
+            <p><label>UUID：</label><span>{{form.uuid}}</span></p>
             <hr>
-            <p class="secure-level"><label>安全等级：</label><span>{{secureLevel === 'low' ? '低' : secureLevel === 'medium' ? '中' : '高'}}</span></p>
+            <p class="secure-level"><label>安全等级：</label><span>{{form.secureLevel === 'low' ? '低' : form.secureLevel === 'middle' ? '中' : '高'}}</span></p>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -33,26 +33,26 @@
               <ul class="personal-info">
                 <li>
                   <span class="personal-info-label">手机号：</span>
-                  <span class="personal-info-value">{{phone}}</span>
+                  <span class="personal-info-value">{{form.phone || '暂无'}}</span>
                   <div class="personal-info-opt">
-                    <v-btn flat color="warning">绑定</v-btn>
-                    <v-btn flat color="warning">修改</v-btn>
+                    <v-btn flat color="warning" @click="setPhone('bind')" v-if="!form.phone">绑定</v-btn>
+                    <v-btn flat color="warning" @click="setPhone('update')" v-else>修改</v-btn>
                   </div>
                 </li>
                 <li>
                   <span class="personal-info-label">安全邮箱：</span>
-                  <span class="personal-info-value">{{email}}</span>
+                  <span class="personal-info-value">{{form.email || '暂无'}}</span>
                   <div class="personal-info-opt">
-                    <v-btn flat color="warning" @click="setEmail('bind')">绑定</v-btn>
-                    <v-btn flat color="warning" @click="setEmail('update')">修改</v-btn>
+                    <v-btn flat color="warning" @click="setEmail('bind')" v-if="!form.email">绑定</v-btn>
+                    <v-btn flat color="warning" @click="setEmail('update')" v-else>修改</v-btn>
                   </div>
                 </li>
                 <li>
                   <span class="personal-info-label">资金密码：</span>
                   <span class="personal-info-value">
-                    {{showPassWord ? password : new Array(password.length).fill('*').join('')}}
-                    <v-btn flat icon color="warning" @click="showPassWord = !showPassWord">
-                      <v-icon>{{showPassWord ? 'visibility' : 'visibility_off'}}</v-icon>
+                    {{form.showPassWord ? form.password : new Array(form.password.length).fill('*').join('')}}
+                    <v-btn flat icon color="warning" @click="form.showPassWord = !form.showPassWord">
+                      <v-icon>{{form.showPassWord ? 'visibility' : 'visibility_off'}}</v-icon>
                     </v-btn>
                   </span>
                   <div class="personal-info-opt">
@@ -72,10 +72,10 @@
               <ul class="personal-info">
                 <li>
                   <span class="personal-info-label">实名认证：</span>
-                  <span class="personal-info-value">{{realName}}，{{idCard}}</span>
+                  <span class="personal-info-value">{{form.realVerify ? `${form.realName}，${form.idCard}` : '暂无'}}</span>
                   <div class="personal-info-opt">
-                    <v-btn flat color="warning" to="/personal/idcard-info">去认证</v-btn>
-                    <v-btn flat color="warning">已认证</v-btn>
+                    <v-btn flat color="warning" to="/personal/idcard-info" v-if="!form.realVerify">去认证</v-btn>
+                    <v-btn flat color="warning" to="/personal/idcard-info" v-if="form.realVerify">已认证</v-btn>
                   </div>
                 </li>
               </ul>
@@ -94,7 +94,7 @@
               <ul class="personal-info">
                 <li>
                   <span class="personal-info-label">现⾦余额：</span>
-                  <span class="personal-info-value">￥ {{cash}}</span>
+                  <span class="personal-info-value">￥ {{form.cash}}</span>
                   <div class="personal-info-opt">
                     <v-btn flat color="warning" @click="doCashModal('cashIn')">充值</v-btn>
                     <v-btn flat color="warning" @click="doCashModal('cashOut')">提现</v-btn>
@@ -102,7 +102,7 @@
                 </li>
                 <li>
                   <span class="personal-info-label">⽀付宝：</span>
-                  <span class="personal-info-value">{{aliPay}}</span>
+                  <span class="personal-info-value">{{form.aliPay}}</span>
                   <div class="personal-info-opt">
                     <v-btn flat color="warning">绑定</v-btn>
                     <v-btn flat color="warning">修改</v-btn>
@@ -122,19 +122,19 @@
                 <li>
                   <span class="personal-info-label">接收账户变动提醒</span>
                   <div class="personal-info-switch">
-                    <v-switch v-model="openAccountTip" :label="openAccountTip ? 'ON' : 'OFF'"></v-switch>
+                    <v-switch v-model="form.openAccountTip" :label="form.openAccountTip ? 'ON' : 'OFF'"></v-switch>
                   </div>
                 </li>
                 <li>
                   <span class="personal-info-label">接收最新挂单通知</span>
                   <div class="personal-info-switch">
-                    <v-switch v-model="openBillTip" :label="openBillTip ? 'ON' : 'OFF'"></v-switch>
+                    <v-switch v-model="form.openBillTip" :label="form.openBillTip ? 'ON' : 'OFF'"></v-switch>
                   </div>
                 </li>
                 <li>
                   <span class="personal-info-label">接收交易信息通知</span>
                   <div class="personal-info-switch">
-                    <v-switch v-model="openDealTip" :label="openDealTip ? 'ON' : 'OFF'"></v-switch>
+                    <v-switch v-model="form.openDealTip" :label="form.openDealTip ? 'ON' : 'OFF'"></v-switch>
                   </div>
                 </li>
               </ul>
@@ -199,10 +199,53 @@
       </v-card>
     </v-dialog>
 
+    <!-- 手机绑定 -->
+    <v-dialog v-model="bindPhone.modal" width="500" persistent>
+      <v-card>
+        <v-card-title class="headline grey lighten-2" primary-title>{{computedTypeName(bindPhone.type)}}手机</v-card-title>
+
+        <v-card-text>
+          <v-form>
+            <v-text-field
+              v-model="bindPhone.phone"
+              label="手机号"
+              required
+              :rules="rules.phoneRules"
+            ></v-text-field>
+          </v-form>
+          <p class="text-center red--text">(手机号作⽤：⽤户找回您资⾦密码)</p>
+          <!-- <blockquote class="blockquote">
+            操作提示：
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;系统随后将发送⼀条认证邮件到您的邮箱，请⾄邮箱点击认证链接，完成安全邮箱认证。
+          </blockquote> -->
+        </v-card-text>
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            flat
+            @click="bindPhone.doOpt"
+          >
+            确认
+          </v-btn>
+          <v-btn
+            color="primary"
+            flat
+            @click="bindPhone.modal = false"
+          >
+            取消
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <!-- 邮箱绑定 -->
     <v-dialog v-model="bindEmail.modal" width="500" persistent>
       <v-card>
-        <v-card-title class="headline grey lighten-2" primary-title>绑定邮箱</v-card-title>
+        <v-card-title class="headline grey lighten-2" primary-title>{{computedTypeName(bindEmail.type)}}邮箱</v-card-title>
 
         <v-card-text>
           <v-form>
@@ -296,25 +339,31 @@
 </template>
 
 <script>
+  import { queryInfo } from '@/api/user'
+  import { formatMoney } from '@/utils/util'
+
   export default {
     name: 'Personal',
     data () {
       return {
-        imgSrc: 'https://picsum.photos/500/300?image=10',
-        username: 'weishi',
-        uuid: '1000001',
-        secureLevel: 'low',
-        phone: '13813813813',
-        email: '2342788232@qq.com',
-        password: '123456',
-        realName: '李军挺',
-        idCard: '420832199302938293',
-        cash: '1,000',
-        aliPay: '2342788232@qq.com',
-        openAccountTip: false,
-        openBillTip: false,
-        openDealTip: false,
-        showPassWord: false,
+        form: {
+          imgSrc: 'https://cdn.vuetifyjs.com/images/john.jpg',
+          username: 'weishi',
+          uuid: '1000001',
+          secureLevel: 'low',
+          phone: '13813813813',
+          email: '2342788232@qq.com',
+          password: '123456',
+          realName: '李军挺',
+          idCard: '420832199302938293',
+          cash: '1,000',
+          aliPay: '2342788232@qq.com',
+          openAccountTip: false,
+          openBillTip: false,
+          openDealTip: false,
+          showPassWord: false,
+          realVerify: false
+        },
         cashInfo: {
           modal: false,
           text: '',
@@ -325,9 +374,18 @@
             this.cashInfo.modal = false
           }
         },
+        bindPhone: {
+          modal: false,
+          phone: '',
+          type: '',
+          doOpt: () => {
+            this.bindPhone.modal = false
+          }
+        },
         bindEmail: {
           modal: false,
           email: '',
+          type: '',
           doOpt: () => {
             this.bindEmail.modal = false
           }
@@ -342,6 +400,7 @@
         },
         rules: {
           cashRule: [],
+          phoneRules: [],
           emailRules: [],
           payCodeRules: [],
           rePayCodeRules: []
@@ -356,13 +415,58 @@
         this.cashInfo.cash = ''
       },
       setEmail (type) {
-        console.log(type)
+        this.bindEmail.type = type
         this.bindEmail.modal = true
+      },
+      setPhone (type) {
+        this.bindPhone.type = type
+        this.bindPhone.modal = true
       },
       setPayCode (type) {
         console.log(type)
         this.capitalCode.modal = true
+      },
+      computedTypeName (type) {
+        return type === 'bind' ? '绑定' : '修改'
+      },
+      initUserInfo () {
+        queryInfo().then(res => {
+          if (res.success) {
+            // imgSrc: 'https://cdn.vuetifyjs.com/images/john.jpg',
+            // username: 'weishi',
+            // uuid: '1000001',
+            // secureLevel: 'low',
+            // phone: '13813813813',
+            // email: '2342788232@qq.com',
+            // password: '123456',
+            // realName: '李军挺',
+            // idCard: '420832199302938293',
+            // cash: '1,000',
+            // aliPay: '2342788232@qq.com',
+            // openAccountTip: false,
+            // openBillTip: false,
+            // openDealTip: false,
+            // showPassWord: false,
+            let data = res.data
+            this.form.username = data.userName
+            this.form.uuid = data.userUuid
+            this.form.secureLevel = data.securityLevel ? data.securityLevel.toLowerCase() : ''
+            this.form.phone = data.phone
+            this.form.email = data.email
+            this.form.password = '1234567'
+            this.form.realName = ''
+            this.form.realVerify = !!data.realVerify
+            this.form.imgSrc = data.portraitPicUrl
+            this.form.cash = formatMoney(data.usableAmount)
+            this.form.openAccountTip = data.acceptAcctChangeNotify
+            this.form.openBillTip = data.acceptTradeInfoNotify
+            this.form.openDealTip =  data.acceptLatestAgencyNotify
+          }
+        })
       }
+    },
+    mounted () {
+      this.initUserInfo()
     }
   }
 </script>
@@ -429,6 +533,7 @@
           position: absolute;
           right: 0px;
           top: -4px;
+          a,
           button {
             padding: 4px;
             min-width: 16px;

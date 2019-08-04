@@ -6,3 +6,9 @@ export const doLogin = (data) =>
     method: 'post',
     data
   })
+
+export const doLogout = () =>
+  request({
+    url: '/logout',
+    method: 'get'
+  })

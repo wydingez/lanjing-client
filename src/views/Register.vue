@@ -23,28 +23,31 @@
           </v-tabs>
           <v-form class="register-page-form">
             <v-container>
-              <v-select :items="nationalityList" label="国籍" outline messages="国籍信息注册后不可修改，请务必如实选择。" v-model="form.nationality" @change="selectCountry"></v-select>
-              <v-layout class="phone-emial-input">
-                <template v-if="form.registerType === 0">
-                  <v-flex xs5>
-                    <v-select :items="phoneList" solo v-model="form.phonePrev"></v-select>
+              <v-form ref="form" v-model="form.valid" lazy-validation>
+                <v-select :items="nationalityList" label="国籍" outline messages="国籍信息注册后不可修改，请务必如实选择。" v-model="form.nationality" @change="selectCountry"></v-select>
+                <v-layout class="phone-emial-input">
+                  <template v-if="form.registerType === 0">
+                    <v-flex xs4>
+                      <v-select :items="phoneList" solo v-model="form.phonePrev"></v-select>
+                    </v-flex>
+                    <v-flex xs7 offset-xs1>
+                      <v-text-field label="手机号" solo v-model="form.phone" :rules="rules.phoneRules"></v-text-field>
+                    </v-flex>
+                  </template>
+                  <v-flex v-else xs12>
+                    <v-text-field label="邮箱账号" solo v-model="form.email" :rules="rules.emailRules"></v-text-field>
                   </v-flex>
-                  <v-flex xs7>
-                    <v-text-field label="手机号" solo v-model="form.phone"></v-text-field>
-                  </v-flex>
-                </template>
-                <v-flex v-else xs12>
-                  <v-text-field label="邮箱账号" solo v-model="form.email"></v-text-field>
-                </v-flex>
-              </v-layout>
-              <v-text-field label="设置密码" type="password" outline v-model="form.password"></v-text-field>
-              <v-text-field label="确认密码" type="password" outline v-model="form.rePassword"></v-text-field>
+                </v-layout>
+                <v-text-field label="用户名" outline v-model="form.username" :rules="rules.usernameRules"></v-text-field>
+                <v-text-field label="设置密码" type="password" outline v-model="form.password" :rules="rules.passwordRules"></v-text-field>
+                <v-text-field label="确认密码" type="password" outline v-model="form.rePassword" :rules="rules.rePasswordRules"></v-text-field>
+              </v-form>
             </v-container>
           </v-form>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary">注册</v-btn>
+          <v-btn color="primary" @click="doRegister" :loading="registerLoading">注册</v-btn>
         </v-card-actions>
       </v-card>
     </v-flex>
@@ -54,6 +57,8 @@
 <script>
   import country from '_d/country.json'
   import countryPhone from '_d/countryPhone.json'
+  import { doUserRegister } from '@/api/user'
+
   export default {
     name: 'Register',
     data () {
@@ -63,9 +68,11 @@
           phonePrev: '0086',
           phone: '',
           email: '',
+          username: '',
           password: '',
           rePassword: '',
-          registerType: 0
+          registerType: 0,
+          valid: true
         },
         nationalityList: [],
         phoneList: [],
@@ -77,7 +84,33 @@
             label: '邮箱注册',
             type: 'email'
           }
-        ]
+        ],
+        registerLoading: false
+      }
+    },
+    computed: {
+      rules () {
+        return {
+          usernameRules: [
+            v => !!v || '用户名不能为空'
+          ],
+          phoneRules: this.form.registerType === 0 ? [
+            v => !!v || '手机号不能为空',
+            v => /^1[3456789]\d{9}$/.test(v) || '手机号格式不对'
+          ] : [],
+          emailRules: this.form.registerType === 1 ? [
+            v => !!v || '邮箱不能为空',
+            v => /.+@.+/.test(v) || '邮箱不合法'
+          ] : [],
+          passwordRules: [
+            v => !!v || '设置密码不能为空',
+            v => /^[\w_-]{6,16}$/.test(v) || '密码格式不对：最短6位，最长16位'
+          ],
+          rePasswordRules: [
+            v => !!v || '确认密码不能为空',
+            v => v === this.form.password || '两次密码不一致'
+          ]
+        }
       }
     },
     methods: {
@@ -95,6 +128,20 @@
       },
       selectCountry (value) {
         console.log(value)
+      },
+      doRegister () {
+        if (this.form.valid) {
+          doUserRegister({
+            loginName: this.form.username,
+            password: this.form.pwd,
+            phone: this.form.registerType === 0 ? this.form.phone : '',
+            emial: this.form.registerType === 1 ? this.form.email : ''
+          }).then(res => {
+            console.log(res)
+          })
+        } else {
+          this.$vNotice.error('表单校验失败')
+        }
       }
     },
     created () {

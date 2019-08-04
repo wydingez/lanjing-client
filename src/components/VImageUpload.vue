@@ -26,6 +26,10 @@
       title: {
         type: String,
         default: '上传'
+      },
+      imgFile: {
+        type: File,
+        default: () => ({})
       }
     },
     data () {
@@ -42,6 +46,7 @@
       uploadFile (file) {
         file.fileSrc = window.URL.createObjectURL(file)
         this.file = file
+        this.$emit('update:imgFile', file)
       }
     }
   }

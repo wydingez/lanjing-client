@@ -1,16 +1,17 @@
 <template>
   <div>
-    <v-table :headers="headers" :items="items" hide-actions>
+    <v-table-server :headers="headers" :ajax="ajax">
       <template v-slot:items="props">
         <td>
-          <v-avatar size="36"><img :src="props.item.avatar" :alt="props.item.name"></v-avatar>
+          <v-avatar size="36"><img :src="props.item.agencyUserPortraitUrl" :alt="props.item.name"></v-avatar>
         </td>
-        <td>{{props.item.per}} ￥/个</td>
-        <td>{{props.item.amount}}</td>
+        <td>{{props.item.agencyNo}}</td>
+        <td>{{props.item.agencyUnitPrice}} ￥/蓝晶</td>
+        <td>{{props.item.agencyAmount}}</td>
         <td>
           <v-tooltip top>
             <template v-slot:activator="{ on }">
-              <v-btn color="warning" fab small dark v-on="on" @click="doBuy">
+              <v-btn color="warning" fab small dark v-on="on" @click="doBuy(props.item)">
                 <v-icon>add_shopping_cart</v-icon>
               </v-btn>
             </template>
@@ -18,7 +19,7 @@
           </v-tooltip>
         </td>
       </template>
-    </v-table>
+    </v-table-server>
 
     <v-dialog v-model="dialog" width="500" persistent>
       <v-card>
@@ -33,7 +34,7 @@
               v-show="!showConfPass"
               v-model="amount"
               label="数量"
-              placeholder="80-2000"
+              :placeholder="amountPlaceholder"
               required
               :rules="rules.amountRule"
             ></v-text-field>
@@ -50,7 +51,7 @@
           </v-form>
 
           <template v-if="!showConfPass">
-            <p>锁定的价格为：0.35元/蓝晶</p>
+            <p>锁定的价格为：{{rowClickItem.agencyUnitPrice}}元/蓝晶</p>
             <p>锁定的有效剩余时间：598秒</p>
 
             <blockquote class="blockquote" style="padding: 0">
@@ -110,23 +111,21 @@
 </template>
 
 <script>
+  import { doTradeBuy } from '@/api/trade'
+  import { Base64 } from 'js-base64'
+
   export default {
     name: 'HomeOrderBuy',
     data: () => ({
       headers: [
-        {text: '微信头像', value: 'avatar', sortable: false},
-        {text: '单价', value: 'per'},
-        {text: '数量', value: 'amount'},
+        {text: '微信头像', value: 'agencyUserPortraitUrl', sortable: false},
+        {text: '委托单号', value: 'agencyNo', sortable: false},
+        {text: '单价', value: 'agencyUnitPrice', sortable: false},
+        {text: '数量', value: 'agencyAmount', sortable: false},
         {text: '操作', value: 'opt', sortable: false}
       ],
-      items: [
-        {name: 'wyd1**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 2000, amount: 100},
-        {name: 'wyd2**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 3000, amount: 100},
-        {name: 'wyd3**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 100, amount: 100},
-        {name: 'wyd4**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 500, amount: 100},
-        {name: 'wyd5**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 500, amount: 100}
-      ],
       amount: '',
+      amountPlaceholder: '',
       password: '',
       dialog: false,
       snackbar: false,
@@ -139,10 +138,17 @@
           value => Number(value) >= 20 && Number(value) <= 2000 || '数量应该在80-2000之间'
         ],
         confPassRule: []
-      }
+      },
+      ajax: {
+        url: '/agency/query/sale'
+      },
+      rowClickItem: {}
     }),
     methods: {
-      doBuy () {
+      doBuy (item) {
+        this.rowClickItem = item
+        this.amountPlaceholder = `1-${item.agencyAmount}`
+        this.rules.amountRule[2] = value => Number(value) >=1 && Number(value) <= item.agencyAmount || `数量应该在${this.amountPlaceholder}之间`
         this.rules.confPassRule = []
         this.$refs.form.reset()
         this.showConfPass = false
@@ -153,8 +159,17 @@
         if (this.showConfPass) {
           // 输入了密码，校验密码
           if (flag) {
-            this.dialog = false
-            this.snackbar = true
+            doTradeBuy({
+              agencyNo: this.rowClickItem.agencyNo,
+              payPwd: Base64.encode(this.password),
+              tradeQuantity: this.amount
+            }).then(res => {
+              if (res.success) {
+                this.dialog = false
+                this.snackbar = true
+              }
+            })
+            
           }
         } else {
           // 校验数量，成功了才跳到输入密码页面

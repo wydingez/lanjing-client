@@ -19,7 +19,7 @@
       <v-tab-item v-for="n in tabTypes" :key="n.key" :value="n.key">
         <v-card flat>
           <v-card-text>
-            <OrderList :type="n.key"></OrderList>
+            <OrderList :type="n.key + '-' + orderTypes[activeType].key"></OrderList>
           </v-card-text>
         </v-card>
       </v-tab-item>
@@ -35,17 +35,17 @@
     data () {
       return {
         tabTypes: [
-          {key: 'processing', label: '进行中', desserts: [], totalDesserts: 0},
+          {key: 'progress', label: '进行中', desserts: [], totalDesserts: 0},
           {key: 'completed', label: '已完成', desserts: [], totalDesserts: 0},
-          {key: 'canceled', label: '已取消', desserts: [], totalDesserts: 0},
+          {key: 'cancel', label: '已取消', desserts: [], totalDesserts: 0},
           {key: 'all', label: '全部', desserts: [], totalDesserts: 0},
         ],
         orderTypes: [
-          {key: 'now', label: '即时订单'},
-          {key: 'delegate', label: '委托订单'}
+          {key: 'trade', label: '即时订单'},
+          {key: 'agency', label: '委托订单'}
         ],
-        activeTab: null,
-        activeType: null
+        activeTab: 0,
+        activeType: 0
       }
     }
   }
@@ -65,6 +65,11 @@ tab-custom(n)
     margin-top: n;
   }
   
+.order-page {
+  .v-window__container--is-active {
+    height: auto !important;
+  }
+}
 
 .my-app-phone {
   .order-page {

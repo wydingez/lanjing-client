@@ -7,7 +7,31 @@
       <v-toolbar-title class="my-app-toolbar-title">{{projectTitle}}</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items v-if="!smallScreen">
-        <v-btn flat v-for="btn in toolBarBtns" :key="btn.url" :to="btn.url" color="white">{{btn.title}}</v-btn>
+        <v-btn flat v-for="btn in toolBarBtns.filter(item => item.visible)" :key="btn.url" :to="btn.url" color="white">{{btn.title}}</v-btn>
+
+        <v-menu offset-y v-if="logined">
+          <template v-slot:activator="{ on }">
+            <v-btn
+              color="whte"
+              flat
+              v-on="on"
+            >
+              <v-avatar>
+                <img
+                  src="https://cdn.vuetifyjs.com/images/john.jpg"
+                  alt="John"
+                >
+              </v-avatar>
+              &nbsp;{{loginUserName}}
+              <v-icon dark>mdi-menu-down</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-tile @click="doLogout">
+              <v-list-tile-title>登出</v-list-tile-title>
+            </v-list-tile>
+          </v-list>
+        </v-menu>
       </v-toolbar-items>
       <v-spacer v-if="smallScreen"></v-spacer>
       <v-btn icon v-if="smallScreen" @click="linkHome">
@@ -82,29 +106,6 @@
           </div>
         </v-flex>
       </v-layout>
-      <!-- <v-card
-        class="flex my-app-footer-card"
-        flat
-        tile
-      >
-        <v-card-actions class="grey darken-3 justify-center">
-          &copy;2019 — <strong>{{projectTitle}}</strong>
-          <v-tooltip top v-for="item in footerInfos" :key="item.text">
-            <template v-slot:activator="{ on }">
-              <v-btn
-                class="mx-3"
-                dark
-                icon
-                v-on="on"
-              >
-                <v-icon size="24px">{{ item.icon }}</v-icon>
-              </v-btn>
-            </template>
-            <span class="title">{{item.text}}</span>
-          </v-tooltip>
-          
-        </v-card-actions>
-      </v-card> -->
     </v-footer>
 
     <!-- Mobile menu -->
@@ -136,7 +137,7 @@
         <v-divider light></v-divider>
 
         <v-list-tile
-          v-for="item in toolBarBtns"
+          v-for="item in toolBarBtns.filter(item => item.visible)"
           :key="item.title"
           :to="item.url"
         >
@@ -172,19 +173,14 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'portal',
   data () {
     return {
       tab: null,
-      toolBarBtns: [
-        {title: '首页', url: '/', 'icon': 'home'},
-        {title: '登陆', url: '/login', 'icon': 'supervisor_account'}, 
-        {title: '注册', url: '/register', 'icon': 'person_add'}, 
-        {title: '委托', url: '/delegate', 'icon': 'card_travel'}, 
-        {title: '订单', url: '/order', 'icon': 'description'}, 
-        {title: '个人中心', url: '/personal', 'icon': 'account_circle'}
-      ],
       footerInfos: [
         {
           icon: 'cloud',
@@ -201,8 +197,25 @@ export default {
     }
   },
   computed: {
+    ...mapState([
+      'logined'
+    ]),
+    ...mapGetters([
+      'loginUserName'
+    ]),
     smallScreen () {
       return this.$root.smallScreen
+    },
+    toolBarBtns () {
+      let { logined } = this
+      return [
+        {title: '首页', url: '/', icon: 'home', visible: logined},
+        {title: '登陆', url: '/login', icon: 'supervisor_account', visible: !logined}, 
+        {title: '注册', url: '/register', icon: 'person_add', visible: !logined}, 
+        {title: '委托', url: '/delegate', icon: 'card_travel', visible: logined}, 
+        {title: '订单', url: '/order', icon: 'description', visible: logined}, 
+        {title: '个人中心', url: '/personal', icon: 'account_circle', visible: logined}
+      ]
     }
   },
   methods: {
@@ -211,6 +224,20 @@ export default {
     },
     scrollTop () {
       this.$vuetify.goTo(0, 0)
+    },
+    doLogout () {
+      // 登出
+      this.$vModal.confirm({
+        title: '登出',
+        content: '确认登出吗？',
+        onOk: (next) => {
+          this.$store.dispatch('doLogout').then(res => {
+            if (res.success) {
+              next()
+            }
+          })
+        }
+      })
     }
   }
 }
@@ -267,7 +294,7 @@ $echarts-height = 300px
     }
     .v-toolbar__title {
       font-size: 16px;
-      margin-left: calc(50% - 75px);
+      margin-left: calc(50% - 80px);
     }
     .home-echarts-container {
       height: $echarts-height;

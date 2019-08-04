@@ -1,5 +1,6 @@
 <script>
-  import {VDataTable} from 'vuetify/lib'
+  import vTable from './VTable'
+  import request from '@/utils/request'
 
   const PROP_DEFS_BASE = [
     'custom-filter',
@@ -32,8 +33,8 @@
   const EMISSION_NAMES = ['input', 'update:pagination']
   
   export default {
-    name: 'VTable',
-    components: {VDataTable},
+    name: 'vTableServer',
+    components: {vTable},
     props: [...PROP_DEFS_BASE, ...PROP_DEFS_OTHER],
     render () {
       const scopedSlots = this.$scopedSlots
@@ -41,89 +42,81 @@
         // dispatch vDataTable props
         props: {...this.$options.propsData},
         // dispatch vDataTable methods
-        on: EMISSION_NAMES.reduce((total, emissionName) => {
-          total[emissionName] = (...args) => {
-            this.$emit(emissionName, ...args)
-            if (emissionName === 'update:pagination') {
-              this.pagination = args[0]
+        on: {
+          ...EMISSION_NAMES.reduce((total, emissionName) => {
+            total[emissionName] = (...args) => {
+              this.$emit(emissionName, ...args)
+              if (emissionName === 'update:pagination') {
+                this.pagination = args[0]
+              }
             }
+            return total
+          }, {}),
+          'phone-paging-changed': (val) => {
+            this.pagination.page = val
           }
-          return total
-        }, {})
+        }
       }
 
       return (
-        <v-data-table {...options} pagination={this.pagination} items={this.desserts} total-items={this.totalDesserts} loading={this.loading} scopedSlots={scopedSlots}></v-data-table>
+        <v-table {...options} pagination={this.pagination} items={this.desserts} total-items={this.totalDesserts} loading={this.loading} scopedSlots={scopedSlots}></v-table>
       )
     },
     data: () => ({
       totalDesserts: 0,
       desserts: [],
-      loading: true,
+      loading: false,
       pagination: {}
     }),
     watch: {
       pagination: {
-        handler (val) {
-          if (Object.keys(val).length) {
-            this.getDataFromApi().then(data => {
-              this.desserts = data.items
-              this.totalDesserts = data.total
-            })
+        handler (newVal, oldVal) {
+          // 防止pc上触发查询多次
+          if (Object.keys(newVal).length) {
+            let isPhone = this.$root.smallScreen
+            if (isPhone ||  (!isPhone && JSON.stringify(newVal) !== JSON.stringify(oldVal))) {
+              this.loadTableData()
+            }
           }
         },
         deep: true,
         immediate: true
+      },
+      'ajax.url' () {
+        this.refresh()
       }
     },
     methods: {
-      getDataFromApi () {
-        this.loading = false
-        return new Promise((resolve) => {
-          const {sortBy, descending, page, rowsPerPage} = this.pagination
-          const {url, params} = this.$options.propsData.ajax
-          let items = this.getDesserts(url, params)
-          const total = items.length
+      async getDataFromApi () {
+        this.loading = true
+        const {url, params} = this.$options.propsData.ajax
+        let res = await this.getDesserts(url, params || {})
 
-          if (sortBy) {
-            items = items.sort((a, b) => {
-              const sortA = a[sortBy]
-              const sortB = b[sortBy]
-              if (descending) {
-                if (descending) {
-                  if (sortA < sortB) return 1
-                  if (sortA > sortB) return -1
-                  return 0
-                } else {
-                  if (sortA < sortB) return -1
-                  if (sortA > sortB) return 1
-                  return 0
-                }
-              }
-            })
-            if (rowsPerPage > 0) {
-              items = items.slice((page - 1) * rowsPerPage, page * rowsPerPage)
-            }
-            setTimeout(() => {
-              this.loading = false
-              resolve({
-                items,
-                total
-              })
-            }, 1000)
+        this.loading = false
+        return res
+      },
+      async getDesserts (url, params) {
+        let pageParams = {pageNum: this.pagination.page, pageSize: this.pagination.rowsPerPage}
+        let res = await request({
+          url,
+          method: 'post',
+          data: {
+            ...pageParams,
+            ...params
           }
         })
+        if (res.success) {
+          return res.data
+        }
       },
-      getDesserts () {
-        return [
-          {name: 'wyd1**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 2000, amount: 100},
-          {name: 'wyd2**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 3000, amount: 100},
-          {name: 'wyd3**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 100, amount: 100},
-          {name: 'wyd4**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 500, amount: 100},
-          {name: 'wyd5**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 500, amount: 100},
-          {name: 'wyd6**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 500, amount: 100},
-          {name: 'wyd7**', avatar: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460', per: 500, amount: 100}
-        ]
+      loadTableData () {
+        this.getDataFromApi().then(data => {
+          this.desserts = data.rows
+          this.totalDesserts = data.total
+        })
+      },
+      refresh () {
+        this.loadTableData()
       }
     }
   }

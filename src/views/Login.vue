@@ -15,7 +15,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" @click="doLogin">登陆</v-btn>
+          <v-btn color="primary" @click="doLogin" :loading="loginLoading">登陆</v-btn>
         </v-card-actions>
       </v-card>
     </v-flex>
@@ -23,17 +23,14 @@
 </template>
 
 <script>
-  import { doLogin } from '@/api/login'
-  import { Base64 } from 'js-base64'
-  import { queryInfo } from '@/api/user'
-
   export default {
     name: 'Login',
     data () {
       return {
         valid: true,
+        loginLoading: false,
         form: {
-          username: 'Jesse',
+          username: 'weishi',
           password: 'Jesse123456'
         },
         rules: {
@@ -49,12 +46,12 @@
     methods: {
       doLogin () {
         if (this.$refs.form.validate()) {
-          doLogin({
-            username: this.form.username,
-            password: Base64.encode(this.form.password)
-          }).then(() => {
-            queryInfo()
-          })
+          this.loginLoading = true
+          this.$store.dispatch('doLogin', this.form)
+            .then(() => {
+              this.loginLoading = false
+              this.$router.push('/')
+            })
         } else {
           this.$vNotice.error({
             text: '表单校验失败'
