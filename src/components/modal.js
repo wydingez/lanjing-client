@@ -4,8 +4,6 @@ import {VDialog, VBtn, VCard, VCardTitle, VCardText, VCardActions, VSpacer} from
 let dialogInstance
 
 VDialog.newInstance = properties => {
-  const _props = properties || {}
-
   const Instance = new Vue({
     components: {VDialog, VBtn, VCard, VCardTitle, VCardText, VCardActions, VSpacer},
     data () {
@@ -13,7 +11,7 @@ VDialog.newInstance = properties => {
         visible: false
       }
     },
-    render (h) {
+    render () {
       const { visible, doOk, doCancel } = this
       const { title, content } = properties
       return (

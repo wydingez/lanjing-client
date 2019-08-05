@@ -115,6 +115,7 @@
 
 <script>
   import { doTradeSale } from '@/api/trade'
+  import { getLogined } from '@/utils/auth'
 
   export default {
     name: 'HomeOrderSell',
@@ -160,6 +161,13 @@
         this.dialog = true
       },
       doSell () {
+        if (!getLogined()) {
+          // 没有登陆
+          this.$vNotice.error({
+            text: '您还没有登陆，请先登录！'
+          })
+          return false
+        }
         let flag = this.$refs.form.validate()
         if (flag) {
           doTradeSale({

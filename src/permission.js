@@ -5,7 +5,7 @@ import { getLogined } from '@/utils/auth'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
-const whiteList = ['/login', '/register']
+const whiteList = ['/login', '/register', '/']
 
 router.beforeEach((to, from, next) => {
   // start progress bar

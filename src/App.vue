@@ -209,7 +209,7 @@ export default {
     toolBarBtns () {
       let { logined } = this
       return [
-        {title: '首页', url: '/', icon: 'home', visible: logined},
+        {title: '首页', url: '/', icon: 'home', visible: true},
         {title: '登陆', url: '/login', icon: 'supervisor_account', visible: !logined}, 
         {title: '注册', url: '/register', icon: 'person_add', visible: !logined}, 
         {title: '委托', url: '/delegate', icon: 'card_travel', visible: logined}, 
@@ -231,10 +231,8 @@ export default {
         title: '登出',
         content: '确认登出吗？',
         onOk: (next) => {
-          this.$store.dispatch('doLogout').then(res => {
-            if (res.success) {
-              next()
-            }
+          this.$store.dispatch('doLogout').then(() => {
+            next()
           })
         }
       })

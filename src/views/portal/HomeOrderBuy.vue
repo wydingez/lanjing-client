@@ -113,6 +113,7 @@
 <script>
   import { doTradeBuy } from '@/api/trade'
   import { Base64 } from 'js-base64'
+  import { getLogined } from '@/utils/auth'
 
   export default {
     name: 'HomeOrderBuy',
@@ -146,6 +147,13 @@
     }),
     methods: {
       doBuy (item) {
+        if (!getLogined()) {
+          // 没有登陆
+          this.$vNotice.error({
+            text: '您还没有登陆，请先登录！'
+          })
+          return false
+        }
         this.rowClickItem = item
         this.amountPlaceholder = `1-${item.agencyAmount}`
         this.rules.amountRule[2] = value => Number(value) >=1 && Number(value) <= item.agencyAmount || `数量应该在${this.amountPlaceholder}之间`
