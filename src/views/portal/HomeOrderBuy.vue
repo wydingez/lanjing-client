@@ -93,7 +93,7 @@
           <v-btn
             color="pink"
             flat
-            @click="snackbar = false"
+            @click="linkToOrder"
           >
             确认
           </v-btn>
@@ -146,6 +146,10 @@
       rowClickItem: {}
     }),
     methods: {
+      linkToOrder () {
+        this.snackbar = false
+        this.$router.push('/order')
+      },
       doBuy (item) {
         if (!getLogined()) {
           // 没有登陆

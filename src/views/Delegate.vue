@@ -124,7 +124,7 @@
               :rules="rules.confPassRule"
               :type="passwordVisible ? 'text' : 'password'"
               label="请输入资金密码"
-              v-model="rules.password"
+              v-model="dialogInfo.password"
               @click:append="passwordVisible = !passwordVisible"
             ></v-text-field>
           </v-form>
@@ -182,7 +182,7 @@
 </template>
 
 <script>
-  import { getAgencyTop5 } from '@/api/agency'
+  import { doAgencyBuy, doAgencySale, getAgencyTop5 } from '@/api/agency'
 
   export default {
     name: 'Delegate',
@@ -218,6 +218,7 @@
           type: '',
           amount: '',
           perPrice: '',
+          password: '',
           tip: '',
           onOk: '',
           onCancel: () => {
@@ -272,8 +273,15 @@
         // 卖出操作
         let flag = this.$refs.form.validate()
         if (flag) {
-          this.dialogInfo.dialog = false
-          this.dialogInfo.successModal = true
+          doAgencySale({
+            agencyAmount: this.dialogInfo.amount,
+            agencyUnitPrice: this.dialogInfo.perPrice
+          }).then(res => {
+            if (res.success) {
+              this.dialogInfo.dialog = false
+              this.dialogInfo.successModal = true
+            }
+          })
         }
       },
       doBuy () {
@@ -282,8 +290,16 @@
         if (this.dialogInfo.showConfPass) {
           // 输入了密码，校验密码
           if (flag) {
-            this.dialogInfo.dialog = false
-            this.dialogInfo.successModal = true
+            doAgencyBuy({
+              agencyAmount: this.dialogInfo.amount,
+              agencyUnitPrice: this.dialogInfo.perPrice,
+              payPwd: this.dialogInfo.password
+            }).then(res => {
+              if (res.success) {
+                this.dialogInfo.dialog = false
+                this.dialogInfo.successModal = true
+              }
+            })
           }
         } else {
           // 校验数量，成功了才跳到输入密码页面

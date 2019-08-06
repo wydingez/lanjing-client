@@ -1,5 +1,6 @@
 import axios from 'axios'
 import notice from '_c/notice'
+import store from '../store'
 
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
@@ -18,6 +19,10 @@ service.interceptors.response.use(
       notice.error({
         text: res.msg
       })
+      if (res.code === '9999') {
+        // 没有登陆或者超时，自动消除登陆的状态记录
+        store.dispatch('doRemoveUserLogined')
+      }
       return Promise.reject(new Error('请求失败'))
     }
   },

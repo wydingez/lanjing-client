@@ -96,7 +96,7 @@
           <v-btn
             color="pink"
             flat
-            @click="snackbar = false"
+            @click="linkToOrder"
           >
             确认
           </v-btn>
@@ -146,6 +146,10 @@
       rowClickItem: {}
     }),
     methods: {
+      linkToOrder () {
+        this.snackbar = false
+        this.$router.push('/order')
+      },
       onCopy () {
         this.$vNotice.success({
           text: '复制成功'

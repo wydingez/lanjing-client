@@ -4,6 +4,7 @@
       :headers="headers"
       :ajax="ajax"
       class="elevation-1"
+      ref="vTS"
     >
       <template v-slot:items="props">
         <td>{{ getBuyTypeDesc(props.item.type) }}</td>
@@ -255,7 +256,12 @@
               this.$vNotice.success({
                 text: '收货成功'
               })
+              this.$refs.vTS.refresh()
             }
+          }).then(() => {
+            this.loading = false
+          }).catch(() => {
+            this.loading = false
           })
         } else if (type === 'delivery') {
           doDeliveryConfirm(orderNo).then(res => {
@@ -264,7 +270,12 @@
               this.$vNotice.success({
                 text: '发货成功'
               })
+              this.$refs.vTS.refresh()
             }
+          }).then(() => {
+            this.loading = false
+          }).catch(() => {
+            this.loading = false
           })
         }
       }

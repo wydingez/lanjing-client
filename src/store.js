@@ -66,11 +66,21 @@ export default new Vuex.Store({
             removeLogined()
             removeLoginInfoKey()
             
-            router.push('/login')
+            router.push('/')
             resolve()
           }
         })
       })
+    },
+    doRemoveUserLogined ({ commit }) {
+      let logined = false
+      commit('SET_LOGIN_STATE', logined)
+      commit('SET_LOGIN_USER_INFO', {})
+
+      removeLogined()
+      removeLoginInfoKey()
+      
+      router.push('/')
     }
   }
 })

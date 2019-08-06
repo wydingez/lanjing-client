@@ -56,8 +56,8 @@
                     </v-btn>
                   </span>
                   <div class="personal-info-opt">
-                    <v-btn flat color="warning" @click="setPayCode('bind')">设置</v-btn>
-                    <v-btn flat color="warning" @click="setPayCode('update')">修改</v-btn>
+                    <v-btn flat color="warning" @click="setPayCode('bind')" v-if="!form.password">设置</v-btn>
+                    <v-btn flat color="warning" @click="setPayCode('update')" v-else>修改</v-btn>
                   </div>
                 </li>
               </ul>
@@ -102,7 +102,7 @@
                 </li>
                 <li>
                   <span class="personal-info-label">⽀付宝：</span>
-                  <span class="personal-info-value">{{form.aliPay}}</span>
+                  <span class="personal-info-value">{{form.aliPay || '暂无'}}</span>
                   <div class="personal-info-opt">
                     <v-btn flat color="warning">绑定</v-btn>
                     <v-btn flat color="warning">修改</v-btn>
@@ -162,6 +162,7 @@
               v-model="cashInfo.cash"
               :label="cashInfo.text + '金额'"
               required
+              type="number"
               :rules="rules.cashRule"
             ></v-text-field>
           </v-form>
@@ -189,11 +190,10 @@
             确认{{cashInfo.text}}
           </v-btn>
           <v-btn
-            color="primary"
             flat
             @click="cashInfo.modal = false"
           >
-            取消{{cashInfo.text}}
+            取消
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -214,11 +214,6 @@
             ></v-text-field>
           </v-form>
           <p class="text-center red--text">(手机号作⽤：⽤户找回您资⾦密码)</p>
-          <!-- <blockquote class="blockquote">
-            操作提示：
-            <br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;系统随后将发送⼀条认证邮件到您的邮箱，请⾄邮箱点击认证链接，完成安全邮箱认证。
-          </blockquote> -->
         </v-card-text>
         <v-divider></v-divider>
 
@@ -232,7 +227,6 @@
             确认
           </v-btn>
           <v-btn
-            color="primary"
             flat
             @click="bindPhone.modal = false"
           >
@@ -272,14 +266,13 @@
             flat
             @click="bindEmail.doOpt"
           >
-            确认发送
+            确认
           </v-btn>
           <v-btn
-            color="primary"
             flat
             @click="bindEmail.modal = false"
           >
-            取消发送
+            取消
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -326,11 +319,10 @@
             确认设置
           </v-btn>
           <v-btn
-            color="primary"
             flat
             @click="capitalCode.modal = false"
           >
-            取消设置
+            取消
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -339,25 +331,26 @@
 </template>
 
 <script>
-  import { queryInfo } from '@/api/user'
-  import { formatMoney } from '@/utils/util'
+  import { queryInfo, doBindPhone, doBindEmail } from '@/api/user'
+  import { doBindPayPassword, doCashIn, doCashOut } from '@/api/account'
+  import { formatMoney, REGEX } from '@/utils/util'
 
   export default {
     name: 'Personal',
     data () {
       return {
         form: {
-          imgSrc: 'https://cdn.vuetifyjs.com/images/john.jpg',
-          username: 'weishi',
-          uuid: '1000001',
-          secureLevel: 'low',
-          phone: '13813813813',
-          email: '2342788232@qq.com',
-          password: '123456',
-          realName: '李军挺',
-          idCard: '420832199302938293',
-          cash: '1,000',
-          aliPay: '2342788232@qq.com',
+          imgSrc: '',
+          username: '',
+          uuid: '',
+          secureLevel: '',
+          phone: '',
+          email: '',
+          password: '',
+          realName: '',
+          idCard: '',
+          cash: '',
+          aliPay: '',
           openAccountTip: false,
           openBillTip: false,
           openDealTip: false,
@@ -369,8 +362,35 @@
           text: '',
           type: '',
           cash: '',
-          doOpt: (type) => {
-            console.log(type)
+          doOpt: () => {
+            if (this.cashInfo.type === 'cashIn') {
+              // 充值
+              doCashIn(this.cashInfo.cash)
+                .then(res => {
+                  if (res.success) {
+                    this.cashInfo.modal = false
+                    this.cashInfo.cash = ''
+                    this.$refs.cashForm.reset()
+                    this.$vNotice.success({
+                      text: '充值成功'
+                    })
+                    this.initUserInfo()
+                  }
+                })
+            } else if (this.cashInfo.type === 'cashOut') {
+              // 提现
+              doCashOut(this.cashInfo.cash)
+                .then(res => {
+                  if (res.success) {
+                    this.cashInfo.modal = false
+                    this.cashInfo.cash = ''
+                    this.$vNotice.success({
+                      text: '提现成功'
+                    })
+                    this.initUserInfo()
+                  }
+                })
+            }
             this.cashInfo.modal = false
           }
         },
@@ -379,7 +399,18 @@
           phone: '',
           type: '',
           doOpt: () => {
-            this.bindPhone.modal = false
+            doBindPhone(this.bindPhone.phone)
+              .then(res => {
+                if (res.success) {
+                  this.bindPhone.modal = false
+                  this.bindPhone.phone = ''
+                  this.$vNotice.success({
+                    text: '保存成功'
+                  })
+                  this.initUserInfo()
+                }
+              })
+            
           }
         },
         bindEmail: {
@@ -387,7 +418,17 @@
           email: '',
           type: '',
           doOpt: () => {
-            this.bindEmail.modal = false
+            doBindEmail(this.bindEmail.email)
+              .then(res => {
+                if (res.success) {
+                  this.bindEmail.modal = false
+                  this.bindEmail.email = ''
+                  this.$vNotice.success({
+                    text: '保存成功'
+                  })
+                  this.initUserInfo()
+                }
+              })
           }
         },
         capitalCode: {
@@ -395,15 +436,40 @@
           payCode: '',
           rePayCode: '',
           doOpt: () => {
-            this.capitalCode.modal = false
+            doBindPayPassword(this.capitalCode.payCode)
+              .then(res => {
+                if (res.success) {
+                  this.capitalCode.modal = false
+                  this.capitalCode.payCode = ''
+                  this.capitalCode.rePayCode = ''
+                  this.$vNotice.success({
+                    text: '保存成功'
+                  })
+                  this.initUserInfo()
+                }
+              })
           }
         },
         rules: {
-          cashRule: [],
-          phoneRules: [],
-          emailRules: [],
-          payCodeRules: [],
-          rePayCodeRules: []
+          cashRule: [
+            v => !!v && Number(v) > 0 || '请输入正确的金额'
+          ],
+          phoneRules: [
+            v => !!v || '手机号不能为空',
+            v => REGEX.phone.test(v) || '手机号格式不正确'
+          ],
+          emailRules: [
+            v => !!v || '邮箱不能为空',
+            v => REGEX.email.test(v) || '邮箱格式不正确'
+          ],
+          payCodeRules: [
+            v => !!v || '资金密码不能为空',
+            v => REGEX.password.test(v) || '资金密码格式不正确'
+          ],
+          rePayCodeRules: [
+            v => !!v || '确认金密码不能为空',
+            v => v === this.capitalCode.payCode || '两次密码不一致'
+          ]
         }
       }
     },
@@ -415,15 +481,16 @@
         this.cashInfo.cash = ''
       },
       setEmail (type) {
+        this.bindEmail.email = this.form.email
         this.bindEmail.type = type
         this.bindEmail.modal = true
       },
       setPhone (type) {
+        this.bindPhone.phone = this.form.phone
         this.bindPhone.type = type
         this.bindPhone.modal = true
       },
-      setPayCode (type) {
-        console.log(type)
+      setPayCode () {
         this.capitalCode.modal = true
       },
       computedTypeName (type) {
@@ -432,35 +499,21 @@
       initUserInfo () {
         queryInfo().then(res => {
           if (res.success) {
-            // imgSrc: 'https://cdn.vuetifyjs.com/images/john.jpg',
-            // username: 'weishi',
-            // uuid: '1000001',
-            // secureLevel: 'low',
-            // phone: '13813813813',
-            // email: '2342788232@qq.com',
-            // password: '123456',
-            // realName: '李军挺',
-            // idCard: '420832199302938293',
-            // cash: '1,000',
-            // aliPay: '2342788232@qq.com',
-            // openAccountTip: false,
-            // openBillTip: false,
-            // openDealTip: false,
-            // showPassWord: false,
-            let data = res.data
-            this.form.username = data.userName
-            this.form.uuid = data.userUuid
-            this.form.secureLevel = data.securityLevel ? data.securityLevel.toLowerCase() : ''
-            this.form.phone = data.phone
-            this.form.email = data.email
-            this.form.password = '1234567'
-            this.form.realName = ''
-            this.form.realVerify = !!data.realVerify
-            this.form.imgSrc = data.portraitPicUrl
-            this.form.cash = formatMoney(data.usableAmount)
-            this.form.openAccountTip = data.acceptAcctChangeNotify
-            this.form.openBillTip = data.acceptTradeInfoNotify
-            this.form.openDealTip =  data.acceptLatestAgencyNotify
+            let { acctInfoVO, basicInfoVO, notifySettingDO, securityInfoVO } = res.data
+            notifySettingDO = notifySettingDO || {}
+            this.form.username = basicInfoVO.userName
+            this.form.uuid = basicInfoVO.userUuid
+            this.form.secureLevel = basicInfoVO.securityLevel ? basicInfoVO.securityLevel.toLowerCase() : ''
+            this.form.phone = securityInfoVO.phone
+            this.form.email = securityInfoVO.email
+            this.form.password = securityInfoVO.payPwd
+            this.form.realName = securityInfoVO.realName
+            this.form.realVerify = !!securityInfoVO.realVerify
+            this.form.imgSrc = basicInfoVO.portraitPicUrl
+            this.form.cash = formatMoney(acctInfoVO.usableAmount)
+            this.form.openAccountTip = notifySettingDO.acceptAcctChangeNotify
+            this.form.openBillTip = notifySettingDO.acceptTradeInfoNotify
+            this.form.openDealTip =  notifySettingDO.acceptLatestAgencyNotify
           }
         })
       }

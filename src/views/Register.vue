@@ -58,6 +58,7 @@
   import country from '_d/country.json'
   import countryPhone from '_d/countryPhone.json'
   import { doUserRegister } from '@/api/user'
+  import { REGEX } from '@/utils/util'
 
   export default {
     name: 'Register',
@@ -96,15 +97,15 @@
           ],
           phoneRules: this.form.registerType === 0 ? [
             v => !!v || '手机号不能为空',
-            v => /^1[3456789]\d{9}$/.test(v) || '手机号格式不对'
+            v => REGEX.phone.test(v) || '手机号格式不对'
           ] : [],
           emailRules: this.form.registerType === 1 ? [
             v => !!v || '邮箱不能为空',
-            v => /.+@.+/.test(v) || '邮箱不合法'
+            v => REGEX.email.test(v) || '邮箱不合法'
           ] : [],
           passwordRules: [
             v => !!v || '设置密码不能为空',
-            v => /^[\w_-]{6,16}$/.test(v) || '密码格式不对：最短6位，最长16位'
+            v => REGEX.password.test(v) || '密码格式不对：最短6位，最长16位'
           ],
           rePasswordRules: [
             v => !!v || '确认密码不能为空',

@@ -9,7 +9,7 @@
       <v-toolbar-items v-if="!smallScreen">
         <v-btn flat v-for="btn in toolBarBtns.filter(item => item.visible)" :key="btn.url" :to="btn.url" color="white">{{btn.title}}</v-btn>
 
-        <v-menu offset-y v-if="logined">
+        <v-menu offset-y v-if="logined" class="personal-menu">
           <template v-slot:activator="{ on }">
             <v-btn
               color="whte"
@@ -26,9 +26,9 @@
               <v-icon dark>mdi-menu-down</v-icon>
             </v-btn>
           </template>
-          <v-list>
-            <v-list-tile @click="doLogout">
-              <v-list-tile-title>登出</v-list-tile-title>
+          <v-list class="personal-menu-list">
+            <v-list-tile @click="doLogout" class="personal-menu-list-item">
+              <v-list-tile-title>登出<v-icon class="personal-menu-list-item-icon">mdi-logout</v-icon></v-list-tile-title>
             </v-list-tile>
           </v-list>
         </v-menu>
@@ -140,6 +140,7 @@
           v-for="item in toolBarBtns.filter(item => item.visible)"
           :key="item.title"
           :to="item.url"
+          @click="item.action && item.action()"
         >
           <template v-if="item.icon">
             <v-list-tile-action>
@@ -214,7 +215,8 @@ export default {
         {title: '注册', url: '/register', icon: 'person_add', visible: !logined}, 
         {title: '委托', url: '/delegate', icon: 'card_travel', visible: logined}, 
         {title: '订单', url: '/order', icon: 'description', visible: logined}, 
-        {title: '个人中心', url: '/personal', icon: 'account_circle', visible: logined}
+        {title: '个人中心', url: '/personal', icon: 'account_circle', visible: logined},
+        {title: '退出', action: this.doLogout, icon: 'mdi-logout', visible: logined && this.$root.smallScreen}
       ]
     }
   },
@@ -280,6 +282,13 @@ $echarts-height = 300px
       }
     }
   }
+  .personal-menu-list{
+    &-item {
+      &-icon {
+        float: right;
+      }
+    }
+  }
   .container.grid-list-lg .layout .flex {
     padding: 4px 2px;
   }
@@ -290,9 +299,13 @@ $echarts-height = 300px
     .container.grid-list-lg .layout .flex {
       padding: 2px
     }
+    .my-app-toolbar {
+      .v-toolbar__title {
+        margin-left: calc(50% - 80px);
+      }
+    }
     .v-toolbar__title {
       font-size: 16px;
-      margin-left: calc(50% - 80px);
     }
     .home-echarts-container {
       height: $echarts-height;

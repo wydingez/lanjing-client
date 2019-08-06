@@ -10,3 +10,9 @@ export function formatFormData (obj = {}) {
   })
   return formData
 }
+
+export const REGEX = {
+  phone: /^1[3456789]\d{9}$/,
+  email: /.+@.+/,
+  password: /^[\w_-]{6,16}$/
+}

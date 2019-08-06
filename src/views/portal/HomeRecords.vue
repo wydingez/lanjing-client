@@ -1,10 +1,10 @@
 <template>
   <v-table-server :headers="headers" :ajax="ajax">
     <template v-slot:items="props">
-      <td>{{props.item.agencyNo}}</td>
       <td>
         <v-avatar size="36"><img :src="props.item.tradeUserPortraitUrl" :alt="props.item.name"></v-avatar>
       </td>
+      <td>{{props.item.agencyNo}}</td>
       <td class="font-weight-medium" v-html="translateDesc(props.item)"></td>
     </template>
   </v-table-server> 
@@ -15,8 +15,8 @@
     name: 'HomeOrderSell',
     data: () => ({
       headers: [
-        {text: '委托单号', value: 'agencyNo', sortable: false},
         {text: '微信头像', value: 'tradeUserPortraitUrl', sortable: false},
+        {text: '委托单号', value: 'agencyNo', sortable: false},
         {text: '交易记录', value: 'optDesc', sortable: false},
       ],
       ajax: {
