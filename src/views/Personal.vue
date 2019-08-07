@@ -104,9 +104,17 @@
                   <span class="personal-info-label">⽀付宝：</span>
                   <span class="personal-info-value">{{form.aliPay || '暂无'}}</span>
                   <div class="personal-info-opt">
-                    <v-btn flat color="warning">绑定</v-btn>
-                    <v-btn flat color="warning">修改</v-btn>
-                    <v-btn flat color="warning">设为默认</v-btn>
+                    <v-btn flat color="warning" v-if="!form.aliPay" @click="setZfb('bind')">绑定</v-btn>
+                    <v-btn flat color="warning" v-else @click="setZfb('bind')">修改</v-btn>
+                    <!-- <v-btn flat color="warning">设为默认</v-btn> -->
+                  </div>
+                </li>
+                <li>
+                  <span class="personal-info-label">银行卡号：</span>
+                  <span class="personal-info-value">{{form.bankCard || '暂无'}}</span>
+                  <div class="personal-info-opt">
+                    <v-btn flat color="warning" v-if="!form.bankCard" @click="setBankCard('bind')">绑定</v-btn>
+                    <v-btn flat color="warning" v-else @click="setBankCard('bind')">修改</v-btn>
                   </div>
                 </li>
               </ul>
@@ -122,19 +130,19 @@
                 <li>
                   <span class="personal-info-label">接收账户变动提醒</span>
                   <div class="personal-info-switch">
-                    <v-switch v-model="form.openAccountTip" :label="form.openAccountTip ? 'ON' : 'OFF'"></v-switch>
+                    <v-switch @change="changeNotify('acctChange', $event)" v-model="form.openAccountTip" :label="form.openAccountTip ? 'ON' : 'OFF'"></v-switch>
                   </div>
                 </li>
                 <li>
                   <span class="personal-info-label">接收最新挂单通知</span>
                   <div class="personal-info-switch">
-                    <v-switch v-model="form.openBillTip" :label="form.openBillTip ? 'ON' : 'OFF'"></v-switch>
+                    <v-switch @change="changeNotify('agency', $event)" v-model="form.openBillTip" :label="form.openBillTip ? 'ON' : 'OFF'"></v-switch>
                   </div>
                 </li>
                 <li>
                   <span class="personal-info-label">接收交易信息通知</span>
                   <div class="personal-info-switch">
-                    <v-switch v-model="form.openDealTip" :label="form.openDealTip ? 'ON' : 'OFF'"></v-switch>
+                    <v-switch @change="changeNotify('trade', $event)" v-model="form.openDealTip" :label="form.openDealTip ? 'ON' : 'OFF'"></v-switch>
                   </div>
                 </li>
               </ul>
@@ -205,7 +213,7 @@
         <v-card-title class="headline grey lighten-2" primary-title>{{computedTypeName(bindPhone.type)}}手机</v-card-title>
 
         <v-card-text>
-          <v-form>
+          <v-form ref="phoneForm" lazy-validation>
             <v-text-field
               v-model="bindPhone.phone"
               label="手机号"
@@ -238,7 +246,7 @@
 
     <!-- 邮箱绑定 -->
     <v-dialog v-model="bindEmail.modal" width="500" persistent>
-      <v-card>
+      <v-card ref="emailForm" lazy-validation>
         <v-card-title class="headline grey lighten-2" primary-title>{{computedTypeName(bindEmail.type)}}邮箱</v-card-title>
 
         <v-card-text>
@@ -278,13 +286,87 @@
       </v-card>
     </v-dialog>
 
+    <!-- 绑定支付宝 -->
+    <v-dialog v-model="bindZFB.modal" width="500" persistent>
+      <v-card>
+        <v-card-title class="headline grey lighten-2" primary-title>{{computedTypeName(bindZFB.type)}}支付宝</v-card-title>
+
+        <v-card-text>
+          <v-form ref="zfbForm" lazy-validation>
+            <v-text-field
+              v-model="bindZFB.zfb"
+              label="支付宝账号"
+              required
+              :rules="rules.zfbRules"
+            ></v-text-field>
+          </v-form>
+          <p class="text-center red--text">(支付宝账号：用于充值/提线操作)</p>
+        </v-card-text>
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            flat
+            @click="bindZFB.doOpt"
+          >
+            确认
+          </v-btn>
+          <v-btn
+            flat
+            @click="bindZFB.modal = false"
+          >
+            取消
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- 绑定银行卡号 -->
+    <v-dialog v-model="bindBankCard.modal" width="500" persistent>
+      <v-card>
+        <v-card-title class="headline grey lighten-2" primary-title>{{computedTypeName(bindBankCard.type)}}银行卡号 </v-card-title>
+
+        <v-card-text>
+          <v-form ref="bankCardForm" lazy-validation>
+            <v-text-field
+              v-model="bindBankCard.bankCard"
+              label="银行卡号"
+              required
+              :rules="rules.bankCardRule"
+            ></v-text-field>
+          </v-form>
+          <p class="text-center red--text">(银行卡账号：用于充值/提线操作)</p>
+        </v-card-text>
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            flat
+            @click="bindBankCard.doOpt"
+          >
+            确认
+          </v-btn>
+          <v-btn
+            flat
+            @click="bindBankCard.modal = false"
+          >
+            取消
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <!-- 设置资金密码 -->
     <v-dialog v-model="capitalCode.modal" width="500" persistent>
       <v-card>
         <v-card-title class="headline grey lighten-2" primary-title>设置资金密码</v-card-title>
 
         <v-card-text>
-          <v-form>
+          <v-form ref="payCodeForm" lazy-validation>
             <v-text-field
               v-model="capitalCode.payCode"
               label="资金密码"
@@ -331,8 +413,9 @@
 </template>
 
 <script>
-  import { queryInfo, doBindPhone, doBindEmail } from '@/api/user'
+  import { queryInfo, doBindPhone, doBindEmail, doBindZfb, doBindBankCard } from '@/api/user'
   import { doBindPayPassword, doCashIn, doCashOut } from '@/api/account'
+  import { doChangeNotify } from '@/api/setting'
   import { formatMoney, REGEX } from '@/utils/util'
 
   export default {
@@ -351,6 +434,7 @@
           idCard: '',
           cash: '',
           aliPay: '',
+          bankCard: '',
           openAccountTip: false,
           openBillTip: false,
           openDealTip: false,
@@ -363,35 +447,37 @@
           type: '',
           cash: '',
           doOpt: () => {
-            if (this.cashInfo.type === 'cashIn') {
-              // 充值
-              doCashIn(this.cashInfo.cash)
-                .then(res => {
-                  if (res.success) {
-                    this.cashInfo.modal = false
-                    this.cashInfo.cash = ''
-                    this.$refs.cashForm.reset()
-                    this.$vNotice.success({
-                      text: '充值成功'
-                    })
-                    this.initUserInfo()
-                  }
-                })
-            } else if (this.cashInfo.type === 'cashOut') {
-              // 提现
-              doCashOut(this.cashInfo.cash)
-                .then(res => {
-                  if (res.success) {
-                    this.cashInfo.modal = false
-                    this.cashInfo.cash = ''
-                    this.$vNotice.success({
-                      text: '提现成功'
-                    })
-                    this.initUserInfo()
-                  }
-                })
+            if (this.doFormValidate('cash')) {
+              if (this.cashInfo.type === 'cashIn') {
+                // 充值
+                doCashIn(this.cashInfo.cash)
+                  .then(res => {
+                    if (res.success) {
+                      this.cashInfo.modal = false
+                      this.cashInfo.cash = ''
+                      
+                      this.$vNotice.success({
+                        text: '充值成功'
+                      })
+                      this.initUserInfo()
+                    }
+                  })
+              } else if (this.cashInfo.type === 'cashOut') {
+                // 提现
+                doCashOut(this.cashInfo.cash)
+                  .then(res => {
+                    if (res.success) {
+                      this.cashInfo.modal = false
+                      this.cashInfo.cash = ''
+                      this.$vNotice.success({
+                        text: '提现成功'
+                      })
+                      this.initUserInfo()
+                    }
+                  })
+              }
+              this.cashInfo.modal = false
             }
-            this.cashInfo.modal = false
           }
         },
         bindPhone: {
@@ -399,18 +485,19 @@
           phone: '',
           type: '',
           doOpt: () => {
-            doBindPhone(this.bindPhone.phone)
-              .then(res => {
-                if (res.success) {
-                  this.bindPhone.modal = false
-                  this.bindPhone.phone = ''
-                  this.$vNotice.success({
-                    text: '保存成功'
-                  })
-                  this.initUserInfo()
-                }
-              })
-            
+            if (this.doFormValidate('phone')) {
+              doBindPhone(this.bindPhone.phone)
+                .then(res => {
+                  if (res.success) {
+                    this.bindPhone.modal = false
+                    this.bindPhone.phone = ''
+                    this.$vNotice.success({
+                      text: '保存成功'
+                    })
+                    this.initUserInfo()
+                  }
+                })
+            }
           }
         },
         bindEmail: {
@@ -418,17 +505,59 @@
           email: '',
           type: '',
           doOpt: () => {
-            doBindEmail(this.bindEmail.email)
-              .then(res => {
-                if (res.success) {
-                  this.bindEmail.modal = false
-                  this.bindEmail.email = ''
-                  this.$vNotice.success({
-                    text: '保存成功'
-                  })
-                  this.initUserInfo()
-                }
-              })
+            if (this.doFormValidate('email')) {
+              doBindEmail(this.bindEmail.email)
+                .then(res => {
+                  if (res.success) {
+                    this.bindEmail.modal = false
+                    this.bindEmail.email = ''
+                    this.$vNotice.success({
+                      text: '保存成功'
+                    })
+                    this.initUserInfo()
+                  }
+                })
+            }
+          }
+        },
+        bindZFB: {
+          modal: false,
+          zfb: '',
+          type: '',
+          doOpt: () => {
+            if (this.doFormValidate('zfb')) {
+              doBindZfb(this.bindZFB.zfb)
+                .then(res => {
+                  if (res.success) {
+                    this.bindZFB.modal = false
+                    this.bindZFB.zfb = ''
+                    this.$vNotice.success({
+                      text: '保存成功'
+                    })
+                    this.initUserInfo()
+                  }
+                })
+            }
+          }
+        },
+        bindBankCard: {
+          modal: false,
+          bankCard: '',
+          type: '',
+          doOpt: () => {
+            if (this.doFormValidate('bankCard')) {
+              doBindBankCard(this.bindBankCard.bankCard)
+                .then(res => {
+                  if (res.success) {
+                    this.bindBankCard.modal = false
+                    this.bindBankCard.bankCard = ''
+                    this.$vNotice.success({
+                      text: '保存成功'
+                    })
+                    this.initUserInfo()
+                  }
+                })
+            }
           }
         },
         capitalCode: {
@@ -436,18 +565,20 @@
           payCode: '',
           rePayCode: '',
           doOpt: () => {
-            doBindPayPassword(this.capitalCode.payCode)
-              .then(res => {
-                if (res.success) {
-                  this.capitalCode.modal = false
-                  this.capitalCode.payCode = ''
-                  this.capitalCode.rePayCode = ''
-                  this.$vNotice.success({
-                    text: '保存成功'
-                  })
-                  this.initUserInfo()
-                }
-              })
+            if (this.doFormValidate('payCode')) {
+              doBindPayPassword(this.capitalCode.payCode)
+                .then(res => {
+                  if (res.success) {
+                    this.capitalCode.modal = false
+                    this.capitalCode.payCode = ''
+                    this.capitalCode.rePayCode = ''
+                    this.$vNotice.success({
+                      text: '保存成功'
+                    })
+                    this.initUserInfo()
+                  }
+                })
+            }
           }
         },
         rules: {
@@ -469,21 +600,50 @@
           rePayCodeRules: [
             v => !!v || '确认金密码不能为空',
             v => v === this.capitalCode.payCode || '两次密码不一致'
+          ],
+          zfbRules: [
+            v => !!v || '支付宝账号不能为空'
+          ],
+          bankCardRule: [
+            v => !!v || '银行卡号不能为空'
           ]
         }
       }
     },
     methods: {
+      changeNotify (type, flag) {
+        doChangeNotify(type, flag)
+      },
+      doFormValidate (name) {
+        if (!this.$refs[name + 'Form'].validate()) {
+          // 表单校验失败
+          this.$vNotice.error({
+            text: '表单校验失败'
+          })
+          return false
+        }
+        return true
+      },
       doCashModal (type) {
         this.cashInfo.modal = true
         this.cashInfo.type = type
         this.cashInfo.text = type === 'cashIn' ? '充值' : '提现'
-        this.cashInfo.cash = ''
+        this.$refs.cashForm.reset()
       },
       setEmail (type) {
         this.bindEmail.email = this.form.email
         this.bindEmail.type = type
         this.bindEmail.modal = true
+      },
+      setZfb (type) {
+        this.bindZFB.email = this.form.aliPay
+        this.bindZFB.type = type
+        this.bindZFB.modal = true
+      },
+      setBankCard (type) {
+        this.bindBankCard.bankCard = this.form.bankCard
+        this.bindBankCard.type = type
+        this.bindBankCard.modal = true
       },
       setPhone (type) {
         this.bindPhone.phone = this.form.phone
@@ -496,10 +656,14 @@
       computedTypeName (type) {
         return type === 'bind' ? '绑定' : '修改'
       },
+      findBindTypeValue (obj = [], key) {
+        let find = obj.find(item => item.bindType === key)
+        return find && find.bindAcct
+      },
       initUserInfo () {
         queryInfo().then(res => {
           if (res.success) {
-            let { acctInfoVO, basicInfoVO, notifySettingDO, securityInfoVO } = res.data
+            let { acctBindInfoVO, acctInfoVO, basicInfoVO, notifySettingDO, securityInfoVO } = res.data
             notifySettingDO = notifySettingDO || {}
             this.form.username = basicInfoVO.userName
             this.form.uuid = basicInfoVO.userUuid
@@ -511,6 +675,8 @@
             this.form.realVerify = !!securityInfoVO.realVerify
             this.form.imgSrc = basicInfoVO.portraitPicUrl
             this.form.cash = formatMoney(acctInfoVO.usableAmount)
+            this.form.aliPay = this.findBindTypeValue(acctBindInfoVO, 'ZFB')
+            this.form.bankCard = this.findBindTypeValue(acctBindInfoVO, 'BANKCARD')
             this.form.openAccountTip = notifySettingDO.acceptAcctChangeNotify
             this.form.openBillTip = notifySettingDO.acceptTradeInfoNotify
             this.form.openDealTip =  notifySettingDO.acceptLatestAgencyNotify

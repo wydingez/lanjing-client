@@ -120,7 +120,7 @@
           )
         })
 
-        let pages = this.pagination.rowsPerPage ? Math.ceil(this.totalItems / this.pagination.rowsPerPage) : 0
+        let pages = this.pagination && this.pagination.rowsPerPage ? Math.ceil(this.totalItems / this.pagination.rowsPerPage) : 0
         let tableFooter = (
           <div class="text-xs-center">
             <v-pagination
@@ -135,11 +135,9 @@
         tableDefine = (
           <div class={['v-table-phone']}>
             {rows}
-            {this.hideActions ? '' : tableFooter}
+            {this.hideActions && this.pagination ? '' : tableFooter}
           </div>
         )
-
-
 
         return tableDefine
       }

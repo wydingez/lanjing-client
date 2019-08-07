@@ -144,11 +144,10 @@
             {{'确认委托' + dialogInfo.title}}
           </v-btn>
           <v-btn
-            color="primary"
             flat
             @click="dialogInfo.onCancel"
           >
-            取消委托
+            取消
           </v-btn>
         </v-card-actions>
       </v-card>

@@ -45,8 +45,15 @@ export const doBindPhone = (phone) =>
   })
 
 /** 绑定支付宝 */
-export const doBindZFB = (zfb) =>
+export const doBindZfb = (zfb) =>
   request({
     url: `/user/bind/zfb/${zfb}`,
+    method: 'post'
+  })
+
+/** 绑定银行卡号 */
+export const doBindBankCard = (bankcard) =>
+  request({
+    url: `/user/bind/bankCard/${bankcard}`,
     method: 'post'
   })

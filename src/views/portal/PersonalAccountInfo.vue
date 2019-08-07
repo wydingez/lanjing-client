@@ -70,14 +70,14 @@
       </div>
 
       <div class="account-info-list">
-        <v-table :headers="headers" :items="items">
+        <v-table-server :headers="headers" :ajax="ajax">
           <template v-slot:items="props">
-            <td>{{props.item.no}}</td>
-            <td>{{props.item.type}}</td>
-            <td>{{props.item.amount}} ￥/个</td>
+            <td>{{props.item.streamNo}}</td>
+            <td>{{props.item.streamType}}</td>
+            <td>{{props.item.streamAmount}}</td>
             <td>{{props.item.status}}</td>
           </template>
-        </v-table>
+        </v-table-server>
       </div>
     </v-card-text>
   </v-card>
@@ -91,18 +91,14 @@
         date: new Date().toISOString().substr(0, 10),
         modal: false,
         headers: [
-          {text: '流水号', value: 'no', sortable: false},
-          {text: '类型', value: 'type'},
-          {text: '金额', value: 'amount', sortable: false},
+          {text: '流水号', value: 'streamNo', sortable: false},
+          {text: '类型', value: 'streamType'},
+          {text: '金额', value: 'streamAmount', sortable: false},
           {text: '状态', value: 'status', sortable: false}
         ],
-        items: [
-          {no: '2019072011112542', type: '⽀出', amount: 1000, status: '完成'},
-          {no: '2019072011112543', type: '收入', amount: 1000, status: '完成'},
-          {no: '2019072011112544', type: '充值', amount: 1000, status: '审核中/汇款中/完成/失败'},
-          {no: '2019072011112545', type: '提现', amount: 1000, status: '审核中/汇款中/完成/失败'},
-          {no: '2019072011112546', type: '充值', amount: 1000, status: '审核中/汇款中/完成/失败'}
-        ]
+        ajax: {
+          url: '/acct/fund/list'
+        }
       }
     }
   }

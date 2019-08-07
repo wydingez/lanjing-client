@@ -98,10 +98,10 @@
           // 提交操作
           this.loading = true
           doRealnameAuth(formatFormData({
-            realNameFrontPicUrl: this.form.idCardImgFFile,
-            realNameBackPicUrl: this.form.idCardImgBFile,
-            realName: this.form.name,
-            idCard: this.form.idCard
+            frontPic: this.form.idCardImgFFile,
+            backPic: this.form.idCardImgBFile,
+            applyName: this.form.name,
+            applyIdCard: this.form.idCard
           })).then(res => {
             console.log(res)
           })
