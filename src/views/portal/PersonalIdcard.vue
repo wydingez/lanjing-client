@@ -49,7 +49,7 @@
         <v-btn
           to="/personal"
         >
-          取消认证
+          取消
         </v-btn>
       </v-form>
     </v-card-text>
@@ -103,7 +103,13 @@
             applyName: this.form.name,
             applyIdCard: this.form.idCard
           })).then(res => {
-            console.log(res)
+            if (res.success) {
+              this.$$vNotice.success({
+                text: '提交认证成功'
+              })
+              this.$router.push('/personal')
+            }
+            this.loading = false
           })
         } else {
           this.$vNotice.error({
