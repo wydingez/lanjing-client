@@ -52,7 +52,7 @@
     >
       <v-layout row wrap>
         <v-flex xs12>
-          <div class="text-xs-center pa-2">
+          <div class="text-xs-center pa-3">
             <span class="headline">蓝晶交换平台</span>——<span class="body-2">坚果网络出品</span>
           </div>
         </v-flex>
@@ -101,7 +101,7 @@
           </div>
         </v-flex>
         <v-flex xs12>
-          <div class="text-xs-center pa-1 body-1">
+          <div class="text-xs-center pa-3 body-1">
             Copyright 2018-2019 All right reserved 版权所有：嘉兴市坚果网络科技有限公司 浙ICP备16034800号-1
           </div>
         </v-flex>

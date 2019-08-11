@@ -81,10 +81,11 @@
           {
             label: '手机注册',
             type: 'phone'
-          }, {
-            label: '邮箱注册',
-            type: 'email'
           }
+          // }, {
+          //   label: '邮箱注册',
+          //   type: 'email'
+          // }
         ],
         registerLoading: false
       }

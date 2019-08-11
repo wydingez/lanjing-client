@@ -663,8 +663,8 @@
       initUserInfo () {
         queryInfo().then(res => {
           if (res.success) {
-            let { acctBindInfoVO, acctInfoVO, basicInfoVO, notifySettingDO, securityInfoVO } = res.data
-            notifySettingDO = notifySettingDO || {}
+            let { acctBindInfoVO, acctInfoVO, basicInfoVO, notifySettingVO, securityInfoVO } = res.data
+            notifySettingVO = notifySettingVO || {}
             this.form.username = basicInfoVO.userName
             this.form.uuid = basicInfoVO.userUuid
             this.form.secureLevel = basicInfoVO.securityLevel ? basicInfoVO.securityLevel.toLowerCase() : ''
@@ -677,9 +677,9 @@
             this.form.cash = formatMoney(acctInfoVO.usableAmount)
             this.form.aliPay = this.findBindTypeValue(acctBindInfoVO, 'ZFB')
             this.form.bankCard = this.findBindTypeValue(acctBindInfoVO, 'BANKCARD')
-            this.form.openAccountTip = notifySettingDO.acceptAcctChangeNotify
-            this.form.openBillTip = notifySettingDO.acceptTradeInfoNotify
-            this.form.openDealTip =  notifySettingDO.acceptLatestAgencyNotify
+            this.form.openAccountTip = notifySettingVO.acceptAcctChangeNotify
+            this.form.openBillTip = notifySettingVO.acceptAgencyNotify
+            this.form.openDealTip =  notifySettingVO.acceptTradeNotify
           }
         })
       }

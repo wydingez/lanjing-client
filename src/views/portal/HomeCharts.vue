@@ -8,6 +8,7 @@
   import 'echarts/lib/chart/line'
   import 'echarts/lib/component/tooltip'
   import 'echarts/lib/component/graphic'
+  import { queryDailyTrade } from '@/api/trade'
 
   // https://www.echartsjs.com/examples/editor.html?c=mix-line-bar 参考例子
   // 右边纵坐标 交易量  左边纵坐标价格 / 一个竖条 时间为一天 / 默认显示15天的一个走势 / 柱形就保留一个参数的柱形  在上面加一个折线    柱形表示交易量  折线表示价格
@@ -17,14 +18,13 @@
     components: {
       'v-chart': ECharts
     },
-    watch: {
-      '$root.smallScreen': {
-        handler (small) {
-          this.$set(this.options, 'grid', small ? { left: '15%', right: '15%'} : { left: '5%', right: '5%' })
-          this.$set(this.options.graphic[0].children[0], 'shape', small ? { width: 120, height: 60 } : { width: 190, height: 90 })
-          this.$set(this.options.graphic[0], 'shape', small ? { width: 120, height: 60 } : { width: 190, height: 90 })
-        },
-        immediate: true
+    data () {
+      return {
+        latestTradePrice: '',
+        totalTradeQuantities: '',
+        xLabel: Array(24).fill(':00').map((i, idx) => `${idx < 10 ? '0' + idx : idx}${i}`),
+        avgList: Array(24).fill(0),
+        totalList: Array(24).fill(0)
       }
     },
     computed: {
@@ -58,8 +58,8 @@
           graphic: [
             {
               type: 'group',
-              left: small ? '18%' : '8%',
-              top: small ? '24%' : '20%',
+              left: small ? '15%' : '5%',
+              top: small ? '20%' : '15%',
               children: [
                 {
                   type: 'rect',
@@ -86,11 +86,11 @@
                   left: 'center',
                   top: 'middle',
                   style: {
-                    fill: '#333',
+                    fill: 'red',
                     text: [
                       '最新交易数据',
-                      '今日成交数量：50k',
-                      '当前成交价格：0.45'
+                      `今日成交量：${this.totalTradeQuantities}千个`,
+                      `当前成交价格：${this.latestTradePrice}元`
                     ].join('\n'),
                     font: `${small ? 12 : 14}px Microsoft YaHei`
                   }
@@ -101,7 +101,7 @@
           xAxis: [
             {
               type: 'category',
-              data: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+              data: this.xLabel,
               axisPointer: {
                 type: 'shadow'
               }
@@ -112,7 +112,6 @@
               type: 'value',
               name: '交易量（千个）',
               min: 0,
-              max: 250,
               interval: 50,
               axisLabel: {
                 formatter: '{value}'
@@ -122,7 +121,6 @@
               type: 'value',
               name: '成交价格（元）',
               min: 0,
-              max: 25,
               interval: 5,
               axisLabel: {
                 formatter: '{value}'
@@ -131,18 +129,36 @@
           ],
           series: [
             {
-              name:'交易量（千个）',
-              type:'bar',
-              data:[2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3]
+              name: '交易量（千个）',
+              type: 'bar',
+              data: this.totalList
             },
             {
-              name:'成交价格（元）',
-              type:'line',
+              name: '成交价格（元）',
+              type: 'line',
               yAxisIndex: 1,
-              data:[2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
+              data: this.avgList
             }
           ]
         }
+      }
+    },
+    mounted () {
+      this.initData()
+    },
+    methods: {
+      initData () {
+        queryDailyTrade().then((res) => {
+          if (res.success) {
+            this.latestTradePrice = res.data.latestTradePrice
+            this.totalTradeQuantities = res.data.totalTradeQuantities
+            res.data.periodByHour.forEach((item) => {
+              let index = Number(item.periodHour)
+              this.$set(this.avgList, index, item.avgTradePrice)
+              this.$set(this.totalList, index, item.totalTradeQuantities)
+            })
+          }
+        })
       }
     }
   }

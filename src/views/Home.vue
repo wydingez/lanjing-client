@@ -5,7 +5,8 @@
         <v-carousel-item
           v-for="(item,i) in carouselItems"
           :key="i"
-          :src="item.src">
+          :src="item.src"
+          :position="$root.smallScreen ? 'top left' : 'top center'">
         </v-carousel-item>
       </v-carousel>
     </v-layout>
@@ -119,10 +120,11 @@
           {key: 'sell', label: '我要卖', icon: 'input'}
         ],
         carouselItems: [
-          {src: 'static/bg1.jpg'},
-          {src: 'static/bg2.jpg'},
-          {src: 'static/bg3.jpg'},
-          {src: 'static/bg4.jpg'}
+          // {src: 'static/bg1.jpg'},
+          // {src: 'static/bg2.jpg'},
+          // {src: 'static/bg3.jpg'},
+          // {src: 'static/bg4.jpg'},
+          {src: 'static/bg5.jpg'}
           // {src: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg'},
           // {src: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg'},
           // {src: 'https://cdn.vuetifyjs.com/images/carousel/bird.jpg'},

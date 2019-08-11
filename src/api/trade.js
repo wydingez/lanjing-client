@@ -25,3 +25,9 @@ export const doReceiveConfirm = (tradeNo) =>
     url: `/trade/take-confirm/${tradeNo}`,
     method: 'post'
   })
+
+export const queryDailyTrade = () =>
+  request({
+    url: '/statistic/trade',
+    method: 'get'
+  })
