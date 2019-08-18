@@ -69,7 +69,7 @@
 
                 <v-list-tile-action>
                   <v-list-tile-action-text>
-                    <span class="warning--text">{{ item.type === 'SELL' ? '卖出' : '买入' }}&nbsp;<kbd>{{ item.amount }}</kbd>个</span>
+                    <span class="warning--text">{{ item.type === 'SELL' ? '转赠' : '接收' }}&nbsp;<kbd>{{ item.amount }}</kbd>个</span>
                   </v-list-tile-action-text>
                 </v-list-tile-action>
               </v-list-tile>
@@ -174,7 +174,7 @@
       generateInfo (item, index) {
         let {wx, time, type, amount} = item
         index = index + 1
-        type = type === 'sell' ? '卖出' : '买入'
+        type = type === 'sell' ? '转赠' : '接收'
         return `${index}. <kbd>${wx}</kbd>于<kbd>${time}</kbd><kbd>${type}</kbd><kbd>${amount}</kbd>`
       },
       getStatusDesc (status) {
@@ -217,10 +217,10 @@
         let desc = ''
         switch (type) {
           case 'SALE':
-            desc = '卖出'
+            desc = '转赠'
             break
           case 'BUY':
-            desc = '购买'
+            desc = '购接收'
             break
         }
         return desc
@@ -231,11 +231,11 @@
         if (type === 'receive') {
           this.confirmInfo.modal = true
           this.confirmInfo.title = '收收货'
-          this.confirmInfo.tip = '点击确认后，系统⾃动将资⾦转⼊卖⽅账户'
+          this.confirmInfo.tip = '点击确认后，系统⾃动将资⾦转⼊转赠⽅账户'
         } else if (type === 'delivery') {
           this.confirmInfo.modal = true
           this.confirmInfo.title = '发货'
-          this.confirmInfo.tip = '点击确认后，系统⾃动将货币转⼊卖⽅账户'
+          this.confirmInfo.tip = '点击确认后，系统⾃动将货币转⼊转赠⽅账户'
         } else if (type === 'detail') {
           this.detailInfo.modal = true
           getAgencyDetail(item.orderNo).then(res => {

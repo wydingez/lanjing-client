@@ -194,8 +194,8 @@
         items: [
           {
             type: 'sell',
-            name: '前五卖单',
-            btnText: '我要委托卖',
+            name: '前五转赠单',
+            btnText: '我要委托转赠',
             btnClick: (type) => {
               this.doOrder(type)
             },
@@ -203,8 +203,8 @@
           },
           {
             type: 'buy',
-            name: '前五买单',
-            btnText: '我要委托买',
+            name: '前五接收单',
+            btnText: '我要委托接收',
             btnClick: (type) => {
               this.doOrder(type)
             },
@@ -251,25 +251,25 @@
         this.dialogInfo.perPrice = ''
         this.dialogInfo.showConfPass = false
         if (type === 'sell') {
-          this.dialogInfo.title = '卖出'
+          this.dialogInfo.title = '转赠'
           this.dialogInfo.tip = `
             <blockquote class="blockquote" style="padding: 0">
-              委托卖出提醒：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;委托卖出前请确认您的蓝晶社账号中<span class="red--text font-weight-bold">蓝晶数量充足</span>，以保证能够正常完成交易。一旦发现卖方谎报数据，平台将记录个人诚信档案，在一段时间内禁止登陆平台。谢谢合作！
+              委托转赠提醒：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;委托转赠前请确认您的蓝晶社账号中<span class="red--text font-weight-bold">蓝晶数量充足</span>，以保证能够正常完成交易。一旦发现转赠方谎报数据，平台将记录个人诚信档案，在一段时间内禁止登陆平台。谢谢合作！
             </blockquote>
           `
           this.dialogInfo.onOk = this.doSell
         } else {
-          this.dialogInfo.title = '买入',
+          this.dialogInfo.title = '接收',
           this.dialogInfo.tip = `
             <blockquote class="blockquote" style="padding: 0">
-              委托买入提醒：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;委托买入前请确认您的现金账户中<span class="red--text font-weight-bold">余额充足</span>，以保证能够正常完成交易。一旦确认委托买入，系统自动冻结相应数目的金额，直至交易完成或者委托买入被取消
+              委托接收提醒：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;委托接收前请确认您的现金账户中<span class="red--text font-weight-bold">余额充足</span>，以保证能够正常完成交易。一旦确认委托接收，系统自动冻结相应数目的金额，直至交易完成或者委托接收被取消
             </blockquote>
           `
           this.dialogInfo.onOk = this.doBuy
         }
       },
       doSell () {
-        // 卖出操作
+        // 转赠操作
         let flag = this.$refs.form.validate()
         if (flag) {
           doAgencySale({
@@ -284,7 +284,7 @@
         }
       },
       doBuy () {
-        // 买入操作
+        // 接收操作
         let flag = this.$refs.form.validate()
         if (this.dialogInfo.showConfPass) {
           // 输入了密码，校验密码

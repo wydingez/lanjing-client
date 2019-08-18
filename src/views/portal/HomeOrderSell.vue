@@ -15,14 +15,14 @@
                 <v-icon>input</v-icon>
               </v-btn>
             </template>
-            <span>卖出</span>
+            <span>转赠</span>
           </v-tooltip>
         </td>
       </template>
     </v-table-server>
     <v-dialog v-model="dialog" width="500" persistent>
       <v-card>
-        <v-card-title class="headline grey lighten-2" primary-title>卖出</v-card-title>
+        <v-card-title class="headline grey lighten-2" primary-title>转赠</v-card-title>
 
         <v-card-text>
           <v-form
@@ -41,7 +41,7 @@
           <p>锁定的有效剩余时间：598秒</p>
 
           <blockquote class="blockquote" style="padding: 0">
-            卖出提醒：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;卖出前确认您的<span class="red--text font-weight-bold">蓝晶数量充足</span>，一旦确认卖出，请在10分钟内转赠蓝晶至卖方家的蓝晶社账号。然后至<span class="red--text font-weight-bold">【订单】中确认转出</span>，否则交易自动撤销
+            转赠提醒：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;转赠前确认您的<span class="red--text font-weight-bold">蓝晶数量充足</span>，一旦确认转赠，请在10分钟内转赠蓝晶至转赠方家的蓝晶社账号。然后至<span class="red--text font-weight-bold">【订单】中确认转出</span>，否则交易自动撤销
           </blockquote>
         </v-card-text>
 
@@ -54,7 +54,7 @@
             flat
             @click="doSell"
           >
-            确认卖出
+            确认转赠
           </v-btn>
           <v-btn
             color="primary"
@@ -69,9 +69,9 @@
 
     <v-dialog v-model="snackbar" width="500" persistent>
       <v-card>
-        <v-card-title class="headline grey lighten-2" primary-title>确认卖出</v-card-title>
+        <v-card-title class="headline grey lighten-2" primary-title>确认转赠</v-card-title>
         <v-card-text>
-          <blockquote class="blockquote" style="padding: 0">确认卖出成功，先打开蓝晶社APP转赠蓝晶至：</blockquote>
+          <blockquote class="blockquote" style="padding: 0">确认转赠成功，先打开蓝晶社APP转赠蓝晶至：</blockquote>
           <p>
             手机号：{{buyerInfo.phone}}
              <v-btn

@@ -25,7 +25,7 @@
     }),
     methods: {
       translateDesc ({tradeDate, tradeType, tradeQuantity}) {
-        let sellType = tradeType === 'SALE' ? '售出' : '购入'
+        let sellType = tradeType === 'SALE' ? '转赠' : '接收'
         return `
           <div>
             于<kbd class="warning">${tradeDate}</kbd> ${sellType} <kbd class="warning">${tradeQuantity}</kbd>个

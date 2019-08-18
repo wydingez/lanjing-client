@@ -88,7 +88,7 @@
                   style: {
                     fill: 'black',
                     text: [
-                      '最新交易数据',
+                      '最新转赠数据',
                       `今日成交量：${this.totalTradeQuantities}千个`,
                       `当前成交价格：${this.latestTradePrice}元`
                     ].join('\n'),

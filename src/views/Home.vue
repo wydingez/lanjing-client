@@ -20,7 +20,7 @@
           <v-flex xs12>
             <v-card color="transparent darken-2">
               <v-card-title class="primary white--text">
-                <div class="title">交易数据</div>
+                <div class="title">转赠数据</div>
               </v-card-title>
               <v-divider light></v-divider>
               <div class="home-echarts-container">
@@ -116,8 +116,8 @@
       return {
         selectOrder: null,
         orderInfo: [
-          {key: 'buy', label: '我要买', icon: 'add_shopping_cart'}, 
-          {key: 'sell', label: '我要卖', icon: 'input'}
+          {key: 'buy', label: '我要接收', icon: 'add_shopping_cart'}, 
+          {key: 'sell', label: '我要转赠', icon: 'input'}
         ],
         carouselItems: [
           // {src: 'static/bg1.jpg'},
