@@ -26,7 +26,7 @@
               </v-list-tile>
               <v-list-tile v-for="item in item.list" :key="item.agencyNo">
                 <v-list-tile-content>{{item.agencyAmount}}</v-list-tile-content>
-                <v-list-tile-content class="align-end">￥ {{ item.agencyAmount * item.agencyUnitPrice }}</v-list-tile-content>
+                <v-list-tile-content class="align-end">￥ {{ item.agencyUnitPrice }}</v-list-tile-content>
               </v-list-tile>
               <v-list-tile>
                 <v-btn block color="warning" dark @click="item.btnClick(item.type)">{{ item.btnText }}</v-btn>
@@ -75,7 +75,7 @@
                       </v-list-tile>
                       <v-list-tile v-for="item in item.list" :key="item.id">
                         <v-list-tile-content>{{item.agencyAmount}}</v-list-tile-content>
-                        <v-list-tile-content class="align-end">￥ {{ item.agencyAmount * item.agencyUnitPrice }}</v-list-tile-content>
+                        <v-list-tile-content class="align-end">￥ {{ item.agencyUnitPrice }}</v-list-tile-content>
                       </v-list-tile>
                       <v-list-tile>
                         <v-btn block color="warning" dark @click="item.btnClick(item.type)">{{ item.btnText }}</v-btn>
@@ -314,8 +314,8 @@
       initTop5 () {
         getAgencyTop5().then(res => {
           if (res.success) {
-            this.items[0].list = res.data.top5AgengcySalelist
-            this.items[1].list = res.data.top5AgengcyBuylist
+            this.items[0].list = res.data.top5AgencySalelist
+            this.items[1].list = res.data.top5AgencyBuylist
           }
         })
       }

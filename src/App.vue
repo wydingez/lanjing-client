@@ -97,7 +97,7 @@
         <v-flex sm3 xs4 pa-3 class="row2 row2-3">
           <div class="row2-subscription">
             <span class="row2-subscription-title">微信公众号</span>
-            <v-img src="static/subscription.bmp" :height="80" :width="80" class="row2-subscription-img"></v-img>
+            <img src="static/subscription.bmp" :height="80" :width="80" class="row2-subscription-img"/>
           </div>
         </v-flex>
         <v-flex xs12>

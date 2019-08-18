@@ -59,6 +59,7 @@
   import countryPhone from '_d/countryPhone.json'
   import { doUserRegister } from '@/api/user'
   import { REGEX } from '@/utils/util'
+  import { Base64 } from 'js-base64'
 
   export default {
     name: 'Register',
@@ -133,13 +134,18 @@
       },
       doRegister () {
         if (this.form.valid) {
+          this.registerLoading = true
           doUserRegister({
             loginName: this.form.username,
-            password: this.form.pwd,
+            pwd: Base64.encode(this.form.password),
             phone: this.form.registerType === 0 ? this.form.phone : '',
             emial: this.form.registerType === 1 ? this.form.email : ''
           }).then(res => {
-            console.log(res)
+            if (res.succcess) {
+              this.$vNotice.succcess('注册成功')
+              this.$router.push('/login')
+            }
+            this.registerLoading = false
           })
         } else {
           this.$vNotice.error('表单校验失败')

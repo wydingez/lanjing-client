@@ -86,7 +86,7 @@
                   left: 'center',
                   top: 'middle',
                   style: {
-                    fill: 'red',
+                    fill: 'black',
                     text: [
                       '最新交易数据',
                       `今日成交量：${this.totalTradeQuantities}千个`,

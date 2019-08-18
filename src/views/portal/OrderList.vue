@@ -69,7 +69,7 @@
 
                 <v-list-tile-action>
                   <v-list-tile-action-text>
-                    <span class="warning--text">{{ item.type === 'sell' ? '卖出' : '买入' }}&nbsp;<kbd>{{ item.amount }}</kbd>个</span>
+                    <span class="warning--text">{{ item.type === 'SELL' ? '卖出' : '买入' }}&nbsp;<kbd>{{ item.amount }}</kbd>个</span>
                   </v-list-tile-action-text>
                 </v-list-tile-action>
               </v-list-tile>
@@ -95,6 +95,7 @@
 
 <script>
   import { doDeliveryConfirm, doReceiveConfirm } from '@/api/trade'
+  import { getAgencyDetail } from '@/api/agency'
 
   export default {
     name: 'order-list',
@@ -116,12 +117,7 @@
         },
         detailInfo: {
           modal: false,
-          details: [
-            {wx: 'zhagnsan', time: '2019-07-21 17:34:00', type: 'sell', amount: 1000},
-            {wx: 'lishi', time: '2019-07-22 17:00:00', type: 'sell', amount: 500},
-            {wx: 'wangwu', time: '2019-07-22 17:34:00', type: 'sell', amount: 100},
-            {wx: 'zhaoliu', time: '2019-07-21 17:34:00', type: 'sell', amount: 50}
-          ]
+          details: []
         },
         btns: [
           {
@@ -241,8 +237,20 @@
           this.confirmInfo.title = '发货'
           this.confirmInfo.tip = '点击确认后，系统⾃动将货币转⼊卖⽅账户'
         } else if (type === 'detail') {
-          //
           this.detailInfo.modal = true
+          getAgencyDetail(item.orderNo).then(res => {
+            if (res.success) {
+              this.details = res.data.map(i => {
+                // {wx: 'zhagnsan', time: '2019-07-21 17:34:00', type: 'sell', amount: 1000}
+                return {
+                  wx: i.tradeUser,
+                  time: i.tradeDate,
+                  type: i.tradeType,
+                  amount: i.tradeQuantity
+                }
+              })
+            }
+          })
         }
       },
       doOpt () {

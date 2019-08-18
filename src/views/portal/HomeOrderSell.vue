@@ -69,9 +69,9 @@
 
     <v-dialog v-model="snackbar" width="500" persistent>
       <v-card>
-        <v-card-title class="headline grey lighten-2" primary-title>卖出成功</v-card-title>
+        <v-card-title class="headline grey lighten-2" primary-title>确认卖出</v-card-title>
         <v-card-text>
-          <blockquote class="blockquote" style="padding: 0">确认购买成功，先打开蓝晶社APP转赠蓝晶至：</blockquote>
+          <blockquote class="blockquote" style="padding: 0">确认卖出成功，先打开蓝晶社APP转赠蓝晶至：</blockquote>
           <p>
             手机号：{{buyerInfo.phone}}
              <v-btn
@@ -80,6 +80,7 @@
               v-clipboard:copy="buyerInfo.phone"
               v-clipboard:success="onCopy"
               v-clipboard:error="onError"
+              style="padding: 0 5px"
             >
               【点击复制】 
             </v-btn>
