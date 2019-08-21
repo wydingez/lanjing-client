@@ -14,7 +14,7 @@
         <td>{{ props.item.totalAmount }}</td>
         <td>{{ getStatusDesc(props.item.status) }}</td>
         <td class="order-table-btn">
-          <v-btn color="warning" small outline @click="doOptModal(props.item, btn.key)" v-for="btn in btns" :key="btn.key" v-show="btn.visible(props.item.status)">{{btn.label}}</v-btn>
+          <v-btn color="warning" small outline @click="doOptModal(props.item, btn.key)" v-for="btn in btns" :key="btn.key" v-show="btn.visible(props.item.type, props.item.status)">{{btn.label}}</v-btn>
         </td>
       </template>
     </v-table-server>
@@ -49,8 +49,7 @@
       <v-card>
         <v-card-title class="headline grey lighten-2" primary-title>明细详情</v-card-title>
         <v-card-text>
-          <!-- <p v-for="(item, index) in detailInfo.details" :key="index" v-html="generateInfo(item, index)"></p> -->
-          <v-list two-line>
+          <v-list two-line v-if="detailInfo.details.length">
             <template v-for="(item, index) in detailInfo.details">
               <v-list-tile
                 :key="index"
@@ -59,12 +58,10 @@
               >
                 <v-list-tile-avatar>
                   <v-icon>filter_{{index + 1}}</v-icon>
-                  <!-- <span class="title">{{index + 1}}</span> -->
                 </v-list-tile-avatar>
                 <v-list-tile-content>
                   <v-list-tile-title><v-icon>account_circle</v-icon>{{ item.wx }}</v-list-tile-title>
                   <v-list-tile-sub-title class="text--primary">{{ item.time }}</v-list-tile-sub-title>
-                  <!-- <v-list-tile-sub-title>{{ item.amount }}</v-list-tile-sub-title> -->
                 </v-list-tile-content>
 
                 <v-list-tile-action>
@@ -76,6 +73,9 @@
               <v-divider :key="'divider_' + index" v-if="index + 1 != detailInfo.details.length"></v-divider>
             </template>
           </v-list>
+          <div v-else class="no-data">
+            暂无数据
+          </div>
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
@@ -121,24 +121,24 @@
         },
         btns: [
           {
-            key: 'delivery',
-            label: '确认发货',
-            visible: (status) => {
-              return this.orderType === 'trade' && status === 'TO_BE_DELIVER'
+            key: 'receive',
+            label: '确认收货',
+            visible: (type, status) => {
+              return type === 'BUY' && status === 'TO_BE_TAKE'
             }
           },
           {
-            key: 'receive',
-            label: '确认收货',
-            visible: (status) => {
-              return this.orderType === 'trade' && status === 'TO_BE_TAKE'
+            key: 'delivery',
+            label: '确认发货',
+            visible: (type, status) => {
+              return type === 'SALE' && status === 'TO_BE_DELIVER'
             }
           },
           {
             key: 'detail',
             label: '查看明细',
-            visible: (status) => {
-              return this.orderType === 'agency' || (this.orderType === 'trade' && status === 'COMPLETED')
+            visible: (type, status) => {
+              return status === 'COMPLETED'
             }
           }
         ]
@@ -220,7 +220,7 @@
             desc = '转赠'
             break
           case 'BUY':
-            desc = '购接收'
+            desc = '接收'
             break
         }
         return desc
@@ -230,7 +230,7 @@
         this.confirmInfo.type = type
         if (type === 'receive') {
           this.confirmInfo.modal = true
-          this.confirmInfo.title = '收收货'
+          this.confirmInfo.title = '收货'
           this.confirmInfo.tip = '点击确认后，系统⾃动将资⾦转⼊转赠⽅账户'
         } else if (type === 'delivery') {
           this.confirmInfo.modal = true
@@ -240,7 +240,7 @@
           this.detailInfo.modal = true
           getAgencyDetail(item.orderNo).then(res => {
             if (res.success) {
-              this.details = res.data.map(i => {
+              this.detailInfo.details = res.data.map(i => {
                 // {wx: 'zhagnsan', time: '2019-07-21 17:34:00', type: 'sell', amount: 1000}
                 return {
                   wx: i.tradeUser,
@@ -291,6 +291,8 @@
   }
 </script>
 
-<style lang="scss" scoped>
-
+<style lang="stylus">
+.no-data {
+  text-align: center;
+}
 </style>

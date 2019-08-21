@@ -20,9 +20,8 @@ export const getAgencyTop5 = () =>
     method: 'get'
   })
 
-export const getAgencyDetail = (agencyNo) => {
+export const getAgencyDetail = (agencyNo) =>
   request({
     url: `/agency/relate-trade/${agencyNo}`,
     method: 'post'
   })
-}

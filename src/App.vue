@@ -301,7 +301,9 @@ $echarts-height = 300px
     }
     .my-app-toolbar {
       .v-toolbar__title {
-        margin-left: calc(50% - 80px);
+        width: 100%;
+        text-align: center;
+        margin-left: 0;
       }
     }
     .v-toolbar__title {
