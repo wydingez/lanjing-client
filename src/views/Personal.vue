@@ -72,10 +72,10 @@
               <ul class="personal-info">
                 <li>
                   <span class="personal-info-label">实名认证：</span>
-                  <span class="personal-info-value">{{form.realVerify ? `${form.realName}，${form.idCard}` : '暂无'}}</span>
+                  <span class="personal-info-value">{{realVertifyDesc}}</span>
                   <div class="personal-info-opt">
-                    <v-btn flat color="warning" to="/personal/idcard-info" v-if="!form.realVerify">去认证</v-btn>
-                    <v-btn flat color="warning" to="/personal/idcard-info" v-if="form.realVerify">已认证</v-btn>
+                    <v-btn flat color="warning" to="/personal/idcard-info" v-if="form.realVerifyStatus === '99'">去认证</v-btn>
+                    <v-btn flat color="warning" v-if="form.realVerifyStatus === '00'">已认证</v-btn>
                   </div>
                 </li>
               </ul>
@@ -246,11 +246,11 @@
 
     <!-- 邮箱绑定 -->
     <v-dialog v-model="bindEmail.modal" width="500" persistent>
-      <v-card ref="emailForm" lazy-validation>
+      <v-card>
         <v-card-title class="headline grey lighten-2" primary-title>{{computedTypeName(bindEmail.type)}}邮箱</v-card-title>
 
         <v-card-text>
-          <v-form>
+          <v-form ref="emailForm" lazy-validation>
             <v-text-field
               v-model="bindEmail.email"
               label="邮箱"
@@ -439,7 +439,7 @@
           openBillTip: false,
           openDealTip: false,
           showPassWord: false,
-          realVerify: false
+          realVerifyStatus: ''
         },
         cashInfo: {
           modal: false,
@@ -610,11 +610,28 @@
         }
       }
     },
+    computed: {
+      realVertifyDesc () {
+        switch (this.form.realVerifyStatus) {
+          case '00':
+            return '认证完成'
+          case '01':
+            return '认证中'
+          case '02':
+            return '认证失败'
+          case '99':
+            return '未认证'
+          default:
+            return '未认证'
+        }
+      }
+    },
     methods: {
       changeNotify (type, flag) {
         doChangeNotify(type, flag)
       },
       doFormValidate (name) {
+        console.log(name)
         if (!this.$refs[name + 'Form'].validate()) {
           // 表单校验失败
           this.$vNotice.error({
@@ -672,7 +689,7 @@
             this.form.email = securityInfoVO.email
             this.form.password = securityInfoVO.payPwd
             this.form.realName = securityInfoVO.realName
-            this.form.realVerify = !!securityInfoVO.realVerify
+            this.form.realVerifyStatus = securityInfoVO.realVerifyStatus
             this.form.imgSrc = basicInfoVO.portraitPicUrl
             this.form.cash = formatMoney(acctInfoVO.usableAmount)
             this.form.aliPay = this.findBindTypeValue(acctBindInfoVO, 'ZFB')

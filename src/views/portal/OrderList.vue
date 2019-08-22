@@ -138,7 +138,8 @@
             key: 'detail',
             label: '查看明细',
             visible: (type, status) => {
-              return status === 'COMPLETED'
+              // 只有委托订单才能查看明细
+              return this.orderType === 'agency'
             }
           }
         ]
@@ -243,7 +244,7 @@
               this.detailInfo.details = res.data.map(i => {
                 // {wx: 'zhagnsan', time: '2019-07-21 17:34:00', type: 'sell', amount: 1000}
                 return {
-                  wx: i.tradeUser,
+                  wx: i.tradeUserName,
                   time: i.tradeDate,
                   type: i.tradeType,
                   amount: i.tradeQuantity

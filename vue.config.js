@@ -19,7 +19,7 @@ module.exports = {
     },
     proxy: {
       [process.env.VUE_APP_BASE_API]: {
-        target: 'http://ceshi.utyue.com/bucrystal/cloud',
+        target: 'https://lanjing.ijguo.cn/bucrystal/cloud',
         changeOrigin: true, // needed for virtual hosted sites
         ws: true, // proxy websockets
         pathRewrite: {

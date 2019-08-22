@@ -104,7 +104,7 @@
             applyIdCard: this.form.idCard
           })).then(res => {
             if (res.success) {
-              this.$$vNotice.success({
+              this.$vNotice.success({
                 text: '提交认证成功'
               })
               this.$router.push('/personal')
