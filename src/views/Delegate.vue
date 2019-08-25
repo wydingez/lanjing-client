@@ -26,7 +26,7 @@
               </v-list-tile>
               <v-list-tile v-for="item in item.list" :key="item.agencyNo">
                 <v-list-tile-content>{{item.agencyAmount}}</v-list-tile-content>
-                <v-list-tile-content class="align-end">￥ {{ item.agencyUnitPrice }}</v-list-tile-content>
+                <v-list-tile-content class="align-end">{{ item.agencyUnitPrice }} JG</v-list-tile-content>
               </v-list-tile>
               <v-list-tile>
                 <v-btn block color="warning" dark @click="item.btnClick(item.type)">{{ item.btnText }}</v-btn>
@@ -43,7 +43,7 @@
         <v-flex xs12>
           <v-card color="transparent darken-2">
             <v-card-title class="primary white--text">
-              <div class="title">委托</div>
+              <div class="title">发布</div>
             </v-card-title>
             <v-divider light></v-divider>
             <div class="home-order-container">
@@ -75,7 +75,7 @@
                       </v-list-tile>
                       <v-list-tile v-for="item in item.list" :key="item.id">
                         <v-list-tile-content>{{item.agencyAmount}}</v-list-tile-content>
-                        <v-list-tile-content class="align-end">￥ {{ item.agencyUnitPrice }}</v-list-tile-content>
+                        <v-list-tile-content class="align-end">JG {{ item.agencyUnitPrice }}</v-list-tile-content>
                       </v-list-tile>
                       <v-list-tile>
                         <v-btn block color="warning" dark @click="item.btnClick(item.type)">{{ item.btnText }}</v-btn>
@@ -92,7 +92,7 @@
 
     <v-dialog v-model="dialogInfo.dialog" width="500" persistent>
       <v-card>
-        <v-card-title class="headline grey lighten-2" primary-title>{{dialogInfo.title}}</v-card-title>
+        <v-card-title class="headline grey lighten-2" primary-title>发布{{dialogInfo.title}}</v-card-title>
 
         <v-card-text>
           <v-form
@@ -123,10 +123,12 @@
               :append-icon="passwordVisible ? 'visibility' : 'visibility_off'"
               :rules="rules.confPassRule"
               :type="passwordVisible ? 'text' : 'password'"
-              label="请输入资金密码"
+              label="请输入JG安全密码"
               v-model="dialogInfo.password"
               @click:append="passwordVisible = !passwordVisible"
             ></v-text-field>
+
+            <div>{{dialogInfo.title}}总计： {{totalPrice}}</div>
           </v-form>
           
           <p v-html="dialogInfo.tip" v-show="!dialogInfo.showConfPass"></p>
@@ -141,7 +143,7 @@
             flat
             @click="dialogInfo.onOk"
           >
-            {{'确认委托' + dialogInfo.title}}
+            {{'确认发布' + dialogInfo.title}}
           </v-btn>
           <v-btn
             flat
@@ -156,7 +158,7 @@
     <v-dialog v-model="dialogInfo.successModal" width="500" persistent>
       <v-card>
         <v-card-title class="headline grey lighten-2" primary-title>{{dialogInfo.title}}成功</v-card-title>
-        <v-card-text>委托{{dialogInfo.title}}成功，请点击确认至【订单】查看委托详情</v-card-text>
+        <v-card-text>发布{{dialogInfo.title}}成功，请点击确认至【订单】查看发布详情</v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -182,11 +184,18 @@
 
 <script>
   import { doAgencyBuy, doAgencySale, getAgencyTop5 } from '@/api/agency'
+  import { Base64 } from 'js-base64'
 
   export default {
     name: 'Delegate',
     created () {
       this.initTop5()
+    },
+    computed: {
+      totalPrice () {
+        let price = this.dialogInfo.amount * this.dialogInfo.perPrice
+        return isNaN(price) ? '' : (price + ' JG')
+      }
     },
     data () {
       return {
@@ -195,7 +204,7 @@
           {
             type: 'sell',
             name: '前五转赠单',
-            btnText: '我要委托转赠',
+            btnText: '我要发布转赠',
             btnClick: (type) => {
               this.doOrder(type)
             },
@@ -204,7 +213,7 @@
           {
             type: 'buy',
             name: '前五接收单',
-            btnText: '我要委托接收',
+            btnText: '我要发布接收',
             btnClick: (type) => {
               this.doOrder(type)
             },
@@ -253,16 +262,16 @@
         if (type === 'sell') {
           this.dialogInfo.title = '转赠'
           this.dialogInfo.tip = `
-            <blockquote class="blockquote" style="padding: 0">
-              委托转赠提醒：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;委托转赠前请确认您的蓝晶社账号中<span class="red--text font-weight-bold">蓝晶数量充足</span>，以保证能够正常完成交易。一旦发现转赠方谎报数据，平台将记录个人诚信档案，在一段时间内禁止登陆平台。谢谢合作！
+            <blockquote class="blockquote" >
+              发布转赠提醒：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;发布转赠前请确认您的蓝晶社账户中<span class="red--text font-weight-bold">蓝晶数量充足</span>，以保证能够正常完成交易。
             </blockquote>
           `
           this.dialogInfo.onOk = this.doSell
         } else {
           this.dialogInfo.title = '接收',
           this.dialogInfo.tip = `
-            <blockquote class="blockquote" style="padding: 0">
-              委托接收提醒：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;委托接收前请确认您的现金账户中<span class="red--text font-weight-bold">余额充足</span>，以保证能够正常完成交易。一旦确认委托接收，系统自动冻结相应数目的金额，直至交易完成或者委托接收被取消
+            <blockquote class="blockquote" >
+              发布接收提醒：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;发布接收前请确认您账户上的坚果（JG）数量足够，以保证正常完成交易。一旦确认发布接收，系统将冻结相应数目的坚果（JG），直至交易完成或者发布的接收被取消。
             </blockquote>
           `
           this.dialogInfo.onOk = this.doBuy
@@ -292,7 +301,7 @@
             doAgencyBuy({
               agencyAmount: this.dialogInfo.amount,
               agencyUnitPrice: this.dialogInfo.perPrice,
-              payPwd: this.dialogInfo.password
+              payPwd: Base64.encode(this.dialogInfo.password)
             }).then(res => {
               if (res.success) {
                 this.dialogInfo.dialog = false

@@ -41,7 +41,7 @@
           <v-flex xs12>
             <v-card color="transparent darken-2">
               <v-card-title class="primary white--text">
-                <div class="title">自选交易区</div>
+                <div class="title">自助转赠/接收区</div>
               </v-card-title>
               <v-divider light></v-divider>
               <div class="home-order-container">

@@ -11,7 +11,7 @@
   import { queryDailyTrade } from '@/api/trade'
 
   // https://www.echartsjs.com/examples/editor.html?c=mix-line-bar 参考例子
-  // 右边纵坐标 交易量  左边纵坐标价格 / 一个竖条 时间为一天 / 默认显示15天的一个走势 / 柱形就保留一个参数的柱形  在上面加一个折线    柱形表示交易量  折线表示价格
+  // 右边纵坐标 转赠量  左边纵坐标价格 / 一个竖条 时间为一天 / 默认显示15天的一个走势 / 柱形就保留一个参数的柱形  在上面加一个折线    柱形表示转赠量  折线表示价格
 
   export default {
     name: 'HomeCharts',
@@ -53,7 +53,7 @@
             }
           },
           legend: {
-            data:['交易量（千个）','成交价格（元）']
+            data:['转赠量（千个）','转赠价（JG）']
           },
           graphic: [
             {
@@ -90,7 +90,7 @@
                     text: [
                       '最新转赠数据',
                       `今日成交量：${this.totalTradeQuantities}千个`,
-                      `当前成交价格：${this.latestTradePrice}元`
+                      `当前转赠价：${this.latestTradePrice}JG`
                     ].join('\n'),
                     font: `${small ? 12 : 14}px Microsoft YaHei`
                   }
@@ -110,7 +110,7 @@
           yAxis: [
             {
               type: 'value',
-              name: '交易量（千个）',
+              name: '转赠量（千个）',
               min: 0,
               interval: 50,
               axisLabel: {
@@ -119,7 +119,7 @@
             },
             {
               type: 'value',
-              name: '成交价格（元）',
+              name: '转赠价（JG）',
               min: 0,
               interval: 5,
               axisLabel: {
@@ -129,12 +129,12 @@
           ],
           series: [
             {
-              name: '交易量（千个）',
+              name: '转赠量（千个）',
               type: 'bar',
               data: this.totalList
             },
             {
-              name: '成交价格（元）',
+              name: '转赠价（JG）',
               type: 'line',
               yAxisIndex: 1,
               data: this.avgList

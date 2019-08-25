@@ -82,20 +82,23 @@
         deep: true,
         immediate: true
       },
-      'ajax.url' () {
+      'ajax' () {
         this.refresh()
-      }
+      },
     },
     methods: {
       async getDataFromApi () {
         this.loading = true
-        const {url, params} = this.$options.propsData.ajax
-        let res = await this.getDesserts(url, params || {})
+        const {url, params, rowsPerPage} = this.$options.propsData.ajax
+        let res = await this.getDesserts(url, params || {}, rowsPerPage)
 
         this.loading = false
         return res
       },
-      async getDesserts (url, params) {
+      async getDesserts (url, params, rowsPerPage) {
+        if (rowsPerPage) {
+          this.pagination.rowsPerPage = rowsPerPage
+        }
         let pageParams = {pageNum: this.pagination.page, pageSize: this.pagination.rowsPerPage}
         let res = await request({
           url,

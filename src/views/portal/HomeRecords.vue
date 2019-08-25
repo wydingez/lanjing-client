@@ -16,7 +16,7 @@
     data: () => ({
       headers: [
         {text: '微信头像', value: 'tradeUserPortraitUrl', sortable: false},
-        {text: '委托单号', value: 'agencyNo', sortable: false},
+        {text: '接收单号', value: 'agencyNo', sortable: false},
         {text: '交易记录', value: 'optDesc', sortable: false},
       ],
       ajax: {

@@ -52,6 +52,10 @@
               this.loginLoading = false
               this.$router.push('/')
             })
+            .catch(e => {
+              console.log(e)
+              this.loginLoading = false
+            })
         } else {
           this.$vNotice.error({
             text: '表单校验失败'

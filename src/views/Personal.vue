@@ -48,7 +48,7 @@
                   </div>
                 </li>
                 <li>
-                  <span class="personal-info-label">资金密码：</span>
+                  <span class="personal-info-label">JG安全密码：</span>
                   <span class="personal-info-value">
                     {{form.showPassWord ? form.password : new Array(form.password.length).fill('*').join('')}}
                     <v-btn flat icon color="warning" @click="form.showPassWord = !form.showPassWord">
@@ -94,10 +94,10 @@
               <ul class="personal-info">
                 <li>
                   <span class="personal-info-label">现⾦余额：</span>
-                  <span class="personal-info-value">￥ {{form.cash}}</span>
+                  <span class="personal-info-value">JG {{form.cash}}</span>
                   <div class="personal-info-opt">
-                    <v-btn flat color="warning" @click="doCashModal('cashIn')">充值</v-btn>
-                    <v-btn flat color="warning" @click="doCashModal('cashOut')">提现</v-btn>
+                    <v-btn flat color="warning" @click="doCashModal('cashIn')">买入坚果（JG）</v-btn>
+                    <v-btn flat color="warning" @click="doCashModal('cashOut')">退回坚果（JG）</v-btn>
                   </div>
                 </li>
                 <li>
@@ -109,14 +109,14 @@
                     <!-- <v-btn flat color="warning">设为默认</v-btn> -->
                   </div>
                 </li>
-                <li>
+                <!-- <li>
                   <span class="personal-info-label">银行卡号：</span>
                   <span class="personal-info-value">{{form.bankCard || '暂无'}}</span>
                   <div class="personal-info-opt">
                     <v-btn flat color="warning" v-if="!form.bankCard" @click="setBankCard('bind')">绑定</v-btn>
                     <v-btn flat color="warning" v-else @click="setBankCard('bind')">修改</v-btn>
                   </div>
-                </li>
+                </li> -->
               </ul>
             </v-card-text>
           </v-card>
@@ -156,10 +156,14 @@
       </v-flex>
     </v-layout>
 
-    <!-- 提现/充值 -->
+    <!-- 退回坚果（JG）/买入坚果（JG） -->
     <v-dialog v-model="cashInfo.modal" width="500" persistent>
       <v-card>
-        <v-card-title class="headline grey lighten-2" primary-title>{{cashInfo.text}}</v-card-title>
+        <v-card-title class="headline grey lighten-2" primary-title>
+          {{cashInfo.text}}
+          <v-spacer></v-spacer>
+          <v-btn flat color="warning" style="margin-top: 0px; margin-bottom: 0px;" @click="dealDetail.modal = true; dealDetail.info = cashInfo">{{cashInfo.text}}明细</v-btn>
+        </v-card-title>
 
         <v-card-text>
           <v-form
@@ -168,20 +172,25 @@
           >
             <v-text-field
               v-model="cashInfo.cash"
-              :label="cashInfo.text + '金额'"
+              :label="cashInfo.text + '数量'"
               required
               type="number"
               :rules="rules.cashRule"
             ></v-text-field>
           </v-form>
-          <blockquote class="blockquote" style="padding: 0" v-if="cashInfo.type === 'cashOut'">
+          <blockquote class="blockquote" >
             操作提示：
             <br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;每位⽤户<span class="red--text font-weight-bold">⼀天只能提现⼀次</span>
-            <br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;申请提现后，资⾦会在<span class="red--text font-weight-bold">半⼩时内</span>汇款⾄您绑定的⽀付宝或者银⾏账户内
-            <br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如超时未到账，请⽹站下⽅联系客服解决。
+            <template v-if="cashInfo.type === 'cashIn'">
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;确认买入坚果（JG）后，系统将会在<span class="red--text font-weight-bold">半个小时内到账</span>，并以公众号信息的形式提示您！
+            </template>
+            <template v-else>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;每位用户<span class="red--text font-weight-bold">一天</span>只能退回坚果（JG）<span class="red--text font-weight-bold">一次</span>，且退回坚果（JG）的数量必须是10的整数倍。
+              <br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;确认退回坚果（JG）后，退款会在当天<span class="red--text font-weight-bold">21时之前</span>退回到您的支付宝账户内，所以请务必确认支付宝账户信息和您实名制认证信息一致，否则会引起退款失败。
+              <br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如退款结算开始的30分钟后仍未收到退款，请在网站下方联系客服解决。
+            </template>
           </blockquote>
           
         </v-card-text>
@@ -195,7 +204,7 @@
             flat
             @click="cashInfo.doOpt"
           >
-            确认{{cashInfo.text}}
+            提交{{cashInfo.text}}
           </v-btn>
           <v-btn
             flat
@@ -205,6 +214,11 @@
           </v-btn>
         </v-card-actions>
       </v-card>
+    </v-dialog>
+
+    <!-- 买入坚果（JG） / 退回坚果（JG）明细 -->
+    <v-dialog v-model="dealDetail.modal" width="800">
+      <deal-detail :info="dealDetail.info" @close="dealDetail.modal = false" v-if="dealDetail.modal"></deal-detail>
     </v-dialog>
 
     <!-- 手机绑定 -->
@@ -300,7 +314,7 @@
               :rules="rules.zfbRules"
             ></v-text-field>
           </v-form>
-          <p class="text-center red--text">(支付宝账号：用于充值/提线操作)</p>
+          <p class="text-center red--text">(支付宝账号：用于买入坚果（JG）/提线操作)</p>
         </v-card-text>
         <v-divider></v-divider>
 
@@ -337,7 +351,6 @@
               :rules="rules.bankCardRule"
             ></v-text-field>
           </v-form>
-          <p class="text-center red--text">(银行卡账号：用于充值/提线操作)</p>
         </v-card-text>
         <v-divider></v-divider>
 
@@ -360,23 +373,23 @@
       </v-card>
     </v-dialog>
 
-    <!-- 设置资金密码 -->
+    <!-- 设置JG安全密码 -->
     <v-dialog v-model="capitalCode.modal" width="500" persistent>
       <v-card>
-        <v-card-title class="headline grey lighten-2" primary-title>设置资金密码</v-card-title>
+        <v-card-title class="headline grey lighten-2" primary-title>设置JG安全密码</v-card-title>
 
         <v-card-text>
           <v-form ref="payCodeForm" lazy-validation>
             <v-text-field
               v-model="capitalCode.payCode"
-              label="资金密码"
+              label="JG安全密码"
               type="password"
               required
               :rules="rules.payCodeRules"
             ></v-text-field>
             <v-text-field
               v-model="capitalCode.rePayCode"
-              label="确认资金密码"
+              label="确认JG安全密码"
               type="password"
               required
               :rules="rules.rePayCodeRules"
@@ -417,9 +430,11 @@
   import { doBindPayPassword, doCashIn, doCashOut } from '@/api/account'
   import { doChangeNotify } from '@/api/setting'
   import { formatMoney, REGEX } from '@/utils/util'
+  import DealDetail from './portal/PersonalAccountInfo'
 
   export default {
     name: 'Personal',
+    components: {DealDetail},
     data () {
       return {
         form: {
@@ -441,6 +456,10 @@
           showPassWord: false,
           realVerifyStatus: ''
         },
+        dealDetail: {
+          modal: false,
+          info: {}
+        },
         cashInfo: {
           modal: false,
           text: '',
@@ -449,7 +468,7 @@
           doOpt: () => {
             if (this.doFormValidate('cash')) {
               if (this.cashInfo.type === 'cashIn') {
-                // 充值
+                // 买入坚果（JG）
                 doCashIn(this.cashInfo.cash)
                   .then(res => {
                     if (res.success) {
@@ -457,20 +476,20 @@
                       this.cashInfo.cash = ''
                       
                       this.$vNotice.success({
-                        text: '充值成功'
+                        text: '买入坚果（JG）成功'
                       })
                       this.initUserInfo()
                     }
                   })
               } else if (this.cashInfo.type === 'cashOut') {
-                // 提现
+                // 退回坚果（JG）
                 doCashOut(this.cashInfo.cash)
                   .then(res => {
                     if (res.success) {
                       this.cashInfo.modal = false
                       this.cashInfo.cash = ''
                       this.$vNotice.success({
-                        text: '提现成功'
+                        text: '退回坚果（JG）成功'
                       })
                       this.initUserInfo()
                     }
@@ -594,8 +613,8 @@
             v => REGEX.email.test(v) || '邮箱格式不正确'
           ],
           payCodeRules: [
-            v => !!v || '资金密码不能为空',
-            v => REGEX.password.test(v) || '资金密码格式不正确'
+            v => !!v || 'JG安全密码不能为空',
+            v => REGEX.password.test(v) || 'JG安全密码格式不正确'
           ],
           rePayCodeRules: [
             v => !!v || '确认金密码不能为空',
@@ -644,7 +663,7 @@
       doCashModal (type) {
         this.cashInfo.modal = true
         this.cashInfo.type = type
-        this.cashInfo.text = type === 'cashIn' ? '充值' : '提现'
+        this.cashInfo.text = type === 'cashIn' ? '买入坚果（JG）' : '退回坚果（JG）'
         this.$refs.cashForm.reset()
       },
       setEmail (type) {

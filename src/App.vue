@@ -18,8 +18,8 @@
             >
               <v-avatar>
                 <img
-                  src="https://cdn.vuetifyjs.com/images/john.jpg"
-                  alt="John"
+                  src="static/john.jpg"
+                  :alt="loginUserName"
                 >
               </v-avatar>
               &nbsp;{{loginUserName}}
@@ -213,7 +213,7 @@ export default {
         {title: '首页', url: '/', icon: 'home', visible: true},
         {title: '登陆', url: '/login', icon: 'supervisor_account', visible: !logined}, 
         {title: '注册', url: '/register', icon: 'person_add', visible: !logined}, 
-        {title: '委托', url: '/delegate', icon: 'card_travel', visible: logined}, 
+        {title: '发布', url: '/delegate', icon: 'card_travel', visible: logined}, 
         {title: '订单', url: '/order', icon: 'description', visible: logined}, 
         {title: '个人中心', url: '/personal', icon: 'account_circle', visible: logined},
         {title: '退出', action: this.doLogout, icon: 'mdi-logout', visible: logined && this.$root.smallScreen}

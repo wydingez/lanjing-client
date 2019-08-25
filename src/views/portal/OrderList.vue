@@ -9,9 +9,9 @@
       <template v-slot:items="props">
         <td>{{ getBuyTypeDesc(props.item.type) }}</td>
         <td>{{ props.item.orderNo }}</td>
-        <td>{{ props.item.unitPrice }} 元/蓝晶</td>
+        <td>{{ props.item.unitPrice }} JG/蓝晶</td>
         <td>{{ props.item.quantity }}</td>
-        <td>{{ props.item.totalAmount }}</td>
+        <td>{{ props.item.totalAmount ? `${props.item.totalAmount}JG` : '' }} </td>
         <td>{{ getStatusDesc(props.item.status) }}</td>
         <td class="order-table-btn">
           <v-btn color="warning" small outline @click="doOptModal(props.item, btn.key)" v-for="btn in btns" :key="btn.key" v-show="btn.visible(props.item.type, props.item.status)">{{btn.label}}</v-btn>
@@ -46,7 +46,7 @@
     </v-dialog>
 
     <v-dialog v-model="detailInfo.modal" width="500" persistent>
-      <v-card>
+      <v-card class="order-detail">
         <v-card-title class="headline grey lighten-2" primary-title>明细详情</v-card-title>
         <v-card-text>
           <v-list two-line v-if="detailInfo.details.length">
@@ -61,12 +61,12 @@
                 </v-list-tile-avatar>
                 <v-list-tile-content>
                   <v-list-tile-title><v-icon>account_circle</v-icon>{{ item.wx }}</v-list-tile-title>
-                  <v-list-tile-sub-title class="text--primary">{{ item.time }}</v-list-tile-sub-title>
+                  <v-list-tile-sub-title class="text--primary">{{ item.time }}<br><span class="warning--text">{{ item.type === 'BUY' ? '转赠' : '接收' }}&nbsp;<kbd>{{ item.amount }}</kbd>个</span></v-list-tile-sub-title>
                 </v-list-tile-content>
 
                 <v-list-tile-action>
                   <v-list-tile-action-text>
-                    <span class="warning--text">{{ item.type === 'SELL' ? '转赠' : '接收' }}&nbsp;<kbd>{{ item.amount }}</kbd>个</span>
+                    <v-btn color="warning" small>确认发货</v-btn>
                   </v-list-tile-action-text>
                 </v-list-tile-action>
               </v-list-tile>
@@ -122,14 +122,14 @@
         btns: [
           {
             key: 'receive',
-            label: '确认收货',
+            label: '确认接收',
             visible: (type, status) => {
               return type === 'BUY' && status === 'TO_BE_TAKE'
             }
           },
           {
             key: 'delivery',
-            label: '确认发货',
+            label: '确认转赠',
             visible: (type, status) => {
               return type === 'SALE' && status === 'TO_BE_DELIVER'
             }
@@ -137,8 +137,9 @@
           {
             key: 'detail',
             label: '查看明细',
+            /* eslint-disable*/
             visible: (type, status) => {
-              // 只有委托订单才能查看明细
+              // 只有接收订单才能查看明细
               return this.orderType === 'agency'
             }
           }
@@ -159,7 +160,7 @@
         }
       },
       headers () {
-        let orderType = this.orderType === 'trade' ? '订单' : '委托'
+        let orderType = this.orderType === 'trade' ? '订单' : '发布'
         return [
           { text: `${orderType}类型`, value: 'type' },
           { text: '订单号', value: 'orderNo' },
@@ -190,16 +191,16 @@
               desc = '交易中'
               break
             case 'CANCEL':
-              desc = '委托撤销'
+              desc = '接收撤销'
               break
           }
         } else {
           switch (status) {
             case 'TO_BE_DELIVER':
-              desc = '待发货'
+              desc = '待转赠'
               break
             case 'TO_BE_TAKE':
-              desc = '待收货'
+              desc = '待接收'
               break
             case 'CANCEL':
               desc = '已取消'
@@ -231,12 +232,12 @@
         this.confirmInfo.type = type
         if (type === 'receive') {
           this.confirmInfo.modal = true
-          this.confirmInfo.title = '收货'
+          this.confirmInfo.title = '确认接收'
           this.confirmInfo.tip = '点击确认后，系统⾃动将资⾦转⼊转赠⽅账户'
         } else if (type === 'delivery') {
           this.confirmInfo.modal = true
-          this.confirmInfo.title = '发货'
-          this.confirmInfo.tip = '点击确认后，系统⾃动将货币转⼊转赠⽅账户'
+          this.confirmInfo.title = '确认转赠'
+          this.confirmInfo.tip = '点击确认后，系统将通知接收方检查确认蓝晶是否如数转至其蓝晶社账户。'
         } else if (type === 'detail') {
           this.detailInfo.modal = true
           getAgencyDetail(item.orderNo).then(res => {
@@ -263,7 +264,7 @@
             if (res.success) {
               this.confirmInfo.modal = false
               this.$vNotice.success({
-                text: '收货成功'
+                text: '接收成功'
               })
               this.$refs.vTS.refresh()
             }
@@ -277,7 +278,7 @@
             if (res.success) {
               this.confirmInfo.modal = false
               this.$vNotice.success({
-                text: '发货成功'
+                text: '转赠成功'
               })
               this.$refs.vTS.refresh()
             }
@@ -295,5 +296,10 @@
 <style lang="stylus">
 .no-data {
   text-align: center;
+}
+.order-detail {
+  hr {
+    margin: 10px;
+  }
 }
 </style>

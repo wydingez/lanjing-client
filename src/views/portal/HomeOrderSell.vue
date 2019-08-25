@@ -6,7 +6,7 @@
           <v-avatar size="36"><img :src="props.item.agencyUserPortraitUrl" :alt="props.item.name"></v-avatar>
         </td>
         <td>{{props.item.agencyNo}}</td>
-        <td>{{props.item.agencyUnitPrice}} ￥/蓝晶</td>
+        <td>{{props.item.agencyUnitPrice}} JG/蓝晶</td>
         <td>{{props.item.agencyAmount}}</td>
         <td>
           <v-tooltip top>
@@ -37,11 +37,10 @@
               required
             ></v-text-field>
           </v-form>
-          <p>锁定的价格为：{{rowClickItem.agencyUnitPrice}}元/蓝晶</p>
-          <p>锁定的有效剩余时间：598秒</p>
+          <p>锁定的价格为：{{rowClickItem.agencyUnitPrice}}JG/蓝晶</p>
 
-          <blockquote class="blockquote" style="padding: 0">
-            转赠提醒：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;转赠前确认您的<span class="red--text font-weight-bold">蓝晶数量充足</span>，一旦确认转赠，请在10分钟内转赠蓝晶至转赠方家的蓝晶社账号。然后至<span class="red--text font-weight-bold">【订单】中确认转出</span>，否则交易自动撤销
+          <blockquote class="blockquote" >
+            转赠提醒：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;转赠前确认您的<span class="red--text font-weight-bold">蓝晶数量充足</span>，一旦确认转赠，请在10分钟内转赠蓝晶至接收方的蓝晶社账号。然后至<span class="red--text font-weight-bold">【订单】中确认转出</span>，否则交易自动撤销。
           </blockquote>
         </v-card-text>
 
@@ -71,7 +70,7 @@
       <v-card>
         <v-card-title class="headline grey lighten-2" primary-title>确认转赠</v-card-title>
         <v-card-text>
-          <blockquote class="blockquote" style="padding: 0">确认转赠成功，先打开蓝晶社APP转赠蓝晶至：</blockquote>
+          <blockquote class="blockquote" >打开蓝晶社APP转赠蓝晶至：</blockquote>
           <p>
             手机号：{{buyerInfo.phone}}
              <v-btn
@@ -85,10 +84,10 @@
               【点击复制】 
             </v-btn>
           </p>
-          <p>微信号：{{buyerInfo.wx}}</p>
-          <p class="red--text">(安全提醒：请在蓝晶社APP里转赠蓝晶时务必核对以上信息无误，方可转入。如遇信息不符时请至公众号【爱坚果社区】联系客服人员处理！)</p>
-          <blockquote class="blockquote" style="padding: 0">
-            完成转入后，请到<span class="red--text font-weight-bold">【订单】</span>页面继续完成交易
+          <p>蓝晶社账户昵称：{{buyerInfo.wx}}</p>
+          <p class="red--text">（安全提醒：在蓝晶社APP里转赠时，请务必核对以上信息无误，方可转赠。如遇信息不符时，请至网站下方联系客服人员处理！）</p>
+          <blockquote class="blockquote" >
+            请在<span class="red--text font-weight-bold">完成转赠后</span>，到【订单】页面继续完成交易
           </blockquote>
         </v-card-text>
         <v-divider></v-divider>
@@ -123,7 +122,7 @@
     data: () => ({
       headers: [
         {text: '微信头像', value: 'agencyUserPortraitUrl', sortable: false},
-        {text: '委托单号', value: 'agencyNo', sortable: false},
+        {text: '接收单号', value: 'agencyNo', sortable: false},
         {text: '单价', value: 'agencyUnitPrice', sortable: false},
         {text: '数量', value: 'agencyAmount', sortable: false},
         {text: '操作', value: 'opt', sortable: false}
