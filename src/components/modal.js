@@ -8,11 +8,12 @@ VDialog.newInstance = properties => {
     components: {VDialog, VBtn, VCard, VCardTitle, VCardText, VCardActions, VSpacer},
     data () {
       return {
-        visible: false
+        visible: false,
+        okLoading: false
       }
     },
     render () {
-      const { visible, doOk, doCancel } = this
+      const { visible, doOk, doCancel, okLoading } = this
       const { title, content } = properties
       return (
         <v-dialog
@@ -31,15 +32,16 @@ VDialog.newInstance = properties => {
 
               <v-btn
                 flat="flat"
-                vOn:click={doCancel}
+                onClick={doCancel}
               >
                 取消
               </v-btn>
 
               <v-btn
+                loading={okLoading}
                 color="primary darken-1"
                 flat="flat"
-                vOn:click={doOk}
+                onClick={doOk}
               >
                 确认
               </v-btn>
@@ -51,20 +53,28 @@ VDialog.newInstance = properties => {
     methods: {
       doOk () {
         let { onOk } = properties
+        this.okLoading = true
         return new Promise((resolve, reject) => {
           if (onOk && typeof onOk === 'function') {
-            onOk((flag) => {
-              if (flag !== false) {
-                resolve()
-              } else {
-                reject(new Error('Modal not allowded close'))
-              }
-            })
+            onOk(resolve)
+            // onOk((flag) => {
+            //   console.log(12, flag)
+            //   if (flag !== false) {
+            //     this.okLoading = false
+            //     resolve()
+            //   } else {
+            //     this.okLoading = false
+            //     reject(new Error('Modal not allowded close'))
+            //   }
+            // })
           } else {
             resolve()
+            this.okLoading = false
           }
         }).then(() => {
           this.visible = false
+        }).catch(() => {
+          this.okLoading = false
         })
       },
       doCancel () {

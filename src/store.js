@@ -4,7 +4,7 @@ import router from './router'
 
 import { doLogin, doLogout } from '@/api/login'
 import { Base64 } from 'js-base64'
-import { setLogined, setLoginInfoKey, getLogined, getLoginInfoKey, removeLogined, removeLoginInfoKey } from '@/utils/auth'
+import { setLogined, setLoginInfoKey, getLogined, getLoginInfoKey, removeLogined, removeLoginInfoKey, getAvatarUrl } from '@/utils/auth'
 
 Vue.use(Vuex)
 
@@ -12,7 +12,8 @@ export default new Vuex.Store({
   state: {
     logined: getLogined() || false,
     loginUserInfo: getLoginInfoKey() || {},
-    token: ''
+    avatarUrl: getAvatarUrl() || 'static/john.jpg',
+
   },
   getters: {
     loginUserName (state) {

@@ -26,3 +26,8 @@ export function setLoginInfoKey(value) {
 export function removeLoginInfoKey() {
   return Cookies.remove(LoginInfoKey)
 }
+
+export function getAvatarUrl() {
+  let loginUserInfo = getLoginInfoKey()
+  return loginUserInfo && loginUserInfo.portraitPicUrl
+}

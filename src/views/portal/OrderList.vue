@@ -58,15 +58,16 @@
               >
                 <v-list-tile-avatar>
                   <v-icon>filter_{{index + 1}}</v-icon>
+                  <v-img :src="item.avatarUrl"></v-img>
                 </v-list-tile-avatar>
                 <v-list-tile-content>
-                  <v-list-tile-title><v-icon>account_circle</v-icon>{{ item.wx }}</v-list-tile-title>
+                  <v-list-tile-title>{{ item.wx }}</v-list-tile-title>
                   <v-list-tile-sub-title class="text--primary">{{ item.time }}<br><span class="warning--text">{{ item.type === 'BUY' ? '转赠' : '接收' }}&nbsp;<kbd>{{ item.amount }}</kbd>个</span></v-list-tile-sub-title>
                 </v-list-tile-content>
 
                 <v-list-tile-action>
                   <v-list-tile-action-text>
-                    <v-btn color="warning" small>确认发货</v-btn>
+                    <v-btn color="warning" small @click="confirmOrder(item)">{{item.type === 'BUY' ? '确认发货' : '确认收货'}}</v-btn>
                   </v-list-tile-action-text>
                 </v-list-tile-action>
               </v-list-tile>
@@ -248,7 +249,9 @@
                   wx: i.tradeUserName,
                   time: i.tradeDate,
                   type: i.tradeType,
-                  amount: i.tradeQuantity
+                  amount: i.tradeQuantity,
+                  avatarUrl: i.tradeUserPortraitUrl,
+                  tradeNo: i.tradeNo
                 }
               })
             }
@@ -288,6 +291,23 @@
             this.loading = false
           })
         }
+      },
+      confirmOrder ({tradeNo, type}) {
+        let typeDesc = type === 'BUY' ? '发货' : '收货'
+        this.$vModal.confirm({
+          title: '提示',
+          content: `确认${typeDesc}吗？`,
+          onOk: async (next) => {
+            let res = await (type === 'BUY' ? doDeliveryConfirm(tradeNo) : doReceiveConfirm(tradeNo))
+            if (res.success) {
+              this.$vNotice.success({
+                text: `${收货}成功`
+              })
+              this.detailInfo.modal = false
+            }
+            next()
+          }
+        })
       }
     }
   }
