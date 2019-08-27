@@ -67,6 +67,7 @@
 
                 <v-list-tile-action>
                   <v-list-tile-action-text>
+                    {{item.status}}
                     <v-btn color="warning" small @click="confirmOrder(item)">{{item.type === 'BUY' ? '确认发货' : '确认收货'}}</v-btn>
                   </v-list-tile-action-text>
                 </v-list-tile-action>
@@ -167,7 +168,7 @@
           { text: '订单号', value: 'orderNo' },
           { text: '单价', value: 'unitPrice', sortable: false },
           { text: '数量', value: 'quantity', sortable: false },
-          { text: `${orderType}金额`, value: 'totalAmount', sortable: false },
+          { text: `${orderType}总额`, value: 'totalAmount', sortable: false },
           { text: '完成状态', value: 'status', sortable: false },
           { text: '操作', value: 'opt', sortable: false }
         ]
@@ -245,13 +246,19 @@
             if (res.success) {
               this.detailInfo.details = res.data.map(i => {
                 // {wx: 'zhagnsan', time: '2019-07-21 17:34:00', type: 'sell', amount: 1000}
+                let statusInfect = {
+                  'TO_BE_DELIVER': '待发货',
+                  'TO_BE_TAKE': '待收货',
+                  'COMPLETED': '完成'
+                }
                 return {
                   wx: i.tradeUserName,
                   time: i.tradeDate,
                   type: i.tradeType,
                   amount: i.tradeQuantity,
                   avatarUrl: i.tradeUserPortraitUrl,
-                  tradeNo: i.tradeNo
+                  tradeNo: i.tradeNo,
+                  status: statusInfect[i.tradeStatus]
                 }
               })
             }

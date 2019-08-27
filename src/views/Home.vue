@@ -66,10 +66,10 @@
                     :key="item.key"
                   >
                     <v-card flat v-if="item.key === 'buy'">
-                      <HomeOrderBuy />
+                      <HomeOrderBuy :amountLimit="amountLimit" :priceLimit="priceLimit"/>
                     </v-card>
                     <v-card flat v-if="item.key === 'sell'">
-                      <HomeOrderSell />
+                      <HomeOrderSell :amountLimit="amountLimit" :priceLimit="priceLimit"/>
                     </v-card>
                   </v-tab-item>
                 </v-tabs>
@@ -108,10 +108,12 @@
   import HomeOrderBuy from './portal/HomeOrderBuy'
   import HomeOrderSell from './portal/HomeOrderSell'
   import HomeRecords from './portal/HomeRecords'
+  import limitMixins from '@/mixin/limit'
 
   export default {
     name: 'Home',
     components: {HomeCharts, HomeOrderBuy, HomeOrderSell, HomeRecords},
+    mixins: [limitMixins],
     data () {
       return {
         selectOrder: null,
@@ -120,15 +122,7 @@
           {key: 'sell', label: '我要转赠', icon: 'input'}
         ],
         carouselItems: [
-          // {src: 'static/bg1.jpg'},
-          // {src: 'static/bg2.jpg'},
-          // {src: 'static/bg3.jpg'},
-          // {src: 'static/bg4.jpg'},
           {src: 'static/bg5.jpg'}
-          // {src: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg'},
-          // {src: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg'},
-          // {src: 'https://cdn.vuetifyjs.com/images/carousel/bird.jpg'},
-          // {src: 'https://cdn.vuetifyjs.com/images/carousel/planet.jpg'}
         ]
       }
     }

@@ -104,7 +104,7 @@
               v-model="dialogInfo.amount"
               v-show="!dialogInfo.showConfPass"
               :label="dialogInfo.title + '的数量'"
-              placeholder="80-2000"
+              :placeholder="amountLimitDesc"
               required
               :rules="rules.amountRule"
             ></v-text-field>
@@ -113,7 +113,7 @@
               v-model="dialogInfo.perPrice"
               v-show="!dialogInfo.showConfPass"
               :label="dialogInfo.title + '的单价'"
-              placeholder="0.1-10000"
+              :placeholder="priceLimitDesc"
               required
               :rules="rules.perPriceRule"
             ></v-text-field>
@@ -185,16 +185,33 @@
 <script>
   import { doAgencyBuy, doAgencySale, getAgencyTop5 } from '@/api/agency'
   import { Base64 } from 'js-base64'
+  import limitMixins from '@/mixin/limit'
 
   export default {
     name: 'Delegate',
+    mixins: [limitMixins],
     created () {
       this.initTop5()
     },
     computed: {
       totalPrice () {
         let price = this.dialogInfo.amount * this.dialogInfo.perPrice
-        return isNaN(price) ? '' : (price + ' JG')
+        return isNaN(price) ? '' : (price.toFixed(2) + ' JG')
+      },
+      rules () {
+        return {
+          amountRule: [
+            value => !!value || '数量不能为空',
+            value => !Number.isNaN(Number(value)) || '数量不正确',
+            value => Number(value) >= this.amountLimit[0] && Number(value) <= this.amountLimit[1] || `数量应该在${this.amountLimitDesc}}之间`
+          ],
+          perPriceRule: [
+            value => !!value || '单价不能为空',
+            value => !Number.isNaN(Number(value)) || '单价不正确',
+            value => Number(value) >= this.priceLimit[0] && Number(value) <= this.priceLimit[1] || `单价应该在${this.priceLimitDesc}之间`
+          ],
+          confPassRule: []
+        }
       }
     },
     data () {
@@ -234,19 +251,6 @@
           },
           successModal: false,
           showConfPass: false
-        },
-        rules: {
-          amountRule: [
-            value => !!value || '数量不能为空',
-            value => !Number.isNaN(Number(value)) || '数量不正确',
-            value => Number(value) >= 20 && Number(value) <= 2000 || '数量应该在80-2000之间'
-          ],
-          perPriceRule: [
-            value => !!value || '数量不能为空',
-            value => !Number.isNaN(Number(value)) || '数量不正确',
-            value => Number(value) >= 0.1 && Number(value) <= 10000 || '数量应该在0.1-10000之间'
-          ],
-          confPassRule: []
         },
         passwordVisible: false
       }

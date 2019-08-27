@@ -53,7 +53,7 @@
             }
           },
           legend: {
-            data:['转赠量（千个）','转赠价（JG）']
+            data:['转赠量（个）','转赠价（JG）']
           },
           graphic: [
             {
@@ -89,7 +89,7 @@
                     fill: 'black',
                     text: [
                       '最新转赠数据',
-                      `今日成交量：${this.totalTradeQuantities}千个`,
+                      `今日成交量：${this.totalTradeQuantities}个`,
                       `当前转赠价：${this.latestTradePrice}JG`
                     ].join('\n'),
                     font: `${small ? 12 : 14}px Microsoft YaHei`
@@ -110,7 +110,7 @@
           yAxis: [
             {
               type: 'value',
-              name: '转赠量（千个）',
+              name: '转赠量（个）',
               min: 0,
               interval: 50,
               axisLabel: {
@@ -129,7 +129,7 @@
           ],
           series: [
             {
-              name: '转赠量（千个）',
+              name: '转赠量（个）',
               type: 'bar',
               data: this.totalList
             },

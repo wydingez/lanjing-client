@@ -7,7 +7,7 @@
         </td>
         <td>{{props.item.agencyNo}}</td>
         <td>{{props.item.agencyUnitPrice}} JG/蓝晶</td>
-        <td>{{props.item.agencyAmount}}</td>
+        <td>{{props.item.remainTradableAmount}}</td>
         <td>
           <v-tooltip top>
             <template v-slot:activator="{ on }">
@@ -116,6 +116,16 @@
 
   export default {
     name: 'HomeOrderBuy',
+    props: {
+      amountLimit: {
+        type: Array,
+        default: () => []
+      },
+      priceLimit: {
+        type: Array,
+        default: () => []
+      }
+    },
     data: () => ({
       headers: [
         {text: '微信头像', value: 'agencyUserPortraitUrl', sortable: false},
@@ -158,8 +168,9 @@
           return false
         }
         this.rowClickItem = item
-        this.amountPlaceholder = `1-${item.agencyAmount}`
-        this.rules.amountRule[2] = value => Number(value) >=1 && Number(value) <= item.agencyAmount || `数量应该在${this.amountPlaceholder}之间`
+        let max = Math.min(this.amountLimit[1], item.remainTradableAmount)
+        this.amountPlaceholder = `${this.amountLimit[0]}-${max}`
+        this.rules.amountRule[2] = value => Number(value) >= this.amountLimit[0] && Number(value) <= max || `数量应该在${this.amountPlaceholder}之间`
         this.rules.confPassRule = []
         this.$refs.form.reset()
         this.showConfPass = false
