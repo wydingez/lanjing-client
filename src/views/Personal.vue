@@ -650,7 +650,6 @@
         doChangeNotify(type, flag)
       },
       doFormValidate (name) {
-        console.log(name)
         if (!this.$refs[name + 'Form'].validate()) {
           // 表单校验失败
           this.$vNotice.error({

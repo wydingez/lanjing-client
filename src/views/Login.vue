@@ -53,8 +53,8 @@
               this.$router.push('/')
             })
             .catch(e => {
-              console.log(e)
               this.loginLoading = false
+              console.log(e)
             })
         } else {
           this.$vNotice.error({

@@ -56,23 +56,17 @@ VDialog.newInstance = properties => {
         this.okLoading = true
         return new Promise((resolve, reject) => {
           if (onOk && typeof onOk === 'function') {
-            onOk(resolve)
-            // onOk((flag) => {
-            //   console.log(12, flag)
-            //   if (flag !== false) {
-            //     this.okLoading = false
-            //     resolve()
-            //   } else {
-            //     this.okLoading = false
-            //     reject(new Error('Modal not allowded close'))
-            //   }
-            // })
-          } else {
-            resolve()
-            this.okLoading = false
+            onOk((goOn) => {
+              if (goOn === false) {
+                reject()
+              } else {
+                resolve()
+              }
+            })
           }
         }).then(() => {
           this.visible = false
+          this.okLoading = false
         }).catch(() => {
           this.okLoading = false
         })

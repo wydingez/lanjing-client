@@ -298,14 +298,18 @@
           title: '提示',
           content: `确认${typeDesc}吗？`,
           onOk: async (next) => {
-            let res = await (type === 'BUY' ? doDeliveryConfirm(tradeNo) : doReceiveConfirm(tradeNo))
-            if (res.success) {
-              this.$vNotice.success({
-                text: `${收货}成功`
-              })
-              this.detailInfo.modal = false
+            try {
+              let res = await (type === 'BUY' ? doDeliveryConfirm(tradeNo) : doReceiveConfirm(tradeNo))
+              if (res.success) {
+                this.$vNotice.success({
+                  text: `${收货}成功`
+                })
+                this.detailInfo.modal = false
+                next()
+              }
+            } catch (e) {
+              next()
             }
-            next()
           }
         })
       }
