@@ -61,14 +61,13 @@
                   <v-img :src="item.avatarUrl"></v-img>
                 </v-list-tile-avatar>
                 <v-list-tile-content>
-                  <v-list-tile-title>{{ item.wx }}</v-list-tile-title>
+                  <v-list-tile-title>{{ item.wx }}-<kbd class="warning">{{item.statusDesc}}</kbd></v-list-tile-title>
                   <v-list-tile-sub-title class="text--primary">{{ item.time }}<br><span class="warning--text">{{ item.type === 'BUY' ? '转赠' : '接收' }}&nbsp;<kbd>{{ item.amount }}</kbd>个</span></v-list-tile-sub-title>
                 </v-list-tile-content>
 
                 <v-list-tile-action>
                   <v-list-tile-action-text>
-                    {{item.status}}
-                    <v-btn color="warning" small @click="confirmOrder(item)">{{item.type === 'BUY' ? '确认发货' : '确认收货'}}</v-btn>
+                    <v-btn color="warning" small @click="confirmOrder(item)" v-if="showOpt(item)">{{item.type === 'BUY' ? '确认转赠' : '确认接收'}}</v-btn>
                   </v-list-tile-action-text>
                 </v-list-tile-action>
               </v-list-tile>
@@ -242,28 +241,32 @@
           this.confirmInfo.tip = '点击确认后，系统将通知接收方检查确认蓝晶是否如数转至其蓝晶社账户。'
         } else if (type === 'detail') {
           this.detailInfo.modal = true
-          getAgencyDetail(item.orderNo).then(res => {
-            if (res.success) {
-              this.detailInfo.details = res.data.map(i => {
-                // {wx: 'zhagnsan', time: '2019-07-21 17:34:00', type: 'sell', amount: 1000}
-                let statusInfect = {
-                  'TO_BE_DELIVER': '待发货',
-                  'TO_BE_TAKE': '待收货',
-                  'COMPLETED': '完成'
-                }
-                return {
-                  wx: i.tradeUserName,
-                  time: i.tradeDate,
-                  type: i.tradeType,
-                  amount: i.tradeQuantity,
-                  avatarUrl: i.tradeUserPortraitUrl,
-                  tradeNo: i.tradeNo,
-                  status: statusInfect[i.tradeStatus]
-                }
-              })
-            }
-          })
+          this.clickOrderNo = item.orderNo
         }
+      },
+      getOrderDetails () {
+        getAgencyDetail(this.clickOrderNo).then(res => {
+          if (res.success) {
+            this.detailInfo.details = res.data.map(i => {
+              // {wx: 'zhagnsan', time: '2019-07-21 17:34:00', type: 'sell', amount: 1000}
+              let statusInfect = {
+                'TO_BE_DELIVER': '待转赠',
+                'TO_BE_TAKE': '待接收',
+                'COMPLETED': '完成'
+              }
+              return {
+                wx: i.tradeUserName,
+                time: i.tradeDate,
+                type: i.tradeType,
+                amount: i.tradeQuantity,
+                avatarUrl: i.tradeUserPortraitUrl,
+                tradeNo: i.tradeNo,
+                status: i.tradeStatus,
+                statusDesc: statusInfect[i.tradeStatus]
+              }
+            })
+          }
+        })
       },
       doOpt () {
         let type = this.confirmInfo.type
@@ -300,7 +303,7 @@
         }
       },
       confirmOrder ({tradeNo, type}) {
-        let typeDesc = type === 'BUY' ? '发货' : '收货'
+        let typeDesc = type === 'BUY' ? '转赠' : '接收'
         this.$vModal.confirm({
           title: '提示',
           content: `确认${typeDesc}吗？`,
@@ -309,9 +312,9 @@
               let res = await (type === 'BUY' ? doDeliveryConfirm(tradeNo) : doReceiveConfirm(tradeNo))
               if (res.success) {
                 this.$vNotice.success({
-                  text: `${收货}成功`
+                  text: `${typeDesc}成功`
                 })
-                this.detailInfo.modal = false
+                this.getOrderDetails()
                 next()
               }
             } catch (e) {
@@ -319,6 +322,9 @@
             }
           }
         })
+      },
+      showOpt ({type, status}) {
+        return (type === 'BUY' && status === 'TO_BE_DELIVER') || (type === 'SALE' && status === 'TO_BE_TAKE')
       }
     }
   }
