@@ -242,6 +242,7 @@
         } else if (type === 'detail') {
           this.detailInfo.modal = true
           this.clickOrderNo = item.orderNo
+          this.getOrderDetails()
         }
       },
       getOrderDetails () {
