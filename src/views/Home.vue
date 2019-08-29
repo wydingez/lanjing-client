@@ -89,7 +89,7 @@
           <v-flex xs12>
             <v-card color="transparent darken-2">
               <v-card-title class="primary white--text">
-                <div class="title">交易记录</div>
+                <div class="title">转赠记录</div>
               </v-card-title>
               <v-divider light></v-divider>
               <div class="home-records-container">

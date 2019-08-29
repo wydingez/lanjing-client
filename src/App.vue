@@ -212,7 +212,7 @@ export default {
       return [
         {title: '首页', url: '/', icon: 'home', visible: true},
         {title: '登陆', url: '/login', icon: 'supervisor_account', visible: !logined}, 
-        {title: '注册', url: '/register', icon: 'person_add', visible: !logined}, 
+        {title: '注册', url: '/register', icon: 'person_add', visible: false}, 
         {title: '发布', url: '/delegate', icon: 'card_travel', visible: logined}, 
         {title: '订单', url: '/order', icon: 'description', visible: logined}, 
         {title: '个人中心', url: '/personal', icon: 'account_circle', visible: logined},

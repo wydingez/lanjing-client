@@ -12,7 +12,7 @@
         <td>{{ props.item.unitPrice }} JG/蓝晶</td>
         <td>{{ props.item.quantity }}</td>
         <td>{{ props.item.totalAmount ? `${props.item.totalAmount}JG` : '' }} </td>
-        <td>{{ getStatusDesc(props.item.status) }}</td>
+        <td>{{ getStatusDesc(props.item) }}</td>
         <td class="order-table-btn">
           <v-btn color="warning" small outline @click="doOptModal(props.item, btn.key)" v-for="btn in btns" :key="btn.key" v-show="btn.visible(props.item.type, props.item.status)">{{btn.label}}</v-btn>
         </td>
@@ -143,6 +143,15 @@
               // 只有接收订单才能查看明细
               return this.orderType === 'agency'
             }
+          },
+          {
+            key: 'cancel',
+            label: '取消发布',
+            /* eslint-disable*/
+            visible: (type, status) => {
+              // 只有接收订单才能查看明细
+              return this.orderType === 'PROGRESS'
+            }
           }
         ]
       }
@@ -174,13 +183,7 @@
       }
     },
     methods: {
-      generateInfo (item, index) {
-        let {wx, time, type, amount} = item
-        index = index + 1
-        type = type === 'sell' ? '转赠' : '接收'
-        return `${index}. <kbd>${wx}</kbd>于<kbd>${time}</kbd><kbd>${type}</kbd><kbd>${amount}</kbd>`
-      },
-      getStatusDesc (status) {
+      getStatusDesc ({status, type}) {
         let desc = ''
         let isTrade = this.type.split('-')[1] === 'trade'
         if (!isTrade) {
@@ -189,7 +192,11 @@
               desc = '已完成'
               break
             case 'PROGRESS':
-              desc = '交易中'
+              if (type === 'SALE') {
+                desc = '发布转赠中'
+              } else {
+                desc = '发布接收中'
+              }
               break
             case 'CANCEL':
               desc = '接收撤销'
@@ -243,7 +250,7 @@
           this.detailInfo.modal = true
           this.clickOrderNo = item.orderNo
           this.getOrderDetails()
-        }
+        } else if (type === 'cancel') {}
       },
       getOrderDetails () {
         getAgencyDetail(this.clickOrderNo).then(res => {

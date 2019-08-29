@@ -138,13 +138,13 @@
           return [
             {text: '流水号', value: 'streamNo', sortable: false},
             {text: '状态', value: 'status', sortable: false},
-            {text: '金额', value: 'streamAmount', sortable: false}
+            {text: 'JG', value: 'streamAmount', sortable: false}
           ]
         } else {
            return [
             {text: '流水号', value: 'streamNo', sortable: false},
             {text: '类型', value: 'streamType', sortable: false},
-            {text: '金额', value: 'streamAmount', sortable: false}
+            {text: 'JG', value: 'streamAmount', sortable: false}
           ]
         }
       }

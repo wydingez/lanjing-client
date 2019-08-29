@@ -12,3 +12,10 @@ export const doLogout = () =>
     url: '/logout',
     method: 'get'
   })
+
+export const doWxLogin = () => {
+  request({
+    url: '/wx/auth',
+    method: 'get'
+  })
+}

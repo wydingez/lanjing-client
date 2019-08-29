@@ -51,6 +51,7 @@
           <v-btn
             color="primary"
             flat
+            :loading="sellLoading"
             @click="doSell"
           >
             确认转赠
@@ -116,6 +117,7 @@
 <script>
   import { doTradeSale } from '@/api/trade'
   import { getLogined } from '@/utils/auth'
+  import { queryInfo } from '@/api/user'
 
   export default {
     name: 'HomeOrderSell',
@@ -132,7 +134,7 @@
     data: () => ({
       headers: [
         {text: '微信头像', value: 'agencyUserPortraitUrl', sortable: false},
-        {text: '接收单号', value: 'agencyNo', sortable: false},
+        {text: '转赠单号', value: 'agencyNo', sortable: false},
         {text: '单价', value: 'agencyUnitPrice', sortable: false},
         {text: '数量', value: 'agencyAmount', sortable: false},
         {text: '操作', value: 'opt', sortable: false}
@@ -141,9 +143,10 @@
       amountPlaceholder: '',
       dialog: false,
       snackbar: false,
+      sellLoading: false,
       buyerInfo: {
-        phone: '13813813813',
-        wx: 'weishi'
+        phone: '',
+        wx: ''
       },
       amountRule: [
         value => !!value || '数量不能为空',
@@ -169,13 +172,6 @@
         console.error('copy error!')
       },
       openSellModal (item) {
-        this.rowClickItem = item
-        let max = Math.min(this.amountLimit[1], item.remainTradableAmount)
-        this.amountPlaceholder = `${this.amountLimit[0]}-${max}`
-        this.amountRule[2] = value => Number(value) >= this.amountLimit[0] && Number(value) <= max || `数量应该在${this.amountPlaceholder}之间`
-        this.dialog = true
-      },
-      doSell () {
         if (!getLogined()) {
           // 没有登陆
           this.$vNotice.error({
@@ -183,18 +179,32 @@
           })
           return false
         }
+        this.rowClickItem = item
+        let max = Math.min(this.amountLimit[1], item.remainTradableAmount)
+        this.amountPlaceholder = `${this.amountLimit[0]}-${max}`
+        this.amountRule[2] = value => Number(value) >= this.amountLimit[0] && Number(value) <= max || `数量应该在${this.amountPlaceholder}之间`
+        this.dialog = true
+      },
+      doSell () {
         let flag = this.$refs.form.validate()
         if (flag) {
+          this.sellLoading = true
           doTradeSale({
             agencyNo: this.rowClickItem.agencyNo,
             tradeQuantity: this.amount
           }).then(res => {
             if (res.success) {
-              this.dialog = false
-              this.snackbar = true
+              queryInfo().then(({data, success}) => {
+                if (success) {
+                  this.sellLoading = false
+                  this.buyerInfo.phone = data.securityInfoVO.phone
+                  this.buyerInfo.wx = data.basicInfoVO.nickName
+                  this.dialog = false
+                  this.snackbar = true
+                }
+              })
             }
           })
-          
         } else {
           this.$vNotice.error({
             text: '表单校验失败'

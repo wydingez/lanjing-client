@@ -22,7 +22,7 @@
             <v-list dense>
               <v-list-tile>
                 <v-list-tile-content class="subheading font-weight-bold" style="display: -webkit-box">数量<v-icon>sort</v-icon></v-list-tile-content>
-                <v-list-tile-content class="align-end subheading font-weight-bold" style="display: -webkit-box"><v-icon>attach_money</v-icon>价格</v-list-tile-content>
+                <v-list-tile-content class="align-end subheading font-weight-bold" style="display: -webkit-box"><v-icon>attach_money</v-icon>{{item.typeDesc}}价</v-list-tile-content>
               </v-list-tile>
               <v-list-tile v-for="item in item.list" :key="item.agencyNo">
                 <v-list-tile-content>{{item.agencyAmount}}</v-list-tile-content>
@@ -71,7 +71,7 @@
                     <v-list dense>
                       <v-list-tile>
                         <v-list-tile-content class="subheading font-weight-bold" style="display: -webkit-box">数量<v-icon>sort</v-icon></v-list-tile-content>
-                        <v-list-tile-content class="align-end subheading font-weight-bold" style="display: -webkit-box"><v-icon>attach_money</v-icon>价格</v-list-tile-content>
+                        <v-list-tile-content class="align-end subheading font-weight-bold" style="display: -webkit-box"><v-icon>attach_money</v-icon>{{item.typeDesc}}价</v-list-tile-content>
                       </v-list-tile>
                       <v-list-tile v-for="item in item.list" :key="item.id">
                         <v-list-tile-content>{{item.agencyAmount}}</v-list-tile-content>
@@ -203,7 +203,7 @@
           amountRule: [
             value => !!value || '数量不能为空',
             value => !Number.isNaN(Number(value)) || '数量不正确',
-            value => Number(value) >= this.amountLimit[0] && Number(value) <= this.amountLimit[1] || `数量应该在${this.amountLimitDesc}}之间`
+            value => Number(value) >= this.amountLimit[0] && Number(value) <= this.amountLimit[1] || `数量应该在${this.amountLimitDesc}之间`
           ],
           perPriceRule: [
             value => !!value || '单价不能为空',
@@ -220,6 +220,7 @@
         items: [
           {
             type: 'sell',
+            typeDesc: '转增',
             name: '前五转赠单',
             btnText: '我要发布转赠',
             btnClick: (type) => {
@@ -229,6 +230,7 @@
           },
           {
             type: 'buy',
+            typeDesc: '接收',
             name: '前五接收单',
             btnText: '我要发布接收',
             btnClick: (type) => {

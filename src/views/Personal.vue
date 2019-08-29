@@ -74,7 +74,7 @@
                   <span class="personal-info-label">实名认证：</span>
                   <span class="personal-info-value">{{realVertifyDesc}}</span>
                   <div class="personal-info-opt">
-                    <v-btn flat color="warning" to="/personal/idcard-info" v-if="form.realVerifyStatus === '99'">去认证</v-btn>
+                    <v-btn flat color="warning" to="/personal/idcard-info" v-if="['02', '99'].includes(form.realVerifyStatus)">去认证</v-btn>
                     <v-btn flat color="warning" v-if="form.realVerifyStatus === '00'">已认证</v-btn>
                   </div>
                 </li>
@@ -93,7 +93,7 @@
             <v-card-text>
               <ul class="personal-info">
                 <li>
-                  <span class="personal-info-label">现⾦余额：</span>
+                  <span class="personal-info-label">坚果（JG）剩余：</span>
                   <span class="personal-info-value">JG {{form.cash}}</span>
                   <div class="personal-info-opt">
                     <v-btn flat color="warning" @click="doCashModal('cashIn')">买入坚果（JG）</v-btn>
@@ -170,20 +170,43 @@
             ref="cashForm"
             lazy-validation
           >
-            <v-text-field
-              v-model="cashInfo.cash"
-              :label="cashInfo.text + '数量'"
-              required
-              type="number"
-              :rules="rules.cashRule"
-            ></v-text-field>
+            <div v-if="cashInfo.type === 'cashIn'" class="cash-in-wrapper">
+              <div>{{cashInfo.text + '数量'}}</div>
+              <v-radio-group v-model="cashInfo.cashSelect">
+                <v-radio
+                  v-for="n in [1000, 2000, 5000]"
+                  :key="n"
+                  :label="n + 'JG'"
+                  :value="n"
+                ></v-radio>
+              </v-radio-group>
+              <v-text-field
+                v-model="cashInfo.cash"
+                label="其他"
+                type="number"
+                :rules="rules.cashRule">
+              </v-text-field>
+            </div>
+
+            <template v-else>
+               <v-text-field
+                v-model="cashInfo.cash"
+                :label="cashInfo.text + '数量'"
+                required
+                type="number"
+                :rules="rules.cashRule"
+              ></v-text-field>
+            </template>
+           
           </v-form>
           <blockquote class="blockquote" >
             操作提示：
             <br>
+
             <template v-if="cashInfo.type === 'cashIn'">
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;确认买入坚果（JG）后，系统将会在<span class="red--text font-weight-bold">半个小时内到账</span>，并以公众号信息的形式提示您！
             </template>
+
             <template v-else>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;每位用户<span class="red--text font-weight-bold">一天</span>只能退回坚果（JG）<span class="red--text font-weight-bold">一次</span>，且退回坚果（JG）的数量必须是10的整数倍。
               <br>
@@ -235,7 +258,10 @@
               :rules="rules.phoneRules"
             ></v-text-field>
           </v-form>
-          <p class="text-center red--text">(手机号作⽤：⽤户找回您资⾦密码)</p>
+          <p class="red--text">
+            重要提醒：
+          </p>
+          <blockquote>手机号将作为蓝晶转赠/接收的重要依据，请务必保证您所填的手机号是您注册蓝晶社账号的手机号，否则因手机号错误而造成蓝晶在转赠或者接收时出现问题，本网站概不负责！</blockquote>
         </v-card-text>
         <v-divider></v-divider>
 
@@ -272,7 +298,7 @@
               :rules="rules.emailRules"
             ></v-text-field>
           </v-form>
-          <p class="text-center red--text">(安全邮箱作⽤：⽤户找回您资⾦密码)</p>
+          <p class="text-center red--text">(重要提醒：安全邮箱将作为您找回登陆密码和JG安全密码的主要途径，请填写您常用的联系邮箱。)</p>
           <blockquote class="blockquote">
             操作提示：
             <br>
@@ -700,7 +726,7 @@
           if (res.success) {
             let { acctBindInfoVO, acctInfoVO, basicInfoVO, notifySettingVO, securityInfoVO } = res.data
             notifySettingVO = notifySettingVO || {}
-            this.form.username = basicInfoVO.userName
+            this.form.username = basicInfoVO.loginName
             this.form.uuid = basicInfoVO.userUuid
             this.form.secureLevel = basicInfoVO.securityLevel ? basicInfoVO.securityLevel.toLowerCase() : ''
             this.form.phone = securityInfoVO.phone
@@ -801,6 +827,21 @@
         }
       }
     }
+  }
+}
+
+.cash-in-wrapper {
+  .v-input--radio-group__input {
+    flex-direction: row;
+    .v-radio {
+      margin-bottom: 8px;
+    }
+  }
+  .v-text-field{
+    padding-top: 0px;
+  }
+  .v-input__slot {
+    margin-bottom: 0px;
   }
 }
 

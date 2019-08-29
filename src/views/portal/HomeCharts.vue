@@ -112,7 +112,6 @@
               type: 'value',
               name: '转赠量（个）',
               min: 0,
-              interval: 50,
               axisLabel: {
                 formatter: '{value}'
               }
