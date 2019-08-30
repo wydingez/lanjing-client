@@ -128,10 +128,10 @@
     },
     created () {
       let code = this.$route.query.code
+      console.log(code)
       if (code) {
         // 存在微信授权code，手动调用后台微信登陆接口
         this.$store.dispatch('doWxLogin', code).then(() => {
-            this.loginLoading = false
             this.$router.push('/')
           })
           .catch(e => {

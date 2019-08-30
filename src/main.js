@@ -13,9 +13,10 @@ import debounce from 'lodash/debounce'
 
 Vue.config.productionTip = false
 
-if (process.env.NODE_ENV === 'development') {
-  new vConsole()
-}
+new vConsole()
+// if (process.env.NODE_ENV === 'development') {
+//   new vConsole()
+// }
 
 new Vue({
   data: {

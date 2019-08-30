@@ -80,7 +80,8 @@
         }
       },
       doWxLogin () {
-        doWxAuth()
+        window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxb963c6aac9dcab6e&redirect_uri=https%3A%2F%2Flanjing.ijguo.cn&response_type=code&scope=snsapi_userinfo&state=ijguo'
+        // doWxAuth()
       },
       doMobileLogin () {
         this.loginType = 'mobile'
