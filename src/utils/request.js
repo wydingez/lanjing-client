@@ -27,7 +27,7 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log('err' + error)
+    console.log('err: ' + error)
     notice.error({
       text: error.message
     })

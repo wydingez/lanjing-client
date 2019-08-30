@@ -6,11 +6,16 @@ import router from './router'
 import store from './store'
 import './style/index.styl'
 import './permission'
+import vConsole from 'vconsole'
 
 import throttle from 'lodash/throttle'
 import debounce from 'lodash/debounce'
 
 Vue.config.productionTip = false
+
+if (process.env.NODE_ENV === 'development') {
+  new vConsole()
+}
 
 new Vue({
   data: {

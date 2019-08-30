@@ -38,7 +38,7 @@
 </template>
 
 <script>
-  import {doWxLogin} from '@/api/login'
+  import {doWxAuth} from '@/api/login'
   export default {
     name: 'Login',
     data () {
@@ -80,7 +80,7 @@
         }
       },
       doWxLogin () {
-        doWxLogin()
+        doWxAuth()
       },
       doMobileLogin () {
         this.loginType = 'mobile'
@@ -97,9 +97,6 @@
   .login-type {
     li {
       text-align: center;
-      // button {
-      //   width: 90%;
-      // }
     }
   }
 }

@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import router from './router'
 
-import { doLogin, doLogout } from '@/api/login'
+import { doLogin, doLogout, doWxLogin } from '@/api/login'
 import { Base64 } from 'js-base64'
 import { setLogined, setLoginInfoKey, getLogined, getLoginInfoKey, removeLogined, removeLoginInfoKey, getAvatarUrl } from '@/utils/auth'
 
@@ -43,6 +43,23 @@ export default new Vuex.Store({
       const {username, password} = userInfo
       return new Promise((resolve, reject) => {
         doLogin({username: username.trim(), password: Base64.encode(password)}).then(response => {
+          let logined = true
+          commit('SET_LOGIN_STATE', logined)
+          commit('SET_LOGIN_USER_INFO', response.data)
+
+          setLogined(logined)
+          setLoginInfoKey(response.data)
+
+          resolve()
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    doWxLogin({ commit }, code) {
+      // 微信公众号授权登陆
+      return new Promise((resolve, reject) => {
+        doWxLogin(code).then(response => {
           let logined = true
           commit('SET_LOGIN_STATE', logined)
           commit('SET_LOGIN_USER_INFO', response.data)

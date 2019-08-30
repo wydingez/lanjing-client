@@ -13,9 +13,25 @@ export const doLogout = () =>
     method: 'get'
   })
 
-export const doWxLogin = () => {
+export const doWxAuth = () => {
   request({
     url: '/wx/auth',
-    method: 'get'
+    method: 'get',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  })
+}
+
+export const doWxLogin = (code) => {
+  request({
+    url: '/wx/login',
+    method: 'get',
+    params: {
+      code
+    },
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
   })
 }
