@@ -15,6 +15,7 @@ import PersonalAccountInfo from '_v/portal/PersonalAccountInfo'
 Vue.use(Router)
 
 export default new Router({
+  mode: 'history',
   base: process.env.BASE_URL,
   scrollBehavior: (to, from, savedPosition) => {
     let scrollTo = 0
