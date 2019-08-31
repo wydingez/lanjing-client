@@ -7,10 +7,19 @@ export const getFundList = (data) =>
     data
   })
 
+/** 绑定初始支付密码 */
 export const doBindPayPassword = (password) =>
   request({
     url: `/acct/set-pwd/${password}`,
     method: 'post'
+  })
+
+/** 修改支付密码 */
+export const doUpdatePayPassword = (data) =>
+  request({
+    url: `/acct/reset-pwd`,
+    method: 'post',
+    data
   })
 
 /** 会员充值 */

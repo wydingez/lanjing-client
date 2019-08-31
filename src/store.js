@@ -35,17 +35,23 @@ export default new Vuex.Store({
     },
     SET_LOGIN_USER_INFO: (state, info) => {
       state.loginUserInfo = info
+    },
+    SET_AVATAR_URL: (state, {portraitPicUrl}) => {
+      if (portraitPicUrl) {
+        state.avatarUrl = portraitPicUrl
+      }
     }
   },
   actions: {
-    // 登录操作
     doLogin({ commit }, userInfo) {
+      // 登录操作
       const {username, password} = userInfo
       return new Promise((resolve, reject) => {
         doLogin({username: username.trim(), password: Base64.encode(password)}).then(response => {
           let logined = true
           commit('SET_LOGIN_STATE', logined)
           commit('SET_LOGIN_USER_INFO', response.data)
+          commit('SET_AVATAR_URL', response.data)
 
           setLogined(logined)
           setLoginInfoKey(response.data)
@@ -57,12 +63,13 @@ export default new Vuex.Store({
       })
     },
     doWxLogin({ commit }, code) {
-      // 微信公众号授权登陆
+      // 微信公众号授权登录
       return new Promise((resolve, reject) => {
         doWxLogin(code).then(response => {
           let logined = true
           commit('SET_LOGIN_STATE', logined)
           commit('SET_LOGIN_USER_INFO', response.data)
+          commit('SET_AVATAR_URL', response.data)
 
           setLogined(logined)
           setLoginInfoKey(response.data)

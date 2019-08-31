@@ -161,9 +161,9 @@
       },
       doBuy (item) {
         if (!getLogined()) {
-          // 没有登陆
+          // 没有登录
           this.$vNotice.error({
-            text: '您还没有登陆，请先登录！'
+            text: '您还没有登录，请先登录！'
           })
           return false
         }

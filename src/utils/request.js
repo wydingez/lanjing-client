@@ -20,7 +20,7 @@ service.interceptors.response.use(
         text: res.msg
       })
       if (res.code === '9999') {
-        // 没有登陆或者超时，自动消除登陆的状态记录
+        // 没有登录或者超时，自动消除登录的状态记录
         store.dispatch('doRemoveUserLogined')
       }
       return Promise.reject(new Error('请求失败'))

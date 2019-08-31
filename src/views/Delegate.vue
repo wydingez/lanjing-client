@@ -191,6 +191,7 @@
     name: 'Delegate',
     mixins: [limitMixins],
     created () {
+      this.initLimit()
       this.initTop5()
     },
     computed: {

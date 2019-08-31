@@ -4,19 +4,21 @@ import './plugins/global'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import './style/index.styl'
 import './permission'
 import vConsole from 'vconsole'
+
+import 'vuetify/src/stylus/app.styl'
+import '@mdi/font/css/materialdesignicons.css'
+import './style/index.styl'
 
 import throttle from 'lodash/throttle'
 import debounce from 'lodash/debounce'
 
 Vue.config.productionTip = false
 
-new vConsole()
-// if (process.env.NODE_ENV === 'development') {
-//   new vConsole()
-// }
+if (process.env.NODE_ENV === 'development') {
+  new vConsole()
+}
 
 new Vue({
   data: {

@@ -40,6 +40,19 @@
                   </div>
                 </li>
                 <li>
+                  <span class="personal-info-label">登陆密码：</span>
+                  <span class="personal-info-value">
+                    {{form.loginPassword ? (form.showLoginPassWord ? form.loginPassword : new Array(form.loginPassword.length).fill('*').join('')) : '暂无'}}
+                    <!-- <v-btn flat icon color="warning" @click="form.showLoginPassWord = !form.showLoginPassWord" v-if="form.loginPassword">
+                      <v-icon>{{form.showLoginPassWord ? 'visibility' : 'visibility_off'}}</v-icon>
+                    </v-btn> -->
+                  </span>
+                  <div class="personal-info-opt">
+                    <v-btn flat color="warning" @click="setLoginPassword('bind')" v-if="!form.loginPassword">设置</v-btn>
+                    <v-btn flat color="warning" @click="setLoginPassword('update')" v-else>修改</v-btn>
+                  </div>
+                </li>
+                <li>
                   <span class="personal-info-label">安全邮箱：</span>
                   <span class="personal-info-value">{{form.email || '暂无'}}</span>
                   <div class="personal-info-opt">
@@ -51,9 +64,9 @@
                   <span class="personal-info-label">JG安全密码：</span>
                   <span class="personal-info-value">
                     {{form.showPassWord ? form.password : new Array(form.password.length).fill('*').join('')}}
-                    <v-btn flat icon color="warning" @click="form.showPassWord = !form.showPassWord">
+                    <!-- <v-btn flat icon color="warning" @click="form.showPassWord = !form.showPassWord">
                       <v-icon>{{form.showPassWord ? 'visibility' : 'visibility_off'}}</v-icon>
-                    </v-btn>
+                    </v-btn> -->
                   </span>
                   <div class="personal-info-opt">
                     <v-btn flat color="warning" @click="setPayCode('bind')" v-if="!form.password">设置</v-btn>
@@ -183,8 +196,7 @@
               <v-text-field
                 v-model="cashInfo.cash"
                 label="其他"
-                type="number"
-                :rules="rules.cashRule">
+                type="number">
               </v-text-field>
             </div>
 
@@ -197,7 +209,8 @@
                 :rules="rules.cashRule"
               ></v-text-field>
             </template>
-           
+
+            锚定兑换比例：1坚果（JG）= 1元
           </v-form>
           <blockquote class="blockquote" >
             操作提示：
@@ -298,7 +311,7 @@
               :rules="rules.emailRules"
             ></v-text-field>
           </v-form>
-          <p class="text-center red--text">(重要提醒：安全邮箱将作为您找回登陆密码和JG安全密码的主要途径，请填写您常用的联系邮箱。)</p>
+          <p class="text-center red--text">(重要提醒：安全邮箱将作为您找回登录密码和JG安全密码的主要途径，请填写您常用的联系邮箱。)</p>
           <blockquote class="blockquote">
             操作提示：
             <br>
@@ -407,8 +420,15 @@
         <v-card-text>
           <v-form ref="payCodeForm" lazy-validation>
             <v-text-field
+              v-model="capitalCode.oldPayCode"
+              label="原始JG安全密码"
+              type="password"
+              required
+              :rules="rules.oldPayCodeRules"
+            ></v-text-field>
+            <v-text-field
               v-model="capitalCode.payCode"
-              label="JG安全密码"
+              label="新JG安全密码"
               type="password"
               required
               :rules="rules.payCodeRules"
@@ -448,15 +468,120 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- 设置登陆密码 -->
+    <v-dialog v-model="bindLoginPassword.modal" width="500" persistent>
+      <v-card>
+        <v-card-title class="headline grey lighten-2" primary-title>设置登陆密码</v-card-title>
+
+        <v-card-text>
+          <v-form ref="loginPasswordForm" lazy-validation>
+            <v-text-field
+              v-model="bindLoginPassword.oldPassword"
+              label="原始登陆密码"
+              type="password"
+              required
+              :rules="rules.oldPasswordRules"
+            ></v-text-field>
+            <v-text-field
+              v-model="bindLoginPassword.password"
+              label="新登陆密码"
+              type="password"
+              required
+              :rules="rules.loginPassRules"
+            ></v-text-field>
+            <v-text-field
+              v-model="bindLoginPassword.newPassword"
+              label="确认登陆密码"
+              type="password"
+              required
+              :rules="rules.loginNewPassRules"
+            ></v-text-field>
+          </v-form>
+        </v-card-text>
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            flat
+            @click="bindLoginPassword.doOpt"
+          >
+            确认设置
+          </v-btn>
+          <v-btn
+            flat
+            @click="bindLoginPassword.modal = false"
+          >
+            取消
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- 充值确认 -->
+    <v-dialog v-model="cashInfo.confirmModal" width="500" persistent>
+      <v-card>
+        <v-card-title class="headline grey lighten-2" primary-title>支付确认</v-card-title>
+
+        <v-card-text>
+          <blockquote class="blockquote">
+            您提交买入的坚果（JG）数量为：{{this.cashInfo.cashSelect || this.cashInfo.cash}}
+            <br>
+            你需要支付的金额为：{{this.cashInfo.cashSelect || this.cashInfo.cash}}元
+            <br>
+            <br>
+            <p class="red--text text-center">请在五分钟内完成支付到下面的账号！</p>
+            <br>
+            <p>支付宝用户名：嘉兴市坚果网络科技有限公司</p>
+            <p>
+              支付宝账号：admin@utyue.com
+              <v-btn
+                color="pink"
+                flat
+                v-clipboard:copy="'admin@utyue.com'"
+                v-clipboard:success="onCopy"
+                v-clipboard:error="onError"
+                style="padding: 0 5px"
+              >
+                【点击复制】 
+              </v-btn>
+            </p>
+            <p>支付宝二维码：</p>
+          </blockquote>
+        </v-card-text>
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <p class="red--text">（点击确认后请前往支付宝支付）</p>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            flat
+            @click="cashInfo.linkAliPay"
+          >
+            确认
+          </v-btn>
+          <v-btn
+            flat
+            @click="cashInfo.confirmModal = false"
+          >
+            取消
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
-  import { queryInfo, doBindPhone, doBindEmail, doBindZfb, doBindBankCard } from '@/api/user'
-  import { doBindPayPassword, doCashIn, doCashOut } from '@/api/account'
+  import { queryInfo, doBindPhone, doBindEmail, doBindZfb, doBindBankCard, doResetLoginPassword } from '@/api/user'
+  import { doBindPayPassword, doUpdatePayPassword, doCashOut } from '@/api/account'
   import { doChangeNotify } from '@/api/setting'
   import { formatMoney, REGEX } from '@/utils/util'
   import DealDetail from './portal/PersonalAccountInfo'
+  import { Base64 } from 'js-base64'
 
   export default {
     name: 'Personal',
@@ -471,6 +596,7 @@
           phone: '',
           email: '',
           password: '',
+          loginPassword: '',
           realName: '',
           idCard: '',
           cash: '',
@@ -480,6 +606,7 @@
           openBillTip: false,
           openDealTip: false,
           showPassWord: false,
+          showLoginPassWord: false,
           realVerifyStatus: ''
         },
         dealDetail: {
@@ -488,25 +615,29 @@
         },
         cashInfo: {
           modal: false,
+          confirmModal: false,
           text: '',
           type: '',
           cash: '',
+          cashSelect: '',
+          linkAliPay: () => {},
           doOpt: () => {
             if (this.doFormValidate('cash')) {
               if (this.cashInfo.type === 'cashIn') {
                 // 买入坚果（JG）
-                doCashIn(this.cashInfo.cash)
-                  .then(res => {
-                    if (res.success) {
-                      this.cashInfo.modal = false
-                      this.cashInfo.cash = ''
+                this.cashInfo.confirmModal = true
+                // doCashIn(this.cashInfo.cash)
+                //   .then(res => {
+                //     if (res.success) {
+                //       this.cashInfo.modal = false
+                //       this.cashInfo.cash = ''
                       
-                      this.$vNotice.success({
-                        text: '买入坚果（JG）成功'
-                      })
-                      this.initUserInfo()
-                    }
-                  })
+                //       this.$vNotice.success({
+                //         text: '买入坚果（JG）成功'
+                //       })
+                //       this.initUserInfo()
+                //     }
+                //   })
               } else if (this.cashInfo.type === 'cashOut') {
                 // 退回坚果（JG）
                 doCashOut(this.cashInfo.cash)
@@ -607,14 +738,20 @@
         },
         capitalCode: {
           modal: false,
+          oldPayCode: '',
           payCode: '',
           rePayCode: '',
           doOpt: () => {
             if (this.doFormValidate('payCode')) {
-              doBindPayPassword(this.capitalCode.payCode)
-                .then(res => {
+              if (this.form.password) {
+                // 存在，则修改
+                doUpdatePayPassword({
+                  password: Base64.encode(this.capitalCode.oldPayCode),
+                  newPassword: Base64.encode(this.capitalCode.payCode)
+                }).then(res => {
                   if (res.success) {
                     this.capitalCode.modal = false
+                    this.capitalCode.oldPayCode = ''
                     this.capitalCode.payCode = ''
                     this.capitalCode.rePayCode = ''
                     this.$vNotice.success({
@@ -623,6 +760,47 @@
                     this.initUserInfo()
                   }
                 })
+              } else {
+                // 不存在，则绑定
+                doBindPayPassword(Base64.encode(this.capitalCode.payCode))
+                .then(res => {
+                  if (res.success) {
+                    this.capitalCode.modal = false
+                    this.capitalCode.oldPayCode = ''
+                    this.capitalCode.payCode = ''
+                    this.capitalCode.rePayCode = ''
+                    this.$vNotice.success({
+                      text: '保存成功'
+                    })
+                    this.initUserInfo()
+                  }
+                })
+              }
+            }
+          }
+        },
+        bindLoginPassword: {
+          modal: false,
+          oldPassword: '',
+          password: '',
+          newPassword: '',
+          doOpt: () => {
+            if (this.doFormValidate('loginPassword')) {
+              doResetLoginPassword({
+                password: Base64.encode(this.bindLoginPassword.password),
+                newPassword: Base64.encode(this.bindLoginPassword.newPassword)
+              }).then(res => {
+                if (res.success) {
+                  this.bindLoginPassword.modal = false
+                  this.bindLoginPassword.oldPassword = ''
+                  this.bindLoginPassword.password = ''
+                  this.bindLoginPassword.newPassword = ''
+                  this.$vNotice.success({
+                    text: '保存成功'
+                  })
+                  this.initUserInfo()
+                }
+              })
             }
           }
         },
@@ -638,13 +816,26 @@
             v => !!v || '邮箱不能为空',
             v => REGEX.email.test(v) || '邮箱格式不正确'
           ],
+          oldPayCodeRules: [
+            v => !!v || '原始JG安全密码不能为空'
+          ],
           payCodeRules: [
-            v => !!v || 'JG安全密码不能为空',
+            v => !!v || '新JG安全密码不能为空',
             v => REGEX.password.test(v) || 'JG安全密码格式不正确'
           ],
           rePayCodeRules: [
-            v => !!v || '确认金密码不能为空',
+            v => !!v || '确认JG安全密码不能为空',
             v => v === this.capitalCode.payCode || '两次密码不一致'
+          ],
+          oldPasswordRules: [
+            v => !!v || '原始登陆密码不能为空'
+          ],
+          loginPassRules: [
+            v => !!v || '新登陆密码不能为空'
+          ],
+          loginNewPassRules: [
+            v => !!v || '确认登陆密码不能为空',
+            v => v === this.bindLoginPassword.password || '两次密码不一致'
           ],
           zfbRules: [
             v => !!v || '支付宝账号不能为空'
@@ -672,6 +863,9 @@
       }
     },
     methods: {
+      setLoginPassword () {
+        this.bindLoginPassword.modal = true
+      },
       changeNotify (type, flag) {
         doChangeNotify(type, flag)
       },
@@ -740,9 +934,18 @@
             this.form.bankCard = this.findBindTypeValue(acctBindInfoVO, 'BANKCARD')
             this.form.openAccountTip = notifySettingVO.acceptAcctChangeNotify
             this.form.openBillTip = notifySettingVO.acceptAgencyNotify
-            this.form.openDealTip =  notifySettingVO.acceptTradeNotify
+            this.form.openDealTip =  notifySettingVO.acceptTradeNotifyg
+            this.form.loginPassword = basicInfoVO.pwd || '111111'
           }
         })
+      },
+      onCopy () {
+        this.$vNotice.success({
+          text: '复制成功'
+        })
+      },
+      onError () {
+        console.error('copy error!')
       }
     },
     mounted () {
@@ -841,7 +1044,7 @@
     padding-top: 0px;
   }
   .v-input__slot {
-    margin-bottom: 0px;
+    margin-bottom: 0px !important;
   }
 }
 

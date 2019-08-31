@@ -18,7 +18,7 @@
             >
               <v-avatar>
                 <img
-                  src="static/john.jpg"
+                  :src="$store.state.avatarUrl || 'static/john.jpg'"
                   :alt="loginUserName"
                 >
               </v-avatar>
@@ -211,7 +211,7 @@ export default {
       let { logined } = this
       return [
         {title: '首页', url: '/', icon: 'home', visible: true},
-        {title: '登陆', url: '/login', icon: 'supervisor_account', visible: !logined}, 
+        {title: '登录', url: '/login', icon: 'supervisor_account', visible: !logined}, 
         {title: '注册', url: '/register', icon: 'person_add', visible: false}, 
         {title: '发布', url: '/delegate', icon: 'card_travel', visible: logined}, 
         {title: '订单', url: '/order', icon: 'description', visible: logined}, 
@@ -234,6 +234,9 @@ export default {
         content: '确认登出吗？',
         onOk: (next) => {
           this.$store.dispatch('doLogout').then(() => {
+            this.$vNotice.success({
+              text: '登出成功'
+            })
             next()
           })
         }

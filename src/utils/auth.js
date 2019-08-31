@@ -16,7 +16,8 @@ export function removeLogined() {
 }
 
 export function getLoginInfoKey() {
-  return Cookies.get(LoginInfoKey)
+  let loginUserInfo = Cookies.get(LoginInfoKey)
+  return loginUserInfo && JSON.parse(loginUserInfo)
 }
 
 export function setLoginInfoKey(value) {

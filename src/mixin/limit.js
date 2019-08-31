@@ -1,8 +1,8 @@
 import {getAmountLimit, getPriceLimit} from '@/api/sys-params'
 
 export default {
-  created () {
-    this.initLimit()
+  mounted () {
+    // this.initLimit()
   },
   computed: {
     amountLimitDesc () {

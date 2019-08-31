@@ -57,3 +57,10 @@ export const doBindBankCard = (bankcard) =>
     url: `/user/bind/bankCard/${bankcard}`,
     method: 'post'
   })
+
+export const doResetLoginPassword = (data) =>
+  request({
+    url: '/user/rest-pwd',
+    method: "post",
+    data
+  })

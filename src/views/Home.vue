@@ -114,6 +114,16 @@
     name: 'Home',
     components: {HomeCharts, HomeOrderBuy, HomeOrderSell, HomeRecords},
     mixins: [limitMixins],
+    watch: {
+      '$store.state.logined': {
+        handler (val) {
+          if (val) {
+            this.initLimit()
+          }
+        },
+        immediate: true
+      }
+    },
     data () {
       return {
         selectOrder: null,
@@ -128,16 +138,17 @@
     },
     created () {
       let code = this.$route.query.code
-      console.log(code)
       if (code) {
-        // 存在微信授权code，手动调用后台微信登陆接口
+        // 存在微信授权code，手动调用后台微信登录接口
         this.$store.dispatch('doWxLogin', code).then(() => {
-            this.$router.push('/')
+          this.$vNotice.success({
+            text: '登录成功'
           })
-          .catch(e => {
-            this.loginLoading = false
-            console.log(e)
-          })
+        })
+        .catch(e => {
+          this.loginLoading = false
+          console.log(e)
+        })
       }
     }
   }
