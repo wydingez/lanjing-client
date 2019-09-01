@@ -549,6 +549,10 @@
               </v-btn>
             </p>
             <p>支付宝二维码：</p>
+            <div class="text-center">
+              <img src="static/alipay.png" :height="300" :width="220"/>
+              <p class="text-center red--text">（长按二维码另存图片到本地）</p>
+            </div>
           </blockquote>
         </v-card-text>
         <v-divider></v-divider>
@@ -640,22 +644,29 @@
             if (this.doFormValidate('cash')) {
               if (this.cashInfo.type === 'cashIn') {
                 // 买入坚果（JG）
-                this.cashInfo.confirmModal = true
+                if (this.cashInfo.cashSelect || this.cashInfo.cash) {
+                  this.cashInfo.confirmModal = true
+                  this.cashInfo.modal = false
+                } else {
+                  this.$vNotice.error({
+                    text: '请输入买入坚果数量'
+                  })
+                }
               } else if (this.cashInfo.type === 'cashOut') {
                 // 退回坚果（JG）
                 doCashOut(this.cashInfo.cash)
-                  .then(res => {
-                    if (res.success) {
-                      this.cashInfo.modal = false
-                      this.cashInfo.cash = ''
-                      this.$vNotice.success({
-                        text: '退回坚果（JG）成功'
-                      })
-                      this.initUserInfo()
-                    }
-                  })
+                .then(res => {
+                  if (res.success) {
+                    this.cashInfo.modal = false
+                    this.cashInfo.cash = ''
+                    this.$vNotice.success({
+                      text: '退回坚果（JG）成功'
+                    })
+                    this.initUserInfo()
+                    this.cashInfo.modal = false
+                  }
+                })
               }
-              this.cashInfo.modal = false
             }
           }
         },
