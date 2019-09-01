@@ -577,7 +577,7 @@
 
 <script>
   import { queryInfo, doBindPhone, doBindEmail, doBindZfb, doBindBankCard, doResetLoginPassword } from '@/api/user'
-  import { doBindPayPassword, doUpdatePayPassword, doCashOut } from '@/api/account'
+  import { doBindPayPassword, doUpdatePayPassword, doCashIn, doCashOut } from '@/api/account'
   import { doChangeNotify } from '@/api/setting'
   import { formatMoney, REGEX } from '@/utils/util'
   import DealDetail from './portal/PersonalAccountInfo'
@@ -620,24 +620,27 @@
           type: '',
           cash: '',
           cashSelect: '',
-          linkAliPay: () => {},
+          linkAliPay: () => {
+            doCashIn(this.cashInfo.cashSelect || this.cashInfo.cash)
+            .then(res => {
+              if (res.success) {
+                this.cashInfo.modal = false
+                this.cashInfo.confirmModal = false
+                this.cashInfo.cashSelect = ''
+                this.cashInfo.cash = ''
+                
+                this.$vNotice.success({
+                  text: '买入坚果（JG）成功'
+                })
+                this.initUserInfo()
+              }
+            })
+          },
           doOpt: () => {
             if (this.doFormValidate('cash')) {
               if (this.cashInfo.type === 'cashIn') {
                 // 买入坚果（JG）
                 this.cashInfo.confirmModal = true
-                // doCashIn(this.cashInfo.cash)
-                //   .then(res => {
-                //     if (res.success) {
-                //       this.cashInfo.modal = false
-                //       this.cashInfo.cash = ''
-                      
-                //       this.$vNotice.success({
-                //         text: '买入坚果（JG）成功'
-                //       })
-                //       this.initUserInfo()
-                //     }
-                //   })
               } else if (this.cashInfo.type === 'cashOut') {
                 // 退回坚果（JG）
                 doCashOut(this.cashInfo.cash)

@@ -18,12 +18,12 @@
             </li>
             <li>
               <v-btn color="primary" large block dark @click="doMobileLogin">
-                <v-icon dark left>mdi-cellphone</v-icon>账号登录
+                <v-icon dark left>mdi-cellphone</v-icon>手机号登录
               </v-btn>
             </li>
           </ul>
           <v-form ref="form" v-model="valid" lazy-validation v-if="loginType === 'mobile'">
-            <v-text-field prepend-icon="mdi-cellphone" v-model="form.username" label="用户名" :rules="rules.username" required></v-text-field>
+            <v-text-field prepend-icon="mdi-cellphone" v-model="form.username" type="number" label="手机号" :rules="rules.username" required></v-text-field>
             <v-text-field prepend-icon="lock" v-model="form.password" label="密码" type="password" :rules="rules.password" required></v-text-field>
             <p class="text-lg-right primary--text forget-pass">忘记密码？</p>
           </v-form>
@@ -38,7 +38,7 @@
 </template>
 
 <script>
-  // import { REGEX } from '@/utils/util'
+  import { REGEX } from '@/utils/util'
   export default {
     name: 'Login',
     data () {
@@ -47,13 +47,13 @@
         loginLoading: false,
         loginType: null,
         form: {
-          username: 'weishi',
+          username: '18668307817',
           password: 'Jesse123456'
         },
         rules: {
           username: [
-            v => !!v || '用户名不能为空！'
-            // v => REGEX.phone.test(v) || '手机号格式不对'
+            v => !!v || '手机号不能为空！',
+            v => REGEX.phone.test(v) || '手机号格式不对'
           ],
           password: [
             v => !!v || '密码不能为空!'
