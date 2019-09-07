@@ -149,8 +149,9 @@
             label: '取消发布',
             /* eslint-disable*/
             visible: (type, status) => {
-              // 只有接收订单才能查看明细
-              return this.orderType === 'PROGRESS'
+              // 只有接收订单才能取消发布
+              return false
+              // return status === 'PROGRESS'
             }
           }
         ]

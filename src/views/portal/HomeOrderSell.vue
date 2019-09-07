@@ -37,7 +37,8 @@
               required
             ></v-text-field>
           </v-form>
-          <p>锁定的价格为：{{rowClickItem.agencyUnitPrice}}JG/蓝晶</p>
+          <p>锁定的转赠价：<span class="red--text font-weight-bold">{{rowClickItem.agencyUnitPrice}}</span>JG/蓝晶</p>
+          <p>当前转赠费率：<span v-html="tradeRateHtml"></span></p>
 
           <blockquote class="blockquote" >
             转赠提醒：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;转赠前确认您的<span class="red--text font-weight-bold">蓝晶数量充足</span>，一旦确认转赠，请在10分钟内转赠蓝晶至接收方的蓝晶社账号。然后至<span class="red--text font-weight-bold">【订单】中确认转出</span>，否则交易自动撤销。
@@ -57,7 +58,6 @@
             确认转赠
           </v-btn>
           <v-btn
-            color="primary"
             flat
             @click="dialog = false"
           >
@@ -88,7 +88,7 @@
           <p>蓝晶社账户昵称：{{buyerInfo.wx}}</p>
           <p class="red--text">（安全提醒：在蓝晶社APP里转赠时，请务必核对以上信息无误，方可转赠。如遇信息不符时，请至网站下方联系客服人员处理！）</p>
           <blockquote class="blockquote" >
-            请在<span class="red--text font-weight-bold">完成转赠后</span>，到【订单】页面继续完成交易
+            请在<span class="red--text font-weight-bold">完成转赠后</span>，到【订单】页面继续完成该订单。
           </blockquote>
         </v-card-text>
         <v-divider></v-divider>
@@ -117,7 +117,6 @@
 <script>
   import { doTradeSale } from '@/api/trade'
   import { getLogined } from '@/utils/auth'
-  import { queryInfo } from '@/api/user'
 
   export default {
     name: 'HomeOrderSell',
@@ -129,6 +128,10 @@
       priceLimit: {
         type: Array,
         default: () => []
+      },
+      tradeRateHtml: {
+        type: String,
+        default: ''
       }
     },
     data: () => ({
@@ -184,6 +187,7 @@
         this.amountPlaceholder = `${this.amountLimit[0]}-${max}`
         this.amountRule[2] = value => Number(value) >= this.amountLimit[0] && Number(value) <= max || `数量应该在${this.amountPlaceholder}之间`
         this.dialog = true
+        this.amount = ''
       },
       doSell () {
         let flag = this.$refs.form.validate()
@@ -194,15 +198,11 @@
             tradeQuantity: this.amount
           }).then(res => {
             if (res.success) {
-              queryInfo().then(({data, success}) => {
-                if (success) {
-                  this.sellLoading = false
-                  this.buyerInfo.phone = data.securityInfoVO.phone
-                  this.buyerInfo.wx = data.basicInfoVO.nickName
-                  this.dialog = false
-                  this.snackbar = true
-                }
-              })
+              this.sellLoading = false
+              this.buyerInfo.phone = this.rowClickItem.agencyPhone
+              this.buyerInfo.wx = this.rowClickItem.agencyUserName
+              this.dialog = false
+              this.snackbar = true
             }
           })
         } else {

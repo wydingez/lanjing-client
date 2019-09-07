@@ -1,4 +1,4 @@
-import {getAmountLimit, getPriceLimit} from '@/api/sys-params'
+import {getAmountLimit, getPriceLimit, getTradeRate} from '@/api/sys-params'
 
 export default {
   mounted () {
@@ -10,12 +10,16 @@ export default {
     },
     priceLimitDesc () {
       return `${this.priceLimit[0]} - ${this.priceLimit[1]}`
+    },
+    tradeRateHtml () {
+      return `<span class="red--text font-weight-bold">${Number(this.tradeRate) * 100}</span> %`
     }
   },
   data () {
     return {
       amountLimit: [],
-      priceLimit: []
+      priceLimit: [],
+      tradeRate: 0,
     }
   },
   methods: {
@@ -28,6 +32,11 @@ export default {
       getPriceLimit().then(res => {
         if (res.success) {
           this.priceLimit = [res.data.minUnitPrice, res.data.maxUnitPrice]
+        }
+      })
+      getTradeRate().then(res => {
+        if (res.success) {
+          this.tradeRate = res.data.rate
         }
       })
     }

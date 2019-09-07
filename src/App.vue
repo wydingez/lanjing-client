@@ -80,14 +80,14 @@
             <v-flex xs12>
               联系方式
             </v-flex>
-            <v-flex sm6 xs12>
+            <!-- <v-flex sm6 xs12>
               QQ群：12345678
-            </v-flex>
+            </v-flex> -->
             <v-flex sm6 xs12>
               邮箱：admin@utyue.com
             </v-flex>
             <v-flex sm6 xs12>
-              客服电话：13813813814
+              客服电话：17346878257
             </v-flex>
             <v-flex sm6 xs12>
               工作时间：9:00-22:00

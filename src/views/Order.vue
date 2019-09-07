@@ -42,7 +42,7 @@
         ],
         orderTypes: [
           {key: 'trade', label: '即时订单'},
-          {key: 'agency', label: '委托订单'}
+          {key: 'agency', label: '发布订单'}
         ],
         activeTab: 0,
         activeType: 0

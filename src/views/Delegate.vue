@@ -128,7 +128,8 @@
               @click:append="passwordVisible = !passwordVisible"
             ></v-text-field>
 
-            <div>{{dialogInfo.title}}总计： {{totalPrice}}</div>
+            <div>{{dialogInfo.title}}总计： <span class="red--text font-weight-bold">{{totalPrice}}</span> JG</div>
+            <div v-if="dialogInfo.type === 'sell'">当前转赠费率： <span v-html="tradeRateHtml"></span></div>
           </v-form>
           
           <p v-html="dialogInfo.tip" v-show="!dialogInfo.showConfPass"></p>
@@ -197,7 +198,7 @@
     computed: {
       totalPrice () {
         let price = this.dialogInfo.amount * this.dialogInfo.perPrice
-        return isNaN(price) ? '' : (price.toFixed(2) + ' JG')
+        return isNaN(price) ? '' : price.toFixed(2)
       },
       rules () {
         return {

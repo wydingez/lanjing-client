@@ -11,3 +11,9 @@ export const getPriceLimit = () =>
     url: `/sys-params/query/price-limit`,
     method: 'get'
   })
+
+export const getTradeRate = () =>
+  request({
+    url: '/sys-params/query/trade-rate',
+    method: 'get'
+  })

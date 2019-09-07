@@ -51,10 +51,10 @@
           </v-form>
 
           <template v-if="!showConfPass">
-            <p>锁定的价格为：{{rowClickItem.agencyUnitPrice}}JG/蓝晶</p>
+            <p>锁定的接收价：<span class="red--text font-weight-bold">{{rowClickItem.agencyUnitPrice}}</span>JG/蓝晶</p>
 
             <blockquote class="blockquote" >
-              接收提醒：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接收前确认您的您账户上的坚果（JG）数量足够，以及<span class="red--text font-weight-bold">蓝晶社账户可接收蓝晶的额度充足</span>，一旦确认接收，系统将冻结相应数目的坚果（JG）。然后立即通知转赠方转赠蓝晶至您蓝晶社账户
+              接收提醒：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;接收前确认您账户上的坚果（JG）数量足够，以及<span class="red--text font-weight-bold">蓝晶社账户可接收蓝晶的额度充足</span>，一旦确认接收，系统将冻结相应数目的坚果（JG）。然后立即通知转赠方转赠蓝晶至您的蓝晶社账户。
             </blockquote>
           </template>
           
@@ -124,6 +124,10 @@
       priceLimit: {
         type: Array,
         default: () => []
+      },
+      tradeRate: {
+        type: [Number, String],
+        default: 0
       }
     },
     data: () => ({

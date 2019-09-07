@@ -42,7 +42,7 @@
                 <li>
                   <span class="personal-info-label">登陆密码：</span>
                   <span class="personal-info-value">
-                    {{form.loginPassword ? (form.showLoginPassWord ? form.loginPassword : new Array(form.loginPassword.length).fill('*').join('')) : '暂无'}}
+                    {{form.loginPassword || '暂无'}}
                     <!-- <v-btn flat icon color="warning" @click="form.showLoginPassWord = !form.showLoginPassWord" v-if="form.loginPassword">
                       <v-icon>{{form.showLoginPassWord ? 'visibility' : 'visibility_off'}}</v-icon>
                     </v-btn> -->
@@ -63,7 +63,7 @@
                 <li>
                   <span class="personal-info-label">JG安全密码：</span>
                   <span class="personal-info-value">
-                    {{form.showPassWord ? form.password : new Array(form.password.length).fill('*').join('')}}
+                    {{form.password || '暂无'}}
                     <!-- <v-btn flat icon color="warning" @click="form.showPassWord = !form.showPassWord">
                       <v-icon>{{form.showPassWord ? 'visibility' : 'visibility_off'}}</v-icon>
                     </v-btn> -->
@@ -88,7 +88,7 @@
                   <span class="personal-info-value">{{realVertifyDesc}}</span>
                   <div class="personal-info-opt">
                     <v-btn flat color="warning" to="/personal/idcard-info" v-if="['02', '99'].includes(form.realVerifyStatus)">去认证</v-btn>
-                    <v-btn flat color="warning" v-if="form.realVerifyStatus === '00'">已认证</v-btn>
+                    <!-- <v-btn flat color="warning" v-if="form.realVerifyStatus === '00'">已认证</v-btn> -->
                   </div>
                 </li>
               </ul>
@@ -353,7 +353,7 @@
               :rules="rules.zfbRules"
             ></v-text-field>
           </v-form>
-          <p class="text-center red--text">(支付宝账号：用于买入坚果（JG）/提线操作)</p>
+          <!-- <p class="text-center red--text">(支付宝账号：用于买入坚果（JG）/提线操作)</p> -->
         </v-card-text>
         <v-divider></v-divider>
 
@@ -424,6 +424,7 @@
               label="原始JG安全密码"
               type="password"
               required
+              v-if="form.password"
               :rules="rules.oldPayCodeRules"
             ></v-text-field>
             <v-text-field
@@ -441,7 +442,7 @@
               :rules="rules.rePayCodeRules"
             ></v-text-field>
           </v-form>
-          <p class="text-center red--text">(资⾦密码作⽤：⽤于验证⾦额的⽀付。)</p>
+          <!-- <p class="text-center red--text">(资⾦密码作⽤：⽤于验证⾦额的⽀付。)</p> -->
           <blockquote class="blockquote">
             操作提示：
             <br>
@@ -481,6 +482,7 @@
               label="原始登陆密码"
               type="password"
               required
+              v-if="form.loginPassword"
               :rules="rules.oldPasswordRules"
             ></v-text-field>
             <v-text-field
@@ -876,6 +878,16 @@
         }
       }
     },
+    watch: {
+      '$route.path': {
+        handler (to) {
+          if (to === '/personal') {
+            // 对于重新返回到该页面时，需要重新获取用户信息
+            this.initUserInfo()
+          }
+        }
+      }
+    },
     methods: {
       setLoginPassword () {
         this.bindLoginPassword.modal = true
@@ -948,8 +960,8 @@
             this.form.bankCard = this.findBindTypeValue(acctBindInfoVO, 'BANKCARD')
             this.form.openAccountTip = notifySettingVO.acceptAcctChangeNotify
             this.form.openBillTip = notifySettingVO.acceptAgencyNotify
-            this.form.openDealTip =  notifySettingVO.acceptTradeNotifyg
-            this.form.loginPassword = basicInfoVO.pwd || '111111'
+            this.form.openDealTip =  notifySettingVO.acceptTradeNotify
+            this.form.loginPassword = basicInfoVO.pwd
           }
         })
       },

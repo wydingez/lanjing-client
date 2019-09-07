@@ -66,10 +66,10 @@
                     :key="item.key"
                   >
                     <v-card flat v-if="item.key === 'buy'">
-                      <HomeOrderBuy :amountLimit="amountLimit" :priceLimit="priceLimit"/>
+                      <HomeOrderBuy :amountLimit="amountLimit" :priceLimit="priceLimit" :tradeRateHtml="tradeRateHtml"/>
                     </v-card>
                     <v-card flat v-if="item.key === 'sell'">
-                      <HomeOrderSell :amountLimit="amountLimit" :priceLimit="priceLimit"/>
+                      <HomeOrderSell :amountLimit="amountLimit" :priceLimit="priceLimit" :tradeRateHtml="tradeRateHtml"/>
                     </v-card>
                   </v-tab-item>
                 </v-tabs>
