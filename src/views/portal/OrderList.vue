@@ -217,7 +217,7 @@
           },
           {
             key: 'trade-cancel',
-            label: '取消发布',
+            label: '取消订单',
             /* eslint-disable*/
             visible: (type, status) => {
               return this.orderType === 'trade' && ['TO_BE_DELIVER', 'TO_BE_TAKE'].includes(status)
@@ -395,45 +395,58 @@
       doOpt () {
         let type = this.confirmInfo.type
         let orderNo = this.confirmInfo.clickRow.orderNo
-        if (type === 'receive') {
-          this.confirmReceive.loading = true
-          doReceiveConfirm(orderNo).then(res => {
-            if (res.success) {
-              this.confirmReceive.loading = false
-              this.confirmReceive.modal = false
-              this.$vNotice.success({
-                text: '接收成功'
+        let desc = type === 'receive' ? '请确保蓝晶APP已经接收到对应数量蓝晶！' : '请确保在蓝晶APP上已经转赠出对应数量蓝晶！'
+        this.$vModal.confirm({
+          title: '确认',
+          content: desc,
+          onOk: (next) => {
+            if (type === 'receive') {
+              this.confirmReceive.loading = true
+              doReceiveConfirm(orderNo).then(res => {
+                if (res.success) {
+                  this.confirmReceive.loading = false
+                  this.confirmReceive.modal = false
+                  this.$vNotice.success({
+                    text: '接收成功'
+                  })
+                  this.$refs.vTS.refresh()
+                  next()
+                  if (this.detailInfo.modal) {
+                    this.getOrderDetails()
+                  }
+                }
+              }).then(() => {
+                this.confirmReceive.loading = false
+                next(false)
+              }).catch(() => {
+                this.confirmReceive.loading = false
+                next(false)
               })
-              this.$refs.vTS.refresh()
-              if (this.detailInfo.modal) {
-                this.getOrderDetails()
-              }
-            }
-          }).then(() => {
-            this.confirmReceive.loading = false
-          }).catch(() => {
-            this.confirmReceive.loading = false
-          })
-        } else if (type === 'delivery') {
-          this.confirmGive.loading = true
-          doDeliveryConfirm(orderNo).then(res => {
-            if (res.success) {
-              this.confirmGive.loading = false
-              this.confirmGive.modal = false
-              this.$vNotice.success({
-                text: '转赠成功'
+            } else if (type === 'delivery') {
+              this.confirmGive.loading = true
+              doDeliveryConfirm(orderNo).then(res => {
+                if (res.success) {
+                  this.confirmGive.loading = false
+                  this.confirmGive.modal = false
+                  this.$vNotice.success({
+                    text: '转赠成功'
+                  })
+                  this.$refs.vTS.refresh()
+                  if (this.detailInfo.modal) {
+                    this.getOrderDetails()
+                  }
+                  next()
+                }
+              }).then(() => {
+                this.confirmGive.loading = false
+                next(false)
+              }).catch(() => {
+                this.confirmGive.loading = false
+                next(false)
               })
-              this.$refs.vTS.refresh()
-              if (this.detailInfo.modal) {
-                this.getOrderDetails()
-              }
             }
-          }).then(() => {
-            this.confirmGive.loading = false
-          }).catch(() => {
-            this.confirmGive.loading = false
-          })
-        }
+          }
+        })
       },
       confirmOrder ({tradeNo, type}) {
         this.confirmInfo.clickRow.orderNo = tradeNo
