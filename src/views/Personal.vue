@@ -582,7 +582,7 @@
 </template>
 
 <script>
-  import { queryInfo, doBindPhone, doBindEmail, doBindZfb, doBindBankCard, doResetLoginPassword } from '@/api/user'
+  import { queryInfo, doBindPhone, doBindEmail, doBindZfb, doBindBankCard, doResetLoginPassword, doFirstSetLoginPassword } from '@/api/user'
   import { doBindPayPassword, doUpdatePayPassword, doCashIn, doCashOut } from '@/api/account'
   import { doChangeNotify } from '@/api/setting'
   import { formatMoney, REGEX } from '@/utils/util'
@@ -802,10 +802,11 @@
           newPassword: '',
           doOpt: () => {
             if (this.doFormValidate('loginPassword')) {
-              doResetLoginPassword({
+              let ret = this.form.loginPassword ? doResetLoginPassword({
                 password: Base64.encode(this.bindLoginPassword.password),
                 newPassword: Base64.encode(this.bindLoginPassword.newPassword)
-              }).then(res => {
+              }) : doFirstSetLoginPassword(Base64.encode(this.bindLoginPassword.password))
+              ret.then(res => {
                 if (res.success) {
                   this.bindLoginPassword.modal = false
                   this.bindLoginPassword.oldPassword = ''

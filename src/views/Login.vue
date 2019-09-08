@@ -47,7 +47,7 @@
         loginLoading: false,
         loginType: null,
         form: {
-          username: '18668307817',
+          username: '15300010002',
           password: 'Jesse123456'
         },
         rules: {

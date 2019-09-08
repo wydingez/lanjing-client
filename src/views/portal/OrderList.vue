@@ -19,32 +19,6 @@
       </template>
     </v-table-server>
 
-    <v-dialog v-model="confirmInfo.modal" width="500" persistent>
-      <v-card>
-        <v-card-title class="headline grey lighten-2" primary-title>{{confirmInfo.title}}</v-card-title>
-        <v-card-text>{{confirmInfo.tip}}</v-card-text>
-        <v-divider></v-divider>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="pink"
-            flat
-            :loading="loading"
-            @click="doOpt"
-          >
-            确认
-          </v-btn>
-          <v-btn
-            color="grey"
-            flat
-            @click="confirmInfo.modal = false"
-          >
-            取消
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
     <v-dialog v-model="detailInfo.modal" width="500" persistent>
       <v-card class="order-detail">
         <v-card-title class="headline grey lighten-2" primary-title>明细详情</v-card-title>
@@ -67,7 +41,7 @@
 
                 <v-list-tile-action>
                   <v-list-tile-action-text>
-                    <v-btn color="warning" small @click="confirmOrder(item)" v-if="showOpt(item)">{{item.type === 'BUY' ? '确认转赠' : '确认接收'}}</v-btn>
+                    <v-btn color="warning" small @click="confirmOrder(item)" v-if="showOpt(item)">{{item.type === 'BUY' ? '去转赠' : '去接收'}}</v-btn>
                   </v-list-tile-action-text>
                 </v-list-tile-action>
               </v-list-tile>
@@ -91,11 +65,92 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- 确认接收 -->
+    <v-dialog v-model="confirmReceive.modal" width="500" persistent>
+      <v-card>
+        <v-card-title class="headline grey lighten-2" primary-title>确认接收</v-card-title>
+        <v-card-text>
+          <p>转赠人：<span>{{confirmReceive.receiver}}</span></p>
+          <p>转赠数量：<span>{{confirmReceive.amount}}</span></p>
+          <p>转入时间：<span>{{confirmReceive.date}}</span></p>
+          <blockquote  class="blockquote">
+            操作提醒：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;请务必前往蓝晶社APP确认转赠人和转赠数量是否和上述<span class="red--text font-weight-bold">信息一致</span>，点击确认后，系统会将您冻结的坚果（JG）转入转赠人账户。如信息有误，请至本网站下方联系客服！
+          </blockquote>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="pink"
+            flat
+            :loading="confirmReceive.loading"
+            @click="confirmReceive.confirm"
+          >
+            确认接收
+          </v-btn>
+          <v-btn
+            color="grey"
+            flat
+            @click="confirmInfo.modal = false"
+          >
+            取消
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- 确认转赠 -->
+    <v-dialog v-model="confirmGive.modal" width="500" persistent>
+      <v-card>
+        <v-card-title class="headline grey lighten-2" primary-title>确认转赠</v-card-title>
+        <v-card-text>
+          <blockquote class="blockquote" >打开蓝晶社APP转赠蓝晶至：</blockquote>
+          <p>
+            手机号：{{confirmGive.phone}}
+             <v-btn
+              color="pink"
+              flat
+              v-clipboard:copy="confirmGive.phone"
+              v-clipboard:success="onCopy"
+              v-clipboard:error="onError"
+              style="padding: 0 5px"
+            >
+              【点击复制】 
+            </v-btn>
+          </p>
+          <p>蓝晶社账户昵称：{{confirmGive.wx}}</p>
+          <p class="red--text">（安全提醒：在蓝晶社APP里转赠时，请务必核对以上信息无误，方可转赠。如遇信息不符时，请至网站下方联系客服人员处理！）</p>
+          <blockquote class="blockquote" >
+            请在<span class="red--text font-weight-bold">完成转赠后</span>，到【订单】页面继续完成该订单。
+          </blockquote>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="pink"
+            flat
+            :loading="confirmGive.loading"
+            @click="confirmGive.confirm"
+          >
+            确认转赠
+          </v-btn>
+          <v-btn
+            color="grey"
+            flat
+            @click="confirmGive.modal = false"
+          >
+            取消
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
-  import { doDeliveryConfirm, doReceiveConfirm } from '@/api/trade'
+  import { doDeliveryConfirm, doReceiveConfirm, doTradeCancel, doAgencyCancel, getTradeDetail } from '@/api/trade'
   import { getAgencyDetail } from '@/api/agency'
 
   export default {
@@ -119,6 +174,25 @@
         detailInfo: {
           modal: false,
           details: []
+        },
+        confirmReceive: {
+          modal: '',
+          receiver: '',
+          amount: '',
+          date: '',
+          loading: false,
+          confirm: () => {
+            this.doOpt()
+          }
+        },
+        confirmGive: {
+          modal: '',
+          phone: '',
+          wx: '',
+          loading: false,
+          confirm: () => {
+            this.doOpt()
+          }
         },
         btns: [
           {
@@ -145,13 +219,19 @@
             }
           },
           {
-            key: 'cancel',
+            key: 'trade-cancel',
             label: '取消发布',
             /* eslint-disable*/
             visible: (type, status) => {
-              // 只有接收订单才能取消发布
-              return false
-              // return status === 'PROGRESS'
+              return this.orderType === 'trade' && ['TO_BE_DELIVER', 'TO_BE_TAKE'].includes(status)
+            }
+          },
+          {
+            key: 'agency-cancel',
+            label: '取消发布',
+            /* eslint-disable*/
+            visible: (type, status) => {
+              return this.orderType === 'agency' && status === 'PROGRESS'
             }
           }
         ]
@@ -251,7 +331,43 @@
           this.detailInfo.modal = true
           this.clickOrderNo = item.orderNo
           this.getOrderDetails()
-        } else if (type === 'cancel') {}
+        } else if (type === 'trade-cancel') {
+          this.$vModal.confirm({
+            title: '操作',
+            content: '确认取消发布吗？',
+            onOk: (next) => {
+              doTradeCancel(item.orderNo).then(res => {
+                if (res.success) {
+                  this.$vNotice.success({
+                    text: '取消发布成功'
+                  })
+                  this.$refs.vTS.refresh()
+                  next()
+                }
+              }).catch(() => {
+                next(false)
+              })
+            }
+          })
+        } else if (type === 'agency-cancel') {
+          this.$vModal.confirm({
+            title: '操作',
+            content: '确认取消发布吗？',
+            onOk: (next) => {
+              doAgencyCancel(item.orderNo).then(res => {
+                if (res.success) {
+                  this.$vNotice.success({
+                    text: '取消发布成功'
+                  })
+                  this.$refs.vTS.refresh()
+                  next()
+                }
+              }).catch(() => {
+                next(false)
+              })
+            }
+          })
+        }
       },
       getOrderDetails () {
         getAgencyDetail(this.clickOrderNo).then(res => {
@@ -280,60 +396,72 @@
       doOpt () {
         let type = this.confirmInfo.type
         let orderNo = this.confirmInfo.clickRow.orderNo
-        this.loading = true
         if (type === 'receive') {
+          this.confirmReceive.loading = true
           doReceiveConfirm(orderNo).then(res => {
             if (res.success) {
-              this.confirmInfo.modal = false
+              this.confirmReceive.loading = false
+              this.confirmReceive.modal = false
               this.$vNotice.success({
                 text: '接收成功'
               })
               this.$refs.vTS.refresh()
             }
           }).then(() => {
-            this.loading = false
+            this.confirmReceive.loading = false
           }).catch(() => {
-            this.loading = false
+            this.confirmReceive.loading = false
           })
         } else if (type === 'delivery') {
+          this.confirmGive.loading = true
           doDeliveryConfirm(orderNo).then(res => {
             if (res.success) {
-              this.confirmInfo.modal = false
+              this.confirmGive.loading = false
+              this.confirmReceive.modal = false
               this.$vNotice.success({
                 text: '转赠成功'
               })
               this.$refs.vTS.refresh()
             }
           }).then(() => {
-            this.loading = false
+            this.confirmGive.loading = false
           }).catch(() => {
-            this.loading = false
+            this.confirmGive.loading = false
           })
         }
       },
       confirmOrder ({tradeNo, type}) {
-        let typeDesc = type === 'BUY' ? '转赠' : '接收'
-        this.$vModal.confirm({
-          title: '提示',
-          content: `确认${typeDesc}吗？`,
-          onOk: async (next) => {
-            try {
-              let res = await (type === 'BUY' ? doDeliveryConfirm(tradeNo) : doReceiveConfirm(tradeNo))
-              if (res.success) {
-                this.$vNotice.success({
-                  text: `${typeDesc}成功`
-                })
-                this.getOrderDetails()
-                next()
-              }
-            } catch (e) {
-              next()
+        if (type === 'BUY') {
+          this.confirmInfo.type = 'receive'
+          this.confirmReceive.modal = true
+          getTradeDetail(tradeNo).then(res => {
+            if (res.success) {
+              this.confirmReceive.receiver = res.data.tradeUsername
+              this.confirmReceive.amount = res.data.totalAmount
+              this.confirmReceive.date = res.data.tradeDate
             }
-          }
-        })
+          })
+        } else if (type === 'SALE') {
+          this.confirmInfo.type = 'delivery'
+          this.confirmGive.modal = true
+          getTradeDetail(tradeNo).then(res => {
+            if (res.success) {
+              this.confirmGive.wx = res.data.tradeUsername
+              this.confirmGive.phone = res.data.tradeUserPhone
+            }
+          })
+        }
       },
       showOpt ({type, status}) {
         return (type === 'BUY' && status === 'TO_BE_DELIVER') || (type === 'SALE' && status === 'TO_BE_TAKE')
+      },
+      onCopy () {
+        this.$vNotice.success({
+          text: '复制成功'
+        })
+      },
+      onError () {
+        console.error('copy error!')
       }
     }
   }

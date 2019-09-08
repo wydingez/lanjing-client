@@ -31,3 +31,33 @@ export const queryDailyTrade = () =>
     url: '/statistic/trade',
     method: 'get'
   })
+
+/**
+ * 查询即时订单详情
+ * @param {String} tradeNo 订单编号
+ */
+export const getTradeDetail = (tradeNo) =>
+  request({
+    url: `/trade/detail/${tradeNo}`,
+    method: 'get'
+  })
+
+/**
+ * 即时订单取消
+ * @param {String} tradeNo 订单编号
+ */
+export const doTradeCancel = (tradeNo) =>
+  request({
+    url: `/trade/cancel/${tradeNo}`,
+    method: 'post'
+  })
+
+/**
+ * 委托订单取消
+ * @param {String} agencyNo 委托单号
+ */
+export const doAgencyCancel = (agencyNo) =>
+  request({
+    url: `/agency/cancel/${agencyNo}`,
+    method: 'post'
+  })

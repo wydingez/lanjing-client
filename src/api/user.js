@@ -64,3 +64,9 @@ export const doResetLoginPassword = (data) =>
     method: "post",
     data
   })
+
+export const doFirstSetLoginPassword = (pwd) =>
+  request({
+    url: `/user/set-pwd/${pwd}`,
+    method: 'post'
+  })
