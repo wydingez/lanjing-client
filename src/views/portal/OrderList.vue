@@ -35,8 +35,8 @@
                   <v-img :src="item.avatarUrl"></v-img>
                 </v-list-tile-avatar>
                 <v-list-tile-content>
-                  <v-list-tile-title>{{ item.wx }}-<kbd class="warning">{{item.statusDesc}}</kbd></v-list-tile-title>
-                  <v-list-tile-sub-title class="text--primary">{{ item.time }}<br><span class="warning--text">{{ item.type === 'BUY' ? '转赠' : '接收' }}&nbsp;<kbd>{{ item.amount }}</kbd>个</span></v-list-tile-sub-title>
+                  <v-list-tile-title>{{ item.wx }}</v-list-tile-title>
+                  <v-list-tile-sub-title class="text--primary">{{ item.time }}-<kbd class="warning">{{item.statusDesc}}</kbd><br><span class="warning--text">{{ item.type === 'BUY' ? '转赠' : '接收' }}&nbsp;<kbd>{{ item.amount }}</kbd>个</span></v-list-tile-sub-title>
                 </v-list-tile-content>
 
                 <v-list-tile-action>
@@ -92,7 +92,7 @@
           <v-btn
             color="grey"
             flat
-            @click="confirmInfo.modal = false"
+            @click="confirmReceive.modal = false"
           >
             取消
           </v-btn>
@@ -166,9 +166,6 @@
         pagination: { rowsPerPage: 10 },
         confirmInfo: {
           clickRow: {},
-          modal: false,
-          title: '',
-          tip: '',
           type: ''
         },
         detailInfo: {
@@ -320,13 +317,15 @@
         this.confirmInfo.clickRow = item
         this.confirmInfo.type = type
         if (type === 'receive') {
-          this.confirmInfo.modal = true
-          this.confirmInfo.title = '确认接收'
-          this.confirmInfo.tip = '点击确认后，系统⾃动将资⾦转⼊转赠⽅账户'
+          this.confirmOrder({
+            tradeNo: item.orderNo,
+            type: 'SALE'
+          })
         } else if (type === 'delivery') {
-          this.confirmInfo.modal = true
-          this.confirmInfo.title = '确认转赠'
-          this.confirmInfo.tip = '点击确认后，系统将通知接收方检查确认蓝晶是否如数转至其蓝晶社账户。'
+          this.confirmOrder({
+            tradeNo: item.orderNo,
+            type: 'BUY'
+          })
         } else if (type === 'detail') {
           this.detailInfo.modal = true
           this.clickOrderNo = item.orderNo
@@ -406,6 +405,9 @@
                 text: '接收成功'
               })
               this.$refs.vTS.refresh()
+              if (this.detailInfo.modal) {
+                this.getOrderDetails()
+              }
             }
           }).then(() => {
             this.confirmReceive.loading = false
@@ -417,11 +419,14 @@
           doDeliveryConfirm(orderNo).then(res => {
             if (res.success) {
               this.confirmGive.loading = false
-              this.confirmReceive.modal = false
+              this.confirmGive.modal = false
               this.$vNotice.success({
                 text: '转赠成功'
               })
               this.$refs.vTS.refresh()
+              if (this.detailInfo.modal) {
+                this.getOrderDetails()
+              }
             }
           }).then(() => {
             this.confirmGive.loading = false
@@ -431,17 +436,18 @@
         }
       },
       confirmOrder ({tradeNo, type}) {
-        if (type === 'BUY') {
+        this.confirmInfo.clickRow.orderNo = tradeNo
+        if (type === 'SALE') {
           this.confirmInfo.type = 'receive'
           this.confirmReceive.modal = true
           getTradeDetail(tradeNo).then(res => {
             if (res.success) {
               this.confirmReceive.receiver = res.data.tradeUsername
-              this.confirmReceive.amount = res.data.totalAmount
+              this.confirmReceive.amount = res.data.tradeQuantity
               this.confirmReceive.date = res.data.tradeDate
             }
           })
-        } else if (type === 'SALE') {
+        } else if (type === 'BUY') {
           this.confirmInfo.type = 'delivery'
           this.confirmGive.modal = true
           getTradeDetail(tradeNo).then(res => {
@@ -474,6 +480,10 @@
 .order-detail {
   hr {
     margin: 10px;
+  }
+  .v-list__tile__title {
+    max-width: 250px;
+    overflow: hidden;
   }
 }
 </style>

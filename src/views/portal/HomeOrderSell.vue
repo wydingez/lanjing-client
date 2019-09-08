@@ -204,6 +204,8 @@
               this.dialog = false
               this.snackbar = true
             }
+          }).catch(() => {
+            this.sellLoading = false
           })
         } else {
           this.$vNotice.error({

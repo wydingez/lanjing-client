@@ -146,6 +146,8 @@
               this.$router.push('/login')
             }
             this.registerLoading = false
+          }).catch(() => {
+            this.registerLoading = false
           })
         } else {
           this.$vNotice.error('表单校验失败')

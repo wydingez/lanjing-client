@@ -110,6 +110,8 @@
               this.$router.push('/personal')
             }
             this.loading = false
+          }).catch(() => {
+            this.loading = false
           })
         } else {
           this.$vNotice.error({
