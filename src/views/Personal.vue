@@ -87,7 +87,7 @@
                   <span class="personal-info-label">实名认证：</span>
                   <span class="personal-info-value">{{realVertifyDesc}}</span>
                   <div class="personal-info-opt">
-                    <v-btn flat color="warning" to="/personal/idcard-info" v-if="['02', '99'].includes(form.realVerifyStatus)">去认证</v-btn>
+                    <v-btn flat color="warning" to="/personal/idcard-info" v-if="['02', '99', null].includes(form.realVerifyStatus)">去认证</v-btn>
                     <!-- <v-btn flat color="warning" v-if="form.realVerifyStatus === '00'">已认证</v-btn> -->
                   </div>
                 </li>
@@ -803,7 +803,7 @@
           doOpt: () => {
             if (this.doFormValidate('loginPassword')) {
               let ret = this.form.loginPassword ? doResetLoginPassword({
-                password: Base64.encode(this.bindLoginPassword.password),
+                password: Base64.encode(this.bindLoginPassword.oldPassword),
                 newPassword: Base64.encode(this.bindLoginPassword.newPassword)
               }) : doFirstSetLoginPassword(Base64.encode(this.bindLoginPassword.password))
               ret.then(res => {
