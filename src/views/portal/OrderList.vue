@@ -395,7 +395,7 @@
       doOpt () {
         let type = this.confirmInfo.type
         let orderNo = this.confirmInfo.clickRow.orderNo
-        let desc = type === 'receive' ? '请确保蓝晶APP已经接收到对应数量蓝晶！' : '请确保在蓝晶APP上已经转赠出对应数量蓝晶！'
+        let desc = type === 'receive' ? '请确保蓝晶社APP已经接收到对应数量蓝晶！' : '请确保在蓝晶社APP上已经转赠出对应数量蓝晶！'
         this.$vModal.confirm({
           title: '确认',
           content: desc,
@@ -455,7 +455,7 @@
           this.confirmReceive.modal = true
           getTradeDetail(tradeNo).then(res => {
             if (res.success) {
-              this.confirmReceive.receiver = res.data.tradeUsername
+              this.confirmReceive.receiver = res.data.agencyUsername
               this.confirmReceive.amount = res.data.tradeQuantity
               this.confirmReceive.date = res.data.tradeDate
             }
@@ -465,8 +465,8 @@
           this.confirmGive.modal = true
           getTradeDetail(tradeNo).then(res => {
             if (res.success) {
-              this.confirmGive.wx = res.data.tradeUsername
-              this.confirmGive.phone = res.data.tradeUserPhone
+              this.confirmGive.wx = res.data.agencyUsername
+              this.confirmGive.phone = res.data.agencyUserPhone
             }
           })
         }

@@ -4,7 +4,7 @@ import store from '../store'
 
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
-  timeout: 8000,
+  timeout: 10,
   withCredentials: true
 })
 
@@ -28,9 +28,16 @@ service.interceptors.response.use(
   },
   error => {
     console.log('err: ' + error)
-    notice.error({
-      text: error.message
-    })
+    if (error.message.includes('timeout')) {
+      // 超时提示
+      notice.error({
+        text: '服务器请求超时！'
+      })
+    } else {
+      notice.error({
+        text: error.message
+      })
+    }
     return Promise.reject(error)
   }
 )

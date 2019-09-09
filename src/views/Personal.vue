@@ -40,7 +40,7 @@
                   </div>
                 </li>
                 <li>
-                  <span class="personal-info-label">登陆密码：</span>
+                  <span class="personal-info-label">登录密码：</span>
                   <span class="personal-info-value">
                     {{form.loginPassword || '暂无'}}
                     <!-- <v-btn flat icon color="warning" @click="form.showLoginPassWord = !form.showLoginPassWord" v-if="form.loginPassword">
@@ -470,16 +470,16 @@
       </v-card>
     </v-dialog>
 
-    <!-- 设置登陆密码 -->
+    <!-- 设置登录密码 -->
     <v-dialog v-model="bindLoginPassword.modal" width="500" persistent>
       <v-card>
-        <v-card-title class="headline grey lighten-2" primary-title>设置登陆密码</v-card-title>
+        <v-card-title class="headline grey lighten-2" primary-title>设置登录密码</v-card-title>
 
         <v-card-text>
           <v-form ref="loginPasswordForm" lazy-validation>
             <v-text-field
               v-model="bindLoginPassword.oldPassword"
-              label="原始登陆密码"
+              label="原始登录密码"
               type="password"
               required
               v-if="form.loginPassword"
@@ -487,14 +487,14 @@
             ></v-text-field>
             <v-text-field
               v-model="bindLoginPassword.password"
-              label="新登陆密码"
+              label="新登录密码"
               type="password"
               required
               :rules="rules.loginPassRules"
             ></v-text-field>
             <v-text-field
               v-model="bindLoginPassword.newPassword"
-              label="确认登陆密码"
+              label="确认登录密码"
               type="password"
               required
               :rules="rules.loginNewPassRules"
@@ -845,13 +845,13 @@
             v => v === this.capitalCode.payCode || '两次密码不一致'
           ],
           oldPasswordRules: [
-            v => !!v || '原始登陆密码不能为空'
+            v => !!v || '原始登录密码不能为空'
           ],
           loginPassRules: [
-            v => !!v || '新登陆密码不能为空'
+            v => !!v || '新登录密码不能为空'
           ],
           loginNewPassRules: [
-            v => !!v || '确认登陆密码不能为空',
+            v => !!v || '确认登录密码不能为空',
             v => v === this.bindLoginPassword.password || '两次密码不一致'
           ],
           zfbRules: [
@@ -947,7 +947,7 @@
           if (res.success) {
             let { acctBindInfoVO, acctInfoVO, basicInfoVO, notifySettingVO, securityInfoVO } = res.data
             notifySettingVO = notifySettingVO || {}
-            this.form.username = basicInfoVO.loginName
+            this.form.username = basicInfoVO.nickName
             this.form.uuid = basicInfoVO.userUuid
             this.form.secureLevel = basicInfoVO.securityLevel ? basicInfoVO.securityLevel.toLowerCase() : ''
             this.form.phone = securityInfoVO.phone
