@@ -15,7 +15,14 @@
 <script>
   import UploadButton from 'vuetify-upload-button'
 
-  const IMG_TYPE = ['bmp','jpg','png','tif','gif','pcx','tga','exif','fpx','svg','psd','cdr','pcd','dxf','ufo','eps','ai','raw','WMF','webp']
+  /**
+   * 微信内嵌浏览器不能上传图片的问题
+   * const IMG_TYPE = ['bmp','jpg','png','tif','gif','pcx','tga','exif','fpx','svg','psd','cdr','pcd','dxf','ufo','eps','ai','raw','WMF','webp']
+   * 将input标签 
+   * <input type=“file" name="image" accept="image/gif, image/jpeg, image/png”>
+   * 写成
+   * <input type="file" name="image" accept=“image/*”>
+   */
 
   export default {
     name: 'VImageUpload',
@@ -34,7 +41,7 @@
     },
     data () {
       return {
-        accept: IMG_TYPE.map(item => '.' +item).join(),
+        accept: 'image/*',
         file: ''
       }
     },
