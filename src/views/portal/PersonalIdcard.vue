@@ -28,6 +28,10 @@
           required
         ></v-text-field>
 
+        <blockquote class="blockquote text-xs-left">
+          安全提醒：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;实名认证信息仅用于帮助平台对接支付宝系统完成资金的<span class="red--text font-weight-bold">转入</span>和<span class="red--text font-weight-bold">转出</span>操作，以此保障平台每位用户的资金安全，一旦实名认证审核通过<span class="red--text font-weight-bold">资料全部自动销毁！</span>
+        </blockquote>
+
         <v-layout row wrap>
           <v-flex md6 xs12>
             <v-image-upload title="身份证正面" :imgFile.sync="form.idCardImgFFile"></v-image-upload>

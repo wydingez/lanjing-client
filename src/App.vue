@@ -65,7 +65,7 @@
               网站地图
             </v-flex>
             <v-flex xs6>
-              法律声明
+              条款说明
             </v-flex>
             <v-flex xs6>
               常见问题

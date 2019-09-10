@@ -455,7 +455,7 @@
           this.confirmReceive.modal = true
           getTradeDetail(tradeNo).then(res => {
             if (res.success) {
-              this.confirmReceive.receiver = res.data.agencyUsername
+              this.confirmReceive.receiver = res.data.deliverUsername
               this.confirmReceive.amount = res.data.tradeQuantity
               this.confirmReceive.date = res.data.tradeDate
             }
@@ -465,8 +465,8 @@
           this.confirmGive.modal = true
           getTradeDetail(tradeNo).then(res => {
             if (res.success) {
-              this.confirmGive.wx = res.data.agencyUsername
-              this.confirmGive.phone = res.data.agencyUserPhone
+              this.confirmGive.wx = res.data.takeUsername
+              this.confirmGive.phone = res.data.takeUserPhone
             }
           })
         }
