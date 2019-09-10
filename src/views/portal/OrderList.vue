@@ -66,7 +66,7 @@
       </v-card>
     </v-dialog>
 
-    <!-- 确认接收 -->
+    <!-- 确认转赠与 -->
     <v-dialog v-model="confirmReceive.modal" width="500" persistent>
       <v-card>
         <v-card-title class="headline grey lighten-2" primary-title>确认接收</v-card-title>
@@ -100,7 +100,7 @@
       </v-card>
     </v-dialog>
 
-    <!-- 确认转赠 -->
+    <!-- 确认接收 -->
     <v-dialog v-model="confirmGive.modal" width="500" persistent>
       <v-card>
         <v-card-title class="headline grey lighten-2" primary-title>确认转赠</v-card-title>
