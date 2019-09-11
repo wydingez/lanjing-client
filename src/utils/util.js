@@ -6,7 +6,11 @@ export function formatMoney (str = '') {
 export function formatFormData (obj = {}) {
   let formData = new FormData()
   Object.keys(obj).forEach(key => {
-    formData.append(key, obj[key])
+    if (obj[key] instanceof Blob) {
+      formData.append(key, obj[key], obj[key].name)
+    } else {
+      formData.append(key, obj[key])
+    }
   })
   return formData
 }
