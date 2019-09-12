@@ -271,7 +271,7 @@
           this.dialogInfo.title = '转赠'
           this.dialogInfo.tip = `
             <blockquote class="blockquote" >
-              发布转赠提醒：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;发布转赠前请确认您的蓝晶社账户中<span class="red--text font-weight-bold">蓝晶数量充足</span>，以保证能够正常完成交易。
+              发布转赠提醒：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;发布转赠前请确认您的蓝晶社账户中<span class="red--text font-weight-bold">蓝晶数量充足</span>，以保证能够正常完成转赠。
             </blockquote>
           `
           this.dialogInfo.onOk = this.doSell
@@ -279,7 +279,7 @@
           this.dialogInfo.title = '接收',
           this.dialogInfo.tip = `
             <blockquote class="blockquote" >
-              发布接收提醒：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;发布接收前请确认您账户上的坚果（JG）数量足够，以保证正常完成交易。一旦确认发布接收，系统将冻结相应数目的坚果（JG），直至交易完成或者发布的接收被取消。
+              发布接收提醒：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;发布接收前请确认您账户中的<span class="red--text font-weight-bold">坚果（JG）数量充足</span>，以保证能够正常完成发布接收。确认发布接收后，系统将冻结相应数目的坚果（JG），直至完成全部接收或者发布的接收被取消。
             </blockquote>
           `
           this.dialogInfo.onOk = this.doBuy

@@ -8,6 +8,7 @@ import Login from '_v/Login'
 import Order from '_v/Order'
 import Personal from '_v/Personal'
 import Register from '_v/Register'
+import FindPassword from '_v/FindPassword'
 
 import PersonalIdcard from '_v/portal/PersonalIdcard'
 import PersonalAccountInfo from '_v/portal/PersonalAccountInfo'
@@ -43,6 +44,11 @@ export default new Router({
       path: '/register',
       name: 'Register',
       component: Register
+    },
+    {
+      path: '/find-password',
+      name: 'FindPassword',
+      component: FindPassword
     },
     {
       path: '/personal',

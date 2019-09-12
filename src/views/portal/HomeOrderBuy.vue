@@ -72,7 +72,7 @@
             {{!showConfPass ? '提交' : '确认'}}接收
           </v-btn>
           <v-btn
-            color="primary"
+            color="grey"
             flat
             @click="dialog = false"
           >

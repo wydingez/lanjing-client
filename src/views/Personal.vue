@@ -16,7 +16,7 @@
           </v-card-text>
           <v-card-actions class="info-footer">
             <p><label>昵称：</label><span>{{form.username}}</span></p>
-            <p><label>UUID：</label><span>{{form.uuid}}</span></p>
+            <p><label>UID：</label><span>{{form.uuid}}</span></p>
             <hr>
             <p class="secure-level"><label>安全等级：</label><span>{{form.secureLevel === 'low' ? '低' : form.secureLevel === 'middle' ? '中' : '高'}}</span></p>
           </v-card-actions>
@@ -185,17 +185,18 @@
           >
             <div v-if="cashInfo.type === 'cashIn'" class="cash-in-wrapper">
               <div>{{cashInfo.text + '数量'}}</div>
-              <v-radio-group v-model="cashInfo.cashSelect">
+              <v-radio-group v-model="cashInfo.cashSelect" @change="cashInfo.cash = ''">
                 <v-radio
-                  v-for="n in [1000, 2000, 5000]"
+                  v-for="n in [100, 200, 500]"
                   :key="n"
                   :label="n + 'JG'"
                   :value="n"
                 ></v-radio>
               </v-radio-group>
               <v-text-field
+                @input="cashInfo.cashSelect = ''"
                 v-model="cashInfo.cash"
-                label="其他"
+                label="其他数量"
                 type="number">
               </v-text-field>
             </div>
@@ -221,11 +222,9 @@
             </template>
 
             <template v-else>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;每位用户<span class="red--text font-weight-bold">一天</span>只能退回坚果（JG）<span class="red--text font-weight-bold">一次</span>，且退回坚果（JG）的数量必须是10的整数倍。
-              <br>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;确认退回坚果（JG）后，退款会在当天<span class="red--text font-weight-bold">21时之前</span>退回到您的支付宝账户内，所以请务必确认支付宝账户信息和您实名制认证信息一致，否则会引起退款失败。
-              <br>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如退款结算开始的30分钟后仍未收到退款，请在网站下方联系客服解决。
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1、用户每天<span class="red--text font-weight-bold">只能申请一次退回</span>，且申请退回的坚果（JG）数量必须是<span class="red--text font-weight-bold">整数</span>。<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2、系统审核通过后，金额最晚会在当天<span class="red--text font-weight-bold">21时之前</span>退回到您的支付宝账户内。所以，请务必确认支付宝账户真实姓名和您提交实名制认证信息一致。<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3、如超过21时后，仍未收到退款，请在网站下方联系客服解决。
             </template>
           </blockquote>
           
@@ -271,7 +270,7 @@
               :rules="rules.phoneRules"
             ></v-text-field>
           </v-form>
-          <p class="red--text">
+          <p class="red--text font-weight-bold">
             重要提醒：
           </p>
           <blockquote>手机号将作为蓝晶转赠/接收的重要依据，请务必保证您所填的手机号是您注册蓝晶社账号的手机号，否则因手机号错误而造成蓝晶在转赠或者接收时出现问题，本网站概不负责！</blockquote>
@@ -311,7 +310,7 @@
               :rules="rules.emailRules"
             ></v-text-field>
           </v-form>
-          <p class="text-center red--text">(重要提醒：安全邮箱将作为您找回登录密码和JG安全密码的主要途径，请填写您常用的联系邮箱。)</p>
+          <p class="text-center red--text font-weight-bold">(重要提醒：安全邮箱将作为您找回登录密码和JG安全密码的主要途径，请填写您常用的联系邮箱。)</p>
           <blockquote class="blockquote">
             操作提示：
             <br>
@@ -353,7 +352,11 @@
               :rules="rules.zfbRules"
             ></v-text-field>
           </v-form>
-          <!-- <p class="text-center red--text">(支付宝账号：用于买入坚果（JG）/提线操作)</p> -->
+          <blockquote class="blockquote">
+            操作提醒：
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;请填入与<span class="red--text font-weight-bold">实名制认证信息相符的支付宝账号信息</span>，否则将导致买入和退回坚果（JG）失败。
+          </blockquote>
         </v-card-text>
         <v-divider></v-divider>
 
@@ -442,11 +445,13 @@
               :rules="rules.rePayCodeRules"
             ></v-text-field>
           </v-form>
-          <!-- <p class="text-center red--text">(资⾦密码作⽤：⽤于验证⾦额的⽀付。)</p> -->
+          <div class="text-xs-right">
+            <a class="red--text font-weight-bold" @click="$router.push('/find-password')">忘记密码？</a>
+          </div>
           <blockquote class="blockquote">
             操作提示：
             <br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;请输⼊⾄少含有<span class="red--text">⼀个⼤写和⼩写字母以及阿拉伯数字的6位及以上字符</span>组合。
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;请输⼊⾄少含有<span class="red--text font-weight-bold">⼀个⼤写和⼩写字母以及阿拉伯数字的6位及以上字符</span>组合。
           </blockquote>
         </v-card-text>
         <v-divider></v-divider>
@@ -500,7 +505,11 @@
               :rules="rules.loginNewPassRules"
             ></v-text-field>
           </v-form>
+          <div class="text-xs-right">
+            <a class="red--text font-weight-bold">忘记密码？</a>
+          </div>
         </v-card-text>
+        
         <v-divider></v-divider>
 
         <v-card-actions>
@@ -534,7 +543,7 @@
             你需要支付的金额为：{{this.cashInfo.cashSelect || this.cashInfo.cash}}元
             <br>
             <br>
-            <p class="red--text text-center">请在五分钟内完成支付到下面的账号！</p>
+            <p class="red--text font-weight-bold text-center">请在五分钟内完成付！</p>
             <br>
             <p>支付宝用户名：嘉兴市坚果网络科技有限公司</p>
             <p>
@@ -553,14 +562,14 @@
             <p>支付宝二维码：</p>
             <div class="text-center">
               <img src="static/alipay.png" :height="300" :width="220"/>
-              <p class="text-center red--text">（长按二维码另存图片到本地）</p>
+              <p class="text-center red--text font-weight-bold">（长按二维码另存图片到本地）</p>
             </div>
           </blockquote>
         </v-card-text>
         <v-divider></v-divider>
 
         <v-card-actions>
-          <p class="red--text">（点击确认后请前往支付宝支付）</p>
+          <p class="red--text font-weight-bold">（点击确认后请前往支付宝支付）</p>
           <v-spacer></v-spacer>
           <v-btn
             color="primary"
