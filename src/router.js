@@ -9,6 +9,7 @@ import Order from '_v/Order'
 import Personal from '_v/Personal'
 import Register from '_v/Register'
 import FindPassword from '_v/FindPassword'
+import BindEmail from '_v/BindEmail'
 
 import PersonalIdcard from '_v/portal/PersonalIdcard'
 import PersonalAccountInfo from '_v/portal/PersonalAccountInfo'
@@ -44,6 +45,11 @@ export default new Router({
       path: '/register',
       name: 'Register',
       component: Register
+    },
+    {
+      path: '/bind-email/:state',
+      name: 'BindEmail',
+      component: BindEmail
     },
     {
       path: '/find-password',
