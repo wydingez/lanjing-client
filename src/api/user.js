@@ -20,7 +20,8 @@ export const doRealnameAuth = (data) =>
     data,
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
-    }
+    },
+    timeout: 200000
   })
 
 /** 绑定银行卡号 */

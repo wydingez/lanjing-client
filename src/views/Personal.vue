@@ -95,7 +95,7 @@
             </v-card-text>
           </v-card>
 
-          <v-card class="elevation-12">
+          <v-card class="elevation-12 account-info">
             <v-toolbar dark color="primary">
               <v-toolbar-title>账户信息</v-toolbar-title>
               <v-spacer></v-spacer>
@@ -112,6 +112,14 @@
                     <v-btn flat color="warning" @click="doCashModal('cashIn')">买入坚果（JG）</v-btn>
                     <v-btn flat color="warning" @click="doCashModal('cashOut')">退回坚果（JG）</v-btn>
                   </div>
+                </li>
+                <li>
+                  <span class="personal-info-label">可用坚果（JG）剩余：</span>
+                  <span class="personal-info-value">JG {{form.cashRemainder}}</span>
+                </li>
+                <li>
+                  <span class="personal-info-label">冻结中的坚果（JG）：</span>
+                  <span class="personal-info-value">JG {{form.cashFrozen}}</span>
                 </li>
                 <li>
                   <span class="personal-info-label">⽀付宝：</span>
@@ -615,6 +623,8 @@
           realName: '',
           idCard: '',
           cash: '',
+          cashRemainder: '',
+          cashFrozen: '',
           aliPay: '',
           bankCard: '',
           openAccountTip: false,
@@ -966,6 +976,8 @@
             this.form.realVerifyStatus = securityInfoVO.realVerifyStatus
             this.form.imgSrc = basicInfoVO.portraitPicUrl
             this.form.cash = formatMoney(acctInfoVO.usableAmount)
+            this.form.cashRemainder = formatMoney(acctInfoVO.balance)
+            this.form.cashFrozen = formatMoney(acctInfoVO.freezeAmount)
             this.form.aliPay = this.findBindTypeValue(acctBindInfoVO, 'ZFB')
             this.form.bankCard = this.findBindTypeValue(acctBindInfoVO, 'BANKCARD')
             this.form.openAccountTip = notifySettingVO.acceptAcctChangeNotify
@@ -1064,6 +1076,11 @@
           right: 0px;
           top: -8px;
         }
+      }
+    }
+    .account-info {
+      .personal-info-label {
+        min-width: 170px;
       }
     }
   }
