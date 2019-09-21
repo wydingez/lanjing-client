@@ -42,4 +42,12 @@ export const doResetPassword = (data) => {
     method: 'post',
     data
   })
-} 
+}
+
+/** 激活邮箱 */
+export const doActivateEmail = (data) =>
+  request({
+    url: '/call-back/active/mail',
+    method: 'post',
+    data
+  })

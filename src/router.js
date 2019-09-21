@@ -11,6 +11,7 @@ import Register from '_v/Register'
 import FindPassword from '_v/FindPassword'
 import BindEmail from '_v/BindEmail'
 import Err_404 from '_v/Page_404'
+import ActivateEmail from '_v/ActivateEmail'
 
 import PersonalIdcard from '_v/portal/PersonalIdcard'
 import PersonalAccountInfo from '_v/portal/PersonalAccountInfo'
@@ -83,6 +84,11 @@ export default new Router({
       path: '/order',
       name: 'Order',
       component: Order
+    },
+    {
+      path: '/activate-email',
+      name: 'ActivateEmail',
+      component: ActivateEmail
     },
     {
       path: '*',

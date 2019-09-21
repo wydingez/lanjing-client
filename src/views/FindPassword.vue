@@ -141,7 +141,7 @@
           this.confirmLoading = true
           let res = await doResetPassword(this.form)
           if (res.success) {
-            this.$vNotice.error({
+            this.$vNotice.success({
               text: '设置成功'
             })
             this.confirmLoading = false

@@ -743,7 +743,7 @@
                     this.bindEmail.modal = false
                     this.bindEmail.email = ''
                     this.$vNotice.success({
-                      text: '保存成功'
+                      text: '邮件发送成功，请到邮件中点击链接以激活邮箱'
                     })
                     this.initUserInfo()
                   }
@@ -995,8 +995,8 @@
             this.form.realName = securityInfoVO.realName
             this.form.realVerifyStatus = securityInfoVO.realVerifyStatus
             this.form.imgSrc = basicInfoVO.portraitPicUrl
-            this.form.cash = formatMoney(acctInfoVO.usableAmount)
-            this.form.cashRemainder = formatMoney(acctInfoVO.balance)
+            this.form.cash = formatMoney(acctInfoVO.balance)
+            this.form.cashRemainder = formatMoney(acctInfoVO.usableAmount)
             this.form.cashFrozen = formatMoney(acctInfoVO.freezeAmount)
             this.form.aliPay = this.findBindTypeValue(acctBindInfoVO, 'ZFB')
             this.form.bankCard = this.findBindTypeValue(acctBindInfoVO, 'BANKCARD')
