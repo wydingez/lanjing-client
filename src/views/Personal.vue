@@ -106,8 +106,16 @@
             <v-card-text>
               <ul class="personal-info">
                 <li>
-                  <span class="personal-info-label">坚果（JG）剩余：</span>
-                  <span class="personal-info-value">JG {{form.cash}}</span>
+                  <span class="personal-info-label">
+                    坚果（JG）剩余：
+                  </span>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                      <v-icon color="primary" dark v-on="on">mdi-alert-circle</v-icon>
+                    </template>
+                    <span>目前该账户可用+冻结的坚果总和</span>
+                  </v-tooltip>
+                  <span class="personal-info-value">&nbsp;&nbsp;JG {{form.cash}}</span>
                   <div class="personal-info-opt">
                     <v-btn flat color="warning" @click="doCashModal('cashIn')">买入坚果（JG）</v-btn>
                     <v-btn flat color="warning" @click="doCashModal('cashOut')">退回坚果（JG）</v-btn>
@@ -115,11 +123,23 @@
                 </li>
                 <li>
                   <span class="personal-info-label">可用坚果（JG）剩余：</span>
-                  <span class="personal-info-value">JG {{form.cashRemainder}}</span>
+                  <v-tooltip top>
+                      <template v-slot:activator="{ on }">
+                        <v-icon color="primary" dark v-on="on">mdi-alert-circle</v-icon>
+                      </template>
+                      <span>可以支配的坚果数量余额</span>
+                    </v-tooltip>
+                  <span class="personal-info-value">&nbsp;&nbsp;JG {{form.cashRemainder}}</span>
                 </li>
                 <li>
                   <span class="personal-info-label">冻结中的坚果（JG）：</span>
-                  <span class="personal-info-value">JG {{form.cashFrozen}}</span>
+                  <v-tooltip top>
+                      <template v-slot:activator="{ on }">
+                        <v-icon color="primary" dark v-on="on">mdi-alert-circle</v-icon>
+                      </template>
+                      <span>现实发起买入后冻结的坚果数量，包括主动发起的和委托发起的买入</span>
+                    </v-tooltip>
+                  <span class="personal-info-value">&nbsp;&nbsp;JG {{form.cashFrozen}}</span>
                 </li>
                 <li>
                   <span class="personal-info-label">⽀付宝：</span>

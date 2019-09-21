@@ -10,6 +10,7 @@ import Personal from '_v/Personal'
 import Register from '_v/Register'
 import FindPassword from '_v/FindPassword'
 import BindEmail from '_v/BindEmail'
+import Err_404 from '_v/Page_404'
 
 import PersonalIdcard from '_v/portal/PersonalIdcard'
 import PersonalAccountInfo from '_v/portal/PersonalAccountInfo'
@@ -82,6 +83,11 @@ export default new Router({
       path: '/order',
       name: 'Order',
       component: Order
+    },
+    {
+      path: '*',
+      name: 'Err_404',
+      component: Err_404
     }
   ]
 })
