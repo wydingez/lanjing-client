@@ -18,5 +18,6 @@ export function formatFormData (obj = {}) {
 export const REGEX = {
   phone: /^1[3456789]\d{9}$/,
   email: /.+@.+/,
-  password: /^[\w_-]{6,16}$/
+  // 至少一个大写字母，一个小写字母，一个数字的不小于6位的密码组合
+  password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,16}/
 }

@@ -3,9 +3,10 @@ import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import { getLogined } from '@/utils/auth'
 
-NProgress.configure({ showSpinner: false }) // NProgress Configuration
+NProgress.configure() // NProgress Configuration
 
-const whiteList = ['/login', '/register', '/']
+// 白名单地址，即不需要登录也能访问的地址
+const whiteList = ['/login', '/register', '/', '/find-password']
 
 router.beforeEach((to, from, next) => {
   // start progress bar
@@ -17,7 +18,6 @@ router.beforeEach((to, from, next) => {
   if (logined) {
     if (to.path === '/login') {
       next({ path: '/' })
-      NProgress.done()
     } else {
       next()
     }

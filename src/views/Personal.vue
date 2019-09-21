@@ -534,7 +534,7 @@
             ></v-text-field>
           </v-form>
           <div class="text-xs-right">
-            <a class="red--text font-weight-bold">忘记密码？</a>
+            <a class="red--text font-weight-bold" @click="$router.push('/find-password')">忘记密码？</a>
           </div>
         </v-card-text>
         

@@ -35,3 +35,11 @@ export const doCashOut = (cash) =>
     url: `/acct/withdraw/${cash}`,
     method: 'post'
   })
+
+export const doResetPassword = (data) => {
+  request({
+    url: '/xx/yyy',
+    method: 'post',
+    data
+  })
+} 

@@ -25,7 +25,7 @@
           <v-form ref="form" v-model="valid" lazy-validation v-if="loginType === 'mobile'">
             <v-text-field prepend-icon="mdi-cellphone" v-model="form.username" type="number" label="手机号" :rules="rules.username" required></v-text-field>
             <v-text-field prepend-icon="lock" v-model="form.password" label="密码" type="password" :rules="rules.password" required></v-text-field>
-            <p class="text-lg-right primary--text forget-pass">忘记密码？</p>
+            <p class="text-lg-right primary--text forget-pass" @click="$router.push('/find-password')">忘记密码？</p>
           </v-form>
         </v-card-text>
         <v-card-actions v-if="loginType === 'mobile'">
