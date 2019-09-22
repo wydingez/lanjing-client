@@ -6,7 +6,16 @@ import { getLogined } from '@/utils/auth'
 NProgress.configure() // NProgress Configuration
 
 // 白名单地址，即不需要登录也能访问的地址
-const whiteList = ['/login', '/register', '/', '/find-password']
+const whiteList = [
+  'Login',
+  'Register',
+  'Home',
+  'FindPassword',
+  'ActivateEmail',
+  'HelpInfo',
+  'Err_404',
+  'BindEmail'
+]
 
 router.beforeEach((to, from, next) => {
   // start progress bar
@@ -22,7 +31,7 @@ router.beforeEach((to, from, next) => {
       next()
     }
   } else {
-    if (whiteList.includes(to.path)) {
+    if (whiteList.includes(to.name)) {
       next()
     } else {
       next(`/login`)

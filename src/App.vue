@@ -65,13 +65,13 @@
               网站地图
             </v-flex>
             <v-flex xs6>
-              条款说明
+              <a href="javascript:void(0)" @click="linkPath('description')">条款说明</a>
             </v-flex>
             <v-flex xs6>
-              常见问题
+              <a href="javascript:void(0)" @click="linkPath('problem')">常见问题</a>
             </v-flex>
             <v-flex xs6>
-              要提意见
+              <a href="javascript:void(0)" @click="linkPath('suggestion')">要提意见</a>
             </v-flex>
           </v-layout>
         </v-flex>
@@ -221,6 +221,9 @@ export default {
     }
   },
   methods: {
+    linkPath (key) {
+      this.$router.push(`/help-info/${key}`)
+    },
     linkHome () {
       this.$router.push('/')
     },

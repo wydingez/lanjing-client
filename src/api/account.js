@@ -30,10 +30,11 @@ export const doCashIn = (cash) =>
   })
 
 /** 会员提现 */
-export const doCashOut = (cash) => 
+export const doCashOut = (data) => 
   request({
-    url: `/acct/withdraw/${cash}`,
-    method: 'post'
+    url: `/acct/withdraw`,
+    method: 'post',
+    data
   })
 
 /** 激活邮箱 */

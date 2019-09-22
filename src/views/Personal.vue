@@ -237,6 +237,13 @@
                 type="number"
                 :rules="rules.cashRule"
               ></v-text-field>
+
+              <v-text-field
+                v-model="cashInfo.password"
+                label="JG安全密码"
+                type="password"
+                :rules="rules.cashPassRule">
+              </v-text-field>
             </template>
 
             锚定兑换比例：1坚果（JG）= 1元
@@ -666,6 +673,7 @@
           type: '',
           cash: '',
           cashSelect: '',
+          password: '',
           linkAliPay: () => {
             doCashIn(this.cashInfo.cashSelect || this.cashInfo.cash)
             .then(res => {
@@ -696,7 +704,10 @@
                 }
               } else if (this.cashInfo.type === 'cashOut') {
                 // 退回坚果（JG）
-                doCashOut(this.cashInfo.cash)
+                doCashOut({
+                  amount: this.cashInfo.cash,
+                  payPwd: this.cashInfo.password
+                })
                 .then(res => {
                   if (res.success) {
                     this.cashInfo.modal = false
@@ -869,6 +880,9 @@
         rules: {
           cashRule: [
             v => !!v && Number(v) > 0 || '请输入正确的金额'
+          ],
+          cashPassRule: [
+            v => !!v && Number(v) > 0 || 'JG安全密码不能为空'
           ],
           phoneRules: [
             v => !!v || '手机号不能为空',
