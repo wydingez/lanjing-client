@@ -36,18 +36,32 @@ export const doCashOut = (cash) =>
     method: 'post'
   })
 
-export const doResetPassword = (data) => {
-  request({
-    url: '/xx/yyy',
-    method: 'post',
-    data
-  })
-}
-
 /** 激活邮箱 */
 export const doActivateEmail = (data) =>
   request({
-    url: '/call-back/active/mail',
+    url: '/email/active/mail',
+    method: 'post',
+    data
+  })
+
+/** 获取登录密码验证码接口 */
+export const getLoginPassValidCode = ()=>
+  request({
+    url: `/email/login-pwd/code`,
+    method: 'get'
+  })
+
+/** 获取登录密码验证码接口 */
+export const getPayPassValidCode = () =>
+  request({
+    url: `/email/pay-pwd/code`,
+    method: 'get'
+  })
+
+/** 通过邮箱验证码重设支付密码 */
+export const doResetPayPwdByEmail = (data) =>
+  request({
+    url: '/acct/forget-rest-pwd',
     method: 'post',
     data
   })

@@ -352,6 +352,7 @@
           <v-btn
             color="primary"
             flat
+            :loading="bindEmail.loading"
             @click="bindEmail.doOpt"
           >
             确认
@@ -735,19 +736,24 @@
           modal: false,
           email: '',
           type: '',
-          doOpt: () => {
+          loading: false,
+          doOpt: async () => {
             if (this.doFormValidate('email')) {
-              doBindEmail(this.bindEmail.email)
-                .then(res => {
-                  if (res.success) {
-                    this.bindEmail.modal = false
-                    this.bindEmail.email = ''
-                    this.$vNotice.success({
-                      text: '邮件发送成功，请到邮件中点击链接以激活邮箱'
-                    })
-                    this.initUserInfo()
-                  }
-                })
+              this.bindEmail.loading = true
+              try {
+                let res = await doBindEmail(this.bindEmail.email)
+                if (res.success) {
+                  this.bindEmail.modal = false
+                  this.bindEmail.email = ''
+                  this.$vNotice.success({
+                    text: '邮件发送成功，请到邮件中点击链接以激活邮箱'
+                  })
+                  this.initUserInfo()
+                  this.bindEmail.loading = false
+                }
+              } catch (e) {
+                this.bindEmail.loading = false
+              }
             }
           }
         },

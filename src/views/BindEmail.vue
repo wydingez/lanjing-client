@@ -13,7 +13,6 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="primary" @click="doConfirm">确认</v-btn>
-          <v-btn @click="doCancel">取消</v-btn>
         </v-card-actions>
       </v-card>
     </v-flex>
@@ -25,8 +24,9 @@
     name: 'bind-email',
 
     methods: {
-      doConfirm () {},
-      doCancel () {}
+      doConfirm () {
+        this.$router.push('/')
+      }
     }
   }
 </script>

@@ -71,3 +71,11 @@ export const doFirstSetLoginPassword = (pwd) =>
     url: `/user/set-pwd/${pwd}`,
     method: 'post'
   })
+
+/** 通过邮箱验证码重设登录密码 */
+export const doResetLoginPwdByEmail = (data) =>
+  request({
+    url: '/user/forget-rest-pwd',
+    method: 'post',
+    data
+  })

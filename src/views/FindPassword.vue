@@ -30,24 +30,17 @@
                   type="number"
                   :rules="rules.validCodeRule"
                 ></v-text-field>
-                <v-btn color="primary" @click="getValidCode" :disabled="count > 0">
+                <v-btn color="primary" @click="getValidCode" :disabled="count > 0" :loading="validCodeLoading">
                   {{count > 0 ? `${count}秒后重新获取` : '立即获取'}}
                 </v-btn>
               </div>              
-
-              <v-text-field
-                v-model="form.phone"
-                label="手机号码"
-                required
-                type="number"
-                :rules="rules.phoneRule"
-              ></v-text-field>
 
               <v-text-field
                 v-model="form.newPassword"
                 :label="newPassLabel"
                 required
                 :rules="rules.newPassRule"
+                type="password"
               ></v-text-field>
 
               <v-text-field
@@ -55,6 +48,7 @@
                 :label="confirmPassLabel"
                 required
                 :rules="rules.confirmPassRule"
+                type="password"
               ></v-text-field>
 
               <blockquote class="blockquote">
@@ -76,8 +70,10 @@
 </template>
 
 <script>
-  import {doResetPassword} from '@/api/account'
+  import {getLoginPassValidCode, getPayPassValidCode, doResetPayPwdByEmail} from '@/api/account'
+  import {doResetLoginPwdByEmail} from '@/api/user'
   import {REGEX} from '@/utils/util'
+  import { Base64 } from 'js-base64'
 
   export default {
     name: 'FindPassword',
@@ -86,7 +82,6 @@
       return {
         form: {
           type: '',
-          phone: '',
           validCode: '',
           newPassword: '',
           confirmPassword: ''
@@ -101,26 +96,44 @@
           }
         ],
         count: 0,
-        confirmLoading: false
+        confirmLoading: false,
+        validCodeLoading: false
       }
     },
 
     methods: {
       changeType () {
         this.$refs.form.resetValidation()
-        this.form.phone = ''
         this.validCode = ''
         this.newPassword = ''
         this.confirmPassword = ''
       },
-      getValidCode () {
-        this.count = 60
-        this.interval = setInterval(() => {
-          if (this.count === 0) {
-            clearInterval(this.interval)
+      async getValidCode () {
+        let res = null
+        this.validCodeLoading = true
+        try {
+          if (this.form.type === 'login') {
+            res = await getLoginPassValidCode()
+          } else {
+            res = await getPayPassValidCode()
           }
-          this.count--
-        }, 1000)
+          if (res.success) {
+            this.validCodeLoading = false
+            this.$vNotice.success({
+              text: '安全校验码发送成功，请登录邮箱注意查收'
+            })
+
+            this.count = 60
+            this.interval = setInterval(() => {
+              if (this.count === 0) {
+                clearInterval(this.interval)
+              }
+              this.count--
+            }, 1000)
+          }
+        } catch (e) {
+          this.validCodeLoading = false
+        }
       },
       async doConfirm () {
         let valid = this.$refs.form.validate()
@@ -137,14 +150,24 @@
           })
           return
         }
+        this.confirmLoading = true
+        let res = null
+        let params = {
+          code: Number(this.form.validCode),
+          newPassword: Base64.encode(this.form.newPassword)
+        }
         try {
-          this.confirmLoading = true
-          let res = await doResetPassword(this.form)
+          if (this.form.type === 'login') {
+            res = await doResetLoginPwdByEmail(params)
+          } else {
+            res = await doResetPayPwdByEmail(params)
+          }
           if (res.success) {
             this.$vNotice.success({
-              text: '设置成功'
+              text: '设置密码成功'
             })
             this.confirmLoading = false
+            this.$router.push('/')
           }
         } catch (e) {
           this.confirmLoading = false
@@ -165,17 +188,13 @@
           validCodeRule: [
             v => !!v || '验证码不能为空'
           ],
-          phoneRule: [
-             v => !!v || '手机号不能为空',
-             v => REGEX.phone.test(v) || '手机号格式不正确'
-          ],
           newPassRule: [
             v => !!v || `${type}不能为空`,
             v => REGEX.password.test(v) || `${type}格式不正确`
           ],
           confirmPassRule: [
             v => !!v || `确认${type}不能为空`,
-            v => v === this.newPassword || '两次密码不一致'
+            v => v === this.form.newPassword || '两次密码不一致'
           ]
         }
       }
