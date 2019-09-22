@@ -882,7 +882,7 @@
             v => !!v && Number(v) > 0 || '请输入正确的金额'
           ],
           cashPassRule: [
-            v => !!v && Number(v) > 0 || 'JG安全密码不能为空'
+            v => !!v || 'JG安全密码不能为空'
           ],
           phoneRules: [
             v => !!v || '手机号不能为空',
