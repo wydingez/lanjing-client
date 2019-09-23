@@ -706,7 +706,7 @@
                 // 退回坚果（JG）
                 doCashOut({
                   amount: this.cashInfo.cash,
-                  payPwd: this.cashInfo.password
+                  payPwd: Base64.encode(this.cashInfo.password)
                 })
                 .then(res => {
                   if (res.success) {
