@@ -61,3 +61,24 @@ export const doAgencyCancel = (agencyNo) =>
     url: `/agency/cancel/${agencyNo}`,
     method: 'post'
   })
+
+/**
+ * 取消交易同意
+ * @param {string} tradeNo 订单编号
+ */
+export const doTradeCancelApproval = (tradeNo) =>
+  request({
+    url: `/trade/cancel/approval/${tradeNo}`,
+    method: 'post'
+  })
+
+/**
+ * 取消交易拒绝
+ * @param {string} tradeNo 订单编号
+ */
+export const doTradeCancelReject = (data) =>
+  request({
+    url: '/trade/cancel/reject',
+    method: 'post',
+    data
+  })

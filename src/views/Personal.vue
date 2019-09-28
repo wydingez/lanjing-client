@@ -137,7 +137,7 @@
                       <template v-slot:activator="{ on }">
                         <v-icon color="primary" dark v-on="on">mdi-alert-circle</v-icon>
                       </template>
-                      <span>现实发起买入后冻结的坚果数量，包括主动发起的和委托发起的买入</span>
+                      <span>发起买入后冻结的坚果数量，包括主动发起的和委托发起的买入</span>
                     </v-tooltip>
                   <span class="personal-info-value">&nbsp;&nbsp;JG {{form.cashFrozen}}</span>
                 </li>

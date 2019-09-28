@@ -5,3 +5,10 @@ export const getArticleInfo = (key) =>
     url: `/article/query/${key}`,
     method: 'get'
   })
+
+export const getArticleContent = (data) =>
+ request({
+   url: '/article/query',
+   method: 'post',
+   data
+ })

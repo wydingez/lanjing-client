@@ -42,6 +42,7 @@
                 <v-list-tile-action>
                   <v-list-tile-action-text>
                     <v-btn color="warning" small @click="confirmOrder(item)" v-if="showOpt(item)">{{item.type === 'BUY' ? '去转赠' : '去接收'}}</v-btn>
+                    <v-btn color="warning" small @click="cancelOrder(item)" v-if="item.status === 'IN_CANCEL'">申请取消</v-btn>
                   </v-list-tile-action-text>
                 </v-list-tile-action>
               </v-list-tile>
@@ -146,11 +147,80 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- 申请取消 -->
+    <v-dialog v-model="confirmCancel.modal" width="500" persistent>
+      <v-card>
+        <v-card-title class="headline grey lighten-2" primary-title>申请取消</v-card-title>
+        <v-card-text>
+          <p>
+            手机号：{{confirmCancel.phone}}
+          </p>
+          <p>蓝晶社账户昵称：{{confirmCancel.wx}}</p>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="pink"
+            flat
+            @click="confirmCancel.confirm"
+          >
+            同意取消
+          </v-btn>
+          <v-btn
+            color="pink"
+            flat
+            @click="confirmCancel.reject"
+          >
+            拒绝取消
+          </v-btn>
+          <v-btn
+            color="grey"
+            flat
+            @click="confirmCancel.modal = false"
+          >
+            取消
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- 拒绝申请取消 -->
+    <v-dialog v-model="rejectCancel.modal" width="500" persistent>
+      <v-card>
+        <v-card-title class="headline grey lighten-2" primary-title>确认</v-card-title>
+        <v-card-text>
+          <v-form ref="form" v-model="rejectCancel.valid" lazy-validation>
+            <v-textarea v-model="rejectCancel.auditDesc" label="拒绝理由" :rules="[v => !!v || '拒绝理由不能为空！']" required></v-textarea>
+          </v-form>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="pink"
+            flat
+            :loading="rejectCancel.loading"
+            @click="rejectCancel.confirm"
+          >
+            确认
+          </v-btn>
+          <v-btn
+            color="grey"
+            flat
+            @click="rejectCancel.modal = false"
+          >
+            取消
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
-  import { doDeliveryConfirm, doReceiveConfirm, doTradeCancel, doAgencyCancel, getTradeDetail } from '@/api/trade'
+  import { doDeliveryConfirm, doReceiveConfirm, doTradeCancel, doAgencyCancel, getTradeDetail, doTradeCancelApproval, doTradeCancelReject } from '@/api/trade'
   import { getAgencyDetail } from '@/api/agency'
 
   export default {
@@ -189,6 +259,28 @@
           loading: false,
           confirm: () => {
             this.doOpt()
+          }
+        },
+        confirmCancel: {
+          modal: '',
+          phone: '',
+          wx: '',
+          tradeNo: '',
+          confirm: () => {
+            this.doCancel('approve')
+          },
+          reject: () => {
+            this.rejectCancel.auditDesc = ''
+            this.rejectCancel.loading = false
+            this.rejectCancel.modal = true
+          }
+        },
+        rejectCancel: {
+          modal: false,
+          loading: false,
+          auditDesc: '',
+          confirm: () => {
+            this.doCancel('reject')  
           }
         },
         btns: [
@@ -376,7 +468,8 @@
               let statusInfect = {
                 'TO_BE_DELIVER': '待转赠',
                 'TO_BE_TAKE': '待接收',
-                'COMPLETED': '完成'
+                'COMPLETED': '完成',
+                'IN_CANCEL': '取消中'
               }
               return {
                 wx: i.tradeUserName,
@@ -391,6 +484,59 @@
             })
           }
         })
+      },
+      async doCancel (type) {
+        let tradeNo = this.confirmCancel.tradeNo
+        if (type === 'approve') {
+          // 同意取消
+          this.$vModal.confirm({
+            title: '确认',
+            content: '确认同意取消吗？',
+            onOk: async (next) => {
+              try {
+                let res = await doTradeCancelApproval(tradeNo)
+                if (res.success) {
+                  this.$vNotice.success({
+                    text: '同意取消成功'
+                  })
+                  next()
+                } else {
+                  next(false)
+                }
+              } catch (e) {
+                next(false)
+              }
+            }
+          })
+        } else if (type === 'reject') {
+          // 拒绝取消
+          if (this.rejectCancel.valid) {
+            this.rejectCancel.loading = true
+            try {
+              let res = await doTradeCancelReject({
+                tradeNo: tradeNo,
+                auditDesc: this.rejectCancel.auditDesc
+              })
+              if (res.success) {
+                this.$vNotice.success({
+                  text: '拒绝取消成功'
+                })
+                this.rejectCancel.loading = false
+                this.rejectCancel.modal = false
+              }
+            } catch (e) {
+              this.rejectCancel.loading = false
+            }
+          } else {
+            this.$vNotice.success({
+              text: '请填写拒绝理由'
+            })
+          }
+        }
+        this.$refs.vTS.refresh()
+        if (this.detailInfo.modal) {
+          this.getOrderDetails()
+        }
       },
       doOpt () {
         let type = this.confirmInfo.type
@@ -470,6 +616,16 @@
             }
           })
         }
+      },
+      cancelOrder ({tradeNo}) {
+        this.confirmCancel.tradeNo = tradeNo
+        this.confirmCancel.modal = true
+        getTradeDetail(tradeNo).then(res => {
+          if (res.success) {
+            this.confirmCancel.wx = res.data.takeUsername
+            this.confirmCancel.phone = res.data.takeUserPhone
+          }
+        })
       },
       showOpt ({type, status}) {
         return (type === 'BUY' && status === 'TO_BE_DELIVER') || (type === 'SALE' && status === 'TO_BE_TAKE')

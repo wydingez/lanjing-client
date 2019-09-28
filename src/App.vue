@@ -62,7 +62,7 @@
               帮助信息
             </v-flex>
             <v-flex xs6>
-              网站地图
+              <a href="javascript:void(0)" @click="linkPath('map')">网站地图</a>
             </v-flex>
             <v-flex xs6>
               <a href="javascript:void(0)" @click="linkPath('description')">条款说明</a>
@@ -222,7 +222,13 @@ export default {
   },
   methods: {
     linkPath (key) {
-      this.$router.push(`/help-info/${key}`)
+      if (key === 'suggestion') {
+        window.open('https://jinshuju.net/f/HfSP2K')
+      } else if (key === 'map') {
+        this.$router.push('/web-map')
+      } else {
+        this.$router.push(`/help-info/${key}`)
+      }
     },
     linkHome () {
       this.$router.push('/')

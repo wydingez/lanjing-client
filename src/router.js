@@ -13,6 +13,7 @@ import BindEmail from '_v/BindEmail'
 import Err_404 from '_v/Page_404'
 import ActivateEmail from '_v/ActivateEmail'
 import HelpInfo from '_v/HelpInfo'
+import WebMap from '_v/WebMap'
 
 import PersonalIdcard from '_v/portal/PersonalIdcard'
 import PersonalAccountInfo from '_v/portal/PersonalAccountInfo'
@@ -95,6 +96,11 @@ export default new Router({
       path: '/help-info/:key',
       name: 'HelpInfo',
       component: HelpInfo
+    },
+    {
+      path: '/web-map',
+      name: 'WebMap',
+      component: WebMap
     },
     {
       path: '*',
