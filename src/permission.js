@@ -14,7 +14,8 @@ const whiteList = [
   'ActivateEmail',
   'HelpInfo',
   'Err_404',
-  'BindEmail'
+  'BindEmail',
+  'WebMap'
 ]
 
 router.beforeEach((to, from, next) => {

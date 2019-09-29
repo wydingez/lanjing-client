@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid grid-list-md>
+  <v-container fluid grid-list-md class="delegate">
     <!-- pc -->
     <v-data-iterator
       v-if="!$root.smallScreen"
@@ -24,11 +24,14 @@
                 <v-list-tile-content class="subheading font-weight-bold" style="display: -webkit-box">数量<v-icon>sort</v-icon></v-list-tile-content>
                 <v-list-tile-content class="align-end subheading font-weight-bold" style="display: -webkit-box"><v-icon>attach_money</v-icon>{{item.typeDesc}}价</v-list-tile-content>
               </v-list-tile>
-              <v-list-tile v-for="item in item.list" :key="item.agencyNo">
+              <v-list-tile v-for="item in item.list" :key="item.agencyNo" class="list-content">
                 <v-list-tile-content>{{item.agencyAmount}}</v-list-tile-content>
                 <v-list-tile-content class="align-end">{{ item.agencyUnitPrice }} JG</v-list-tile-content>
               </v-list-tile>
-              <v-list-tile>
+              <div class="no-item" v-if="item.list.length === 0">
+                暂无数据
+              </div>
+              <v-list-tile class="list-btn">
                 <v-btn block color="warning" dark @click="item.btnClick(item.type)">{{ item.btnText }}</v-btn>
               </v-list-tile>
             </v-list>
@@ -341,5 +344,22 @@
 </script>
 
 <style lang="stylus">
-
+.delegate {
+  .v-list {
+    position: relative;
+    min-height: 300px;
+    .no-item {
+      text-align: center;
+      position: absolute;
+      width: 100%;
+      bottom: 150px;
+      font-size: 20px;
+    }
+    .list-btn {
+      position: absolute;
+      width: 100%;
+      bottom: 16px;
+    }
+  }
+}
 </style>

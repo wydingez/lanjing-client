@@ -12,7 +12,7 @@ export default new Vuex.Store({
   state: {
     logined: getLogined() || false,
     loginUserInfo: getLoginInfoKey() || {},
-    avatarUrl: getAvatarUrl() || 'static/john.jpg',
+    avatarUrl: getAvatarUrl() || 'static/img/john.jpg',
 
   },
   getters: {

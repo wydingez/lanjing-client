@@ -383,6 +383,9 @@
             case 'CANCEL':
               desc = '已取消'
               break
+            case 'IN_CANCEL':
+              desc = '取消中'
+              break
             case 'TO_HANDLE':
               desc = '需要手动处理'
               break
