@@ -33,7 +33,8 @@ module.exports = {
   transpileDependencies:[
     /node_modules[/\\\\]vuetify[/\\\\]/,
     'vue-echarts',
-    'resize-detector'
+    'resize-detector',
+    'vue2-org-tree'
   ],
   chainWebpack: (config) => {
     config.resolve.alias
