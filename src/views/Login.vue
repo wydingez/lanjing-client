@@ -25,8 +25,9 @@
           <v-form ref="form" v-model="valid" lazy-validation v-if="loginType === 'mobile'">
             <v-text-field prepend-icon="mdi-cellphone" v-model="form.username" type="number" label="手机号" :rules="rules.username" required></v-text-field>
             <v-text-field prepend-icon="lock" v-model="form.password" label="密码" type="password" :rules="rules.password" required></v-text-field>
-            <p class="text-lg-right red--text forget-pass" @click="$router.push('/find-password')">忘记密码？</p>
+            <p class="text-lg-right text-xs-right red--text forget-pass" @click="$router.push('/find-password')">忘记密码？</p>
           </v-form>
+          <p class="login-confirm-desc">点击并确认登录本平台，即表示已经阅读并同意<a class="red--text" href="javascrip:void(0)" @click="$router.push('/help-info/description')">《用户协议》</a></p>
         </v-card-text>
         <v-card-actions v-if="loginType === 'mobile'">
           <v-spacer></v-spacer>
@@ -102,6 +103,10 @@
     li {
       text-align: center;
     }
+  }
+  .login-confirm-desc {
+    color: #7b7a7a;
+    text-align: center;
   }
 }
 </style>

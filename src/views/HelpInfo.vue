@@ -8,7 +8,7 @@
           </template>
         </v-breadcrumbs>
       </v-flex>
-      <v-flex xs12 sm2 md3 offset-xs0 >
+      <v-flex xs12 sm2 md3 offset-xs0 class="left">
         <v-card class="list elevation-12">
           <v-toolbar color="primary" dark>
             <v-toolbar-title class="text-xs-center">{{getCategoryName(key)}}</v-toolbar-title>
@@ -37,16 +37,30 @@
           </v-list>
         </v-card>
       </v-flex>
-      <v-flex xs12 sm7 md8 offset-xs0>
+      <v-flex xs12 sm7 md8 offset-xs0 class="right">
         <v-card class="list elevation-12">
           <v-toolbar color="primary" dark class="text-xs-center">
             <v-toolbar-title>
-              {{title}}
+              {{articleInfo.title}}
             </v-toolbar-title>
             <v-spacer></v-spacer>
           </v-toolbar>
 
-          <div v-html="content" class="content">
+          <v-layout row wrap class="title-desc">
+            <v-flex md2>
+              <label>发布人：</label>
+              <span>{{articleInfo.name}}</span>
+            </v-flex>
+            <v-flex md5>
+              <label>发布时间：</label>
+              <span>{{articleInfo.publishTime}}</span>
+            </v-flex>
+            <v-flex md5>
+              <label>更新时间：</label>
+              <span>{{articleInfo.updateTime}}</span>
+            </v-flex>
+          </v-layout>
+          <div v-html="articleInfo.content" class="content">
           </div>
         </v-card>
       </v-flex>
@@ -60,11 +74,16 @@
     name: 'help-info',
     data () {
       return {
-        content: '',
         list: [],
         activeItem: '',
         key: '',
-        title: ''
+        articleInfo: {
+          title: '',
+          name: 'xxx',
+          publishTime: '2019-10-12 12:00:17',
+          updateTime: '2019-10-12 12:00:17',
+          content: ''
+        }
       }
     },
     watch: {
@@ -113,13 +132,13 @@
         return key === 'description' ? '条款说明' : '常见问题'
       },
       async getArticleContent (articleTitle) {
-        this.title = articleTitle
+        this.articleInfo.title = articleTitle
         let res = await getArticleContent({
           categoryCode: this.key,
           articleTitle
         })
         if (res.success) {
-          this.content = res.data.articleContent
+          this.articleInfo.content = res.data.articleContent
           this.activeItem = res.data.articleTitle
         }
       },
@@ -139,25 +158,40 @@
       padding-bottom: 0 !important;
     }
   }
-  .content {
-    margin: 10px;
-  }
-  ul {
-    list-style: disc;
-  }
-  ol {
-    list-style: decimal;
-  }
-  .list {
-    .title {
-      &:hover {
-        background-color: #ddd;
-      }
-      &.active {
-        background-color: #ddd;
+  .left {
+    .list {
+      .v-list--subheader {
+        padding-bottom: 0;
+        .title {
+          cursor: pointer;
+          &:hover {
+            background-color: #ddd;
+          }
+          &.active {
+            background-color: #ddd;
+          }
+        }
       }
     }
   }
-  
+  .right {
+    .title-desc {
+      text-align: center;
+      margin: 0 !important;
+      border-bottom: 1px solid #eee;
+      label {
+        font-weight: bold;
+      }
+    }
+    .content {
+      padding: 10px;
+      ul {
+        list-style: disc;
+      }
+      ol {
+        list-style: decimal;
+      }
+    }
+  }
 }
 </style>

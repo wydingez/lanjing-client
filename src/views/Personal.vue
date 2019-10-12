@@ -569,35 +569,31 @@
 
     <!-- 充值确认 -->
     <v-dialog v-model="cashInfo.confirmModal" width="500" persistent>
-      <v-card>
+      <v-card class="cashIn-confirm">
         <v-card-title class="headline grey lighten-2" primary-title>支付确认</v-card-title>
 
         <v-card-text>
           <blockquote class="blockquote">
-            您提交买入的坚果（JG）数量为：{{this.cashInfo.cashSelect || this.cashInfo.cash}}
-            <br>
-            你需要支付的金额为：{{this.cashInfo.cashSelect || this.cashInfo.cash}}元
-            <br>
-            <br>
+            <p>您提交买入的坚果（JG）数量为：<span class="font-weight-medium">{{this.cashInfo.cashSelect || this.cashInfo.cash}}</span></p>
+            <p>你需要支付的金额为：<span class="font-weight-medium">{{this.cashInfo.cashSelect || this.cashInfo.cash}}元</span></p>
             <p class="red--text font-weight-bold text-center">请在五分钟内完成付！</p>
-            <br>
             <p>支付宝用户名：嘉兴市坚果网络科技有限公司</p>
             <p>
-              支付宝账号：admin@utyue.com
+              支付宝账号：<span class="font-weight-medium">admin@utyue.com</span>
               <v-btn
                 color="pink"
                 flat
                 v-clipboard:copy="'admin@utyue.com'"
                 v-clipboard:success="onCopy"
                 v-clipboard:error="onError"
-                style="padding: 0 5px"
+                style="padding: 0 5px; margin-top: 0px; margin-bottom: 0px;"
               >
                 【点击复制】 
               </v-btn>
             </p>
             <p>支付宝二维码：</p>
             <div class="text-center">
-              <img src="static/img/alipay.png" :height="300" :width="220"/>
+              <img src="static/img/alipay.png" :height="300" :width="328"/>
               <p class="text-center red--text font-weight-bold">（长按二维码另存图片到本地）</p>
             </div>
           </blockquote>
@@ -1138,6 +1134,12 @@
   }
   .v-input__slot {
     margin-bottom: 0px !important;
+  }
+}
+
+.cashIn-confirm {
+  p {
+    margin-bottom: 5px;
   }
 }
 
