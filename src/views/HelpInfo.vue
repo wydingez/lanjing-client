@@ -79,9 +79,9 @@
         key: '',
         articleInfo: {
           title: '',
-          name: 'xxx',
-          publishTime: '2019-10-12 12:00:17',
-          updateTime: '2019-10-12 12:00:17',
+          name: '',
+          publishTime: '',
+          updateTime: '',
           content: ''
         }
       }
@@ -140,6 +140,9 @@
         if (res.success) {
           this.articleInfo.content = res.data.articleContent
           this.activeItem = res.data.articleTitle
+          this.articleInfo.name = res.data.updateUser
+          this.articleInfo.publishTime = res.data.createTime
+          this.articleInfo.updateTime = res.data.updateTime
         }
       },
       chooseArticle (item) {
