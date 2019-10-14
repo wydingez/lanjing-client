@@ -10,9 +10,8 @@
       </v-flex>
       <v-flex xs12 sm2 md3 offset-xs0 class="left">
         <v-card class="list elevation-12">
-          <v-toolbar color="primary" dark>
+          <v-toolbar color="primary" dark class="title">
             <v-toolbar-title class="text-xs-center">{{getCategoryName(key)}}</v-toolbar-title>
-            <v-spacer></v-spacer>
           </v-toolbar>
 
           <v-list subheader>
@@ -39,11 +38,10 @@
       </v-flex>
       <v-flex xs12 sm7 md8 offset-xs0 class="right">
         <v-card class="list elevation-12">
-          <v-toolbar color="primary" dark class="text-xs-center">
+          <v-toolbar color="primary" dark class="title">
             <v-toolbar-title>
               {{articleInfo.title}}
             </v-toolbar-title>
-            <v-spacer></v-spacer>
           </v-toolbar>
 
           <v-layout row wrap class="title-desc">
@@ -195,6 +193,9 @@
         list-style: decimal;
       }
     }
+  }
+  .title .v-toolbar__content {
+    justify-content: center;
   }
 }
 </style>
