@@ -593,7 +593,7 @@
             </p>
             <p>支付宝二维码：</p>
             <div class="text-center">
-              <img src="static/img/alipay.png" :height="300" :width="328"/>
+              <img src="/static/img/alipay.png" :height="300" :width="328"/>
               <p class="text-center red--text font-weight-bold">（长按二维码另存图片到本地）</p>
             </div>
           </blockquote>

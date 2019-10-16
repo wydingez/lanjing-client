@@ -3,7 +3,7 @@
     <!-- Header -->
     <v-toolbar app class="my-app-toolbar" color="primary" dark :height="48" tabs>
       <v-toolbar-side-icon v-if="smallScreen" @click="drawer = !drawer"></v-toolbar-side-icon>
-      <v-img src="static/img/logo.png" class="my-app-toolbar-logo" @click.native="linkHome" v-if="!smallScreen"></v-img>
+      <v-img src="/static/img/logo.png" class="my-app-toolbar-logo" @click.native="linkHome" v-if="!smallScreen"></v-img>
       <v-toolbar-title class="my-app-toolbar-title">{{projectTitle}}</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items v-if="!smallScreen">
@@ -18,7 +18,7 @@
             >
               <v-avatar>
                 <img
-                  :src="$store.state.avatarUrl || 'static/img/john.jpg'"
+                  :src="$store.state.avatarUrl || '/static/img/john.jpg'"
                   :alt="loginUserName"
                 >
               </v-avatar>
@@ -97,7 +97,7 @@
         <v-flex sm3 xs4 pa-3 class="row2 row2-3">
           <div class="row2-subscription">
             <span class="row2-subscription-title">微信公众号</span>
-            <img src="static/img/subscription.bmp" :height="80" :width="80" class="row2-subscription-img"/>
+            <img src="/static/img/subscription.bmp" :height="80" :width="80" class="row2-subscription-img"/>
           </div>
         </v-flex>
         <v-flex xs12>
@@ -118,7 +118,7 @@
       <v-list class="pa-1">
         <v-list-tile avatar tag="div">
           <v-list-tile-avatar>
-            <img src="static/img/logo.png">
+            <img src="/static/img/logo.png">
           </v-list-tile-avatar>
 
           <v-list-tile-content>

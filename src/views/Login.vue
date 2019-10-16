@@ -85,7 +85,8 @@
         }
       },
       doWxLogin () {
-        window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxb963c6aac9dcab6e&redirect_uri=https%3A%2F%2Flanjing.ijguo.cn&response_type=code&scope=snsapi_userinfo&state=ijguo'
+        const redirectLocation = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxb963c6aac9dcab6e&redirect_uri=https://lanjing.ijguo.cn&response_type=code&scope=snsapi_userinfo&state=ijguo'
+        window.location.href = window.encodeURIComponent(redirectLocation)
       },
       doMobileLogin () {
         this.loginType = 'mobile'

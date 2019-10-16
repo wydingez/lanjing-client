@@ -132,7 +132,7 @@
           {key: 'sell', label: '我要转赠', icon: 'input'}
         ],
         carouselItems: [
-          {src: 'static/img/bg5.jpg'}
+          {src: '/static/img/bg5.jpg'}
         ]
       }
     },
