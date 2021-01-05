@@ -9,7 +9,7 @@
     "analyz": "npm_config_report=true npm run build"
   },
   "dependencies": {
-    "axios": "^0.18.1",
+    "axios": "^0.21.1",
     "babel-polyfill": "^6.26.0",
     "browser-image-compression": "^1.0.6",
     "core-js": "^2.6.5",
